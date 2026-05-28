@@ -1,0 +1,242 @@
+/* HANDS on TECHNOLOGY design tokens – @hands-on/design */
+
+@font-face {
+  font-family: 'Uniform';
+  src: url('../fonts/Uniform-Regular.otf') format('opentype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Uniform';
+  src: url('../fonts/Uniform-Bold.otf') format('opentype');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('../fonts/Poppins-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  /* Page backdrop – warm neutral, very subtle brand-orange wash */
+  --orbit-base: #f0ece6;
+  --orbit-gradient: linear-gradient(168deg, #faf9f7 0%, #f3f0eb 42%, #ebe6df 100%);
+  --orbit-glow: radial-gradient(ellipse 110% 85% at 14% 10%, rgba(255, 122, 0, 0.07) 0%, transparent 52%),
+    radial-gradient(ellipse 75% 60% at 92% 92%, rgba(255, 100, 40, 0.055) 0%, transparent 48%);
+
+  /* Liquid glass – frosted tiles (stronger blur + specular rim) */
+  --liquid-blur: 40px;
+  --liquid-saturate: 1.62;
+  --liquid-bg: rgba(255, 255, 255, 0.32);
+  --liquid-bg-strong: rgba(255, 255, 255, 0.74);
+  --liquid-bg-deep: rgba(255, 255, 255, 0.9);
+  --liquid-bg-subtle: rgba(255, 255, 255, 0.2);
+  --liquid-border: rgba(255, 255, 255, 0.78);
+  --liquid-border-soft: rgba(255, 255, 255, 0.38);
+  --liquid-shadow: 0 18px 50px rgba(0, 0, 0, 0.07), 0 6px 18px rgba(0, 0, 0, 0.045),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+  --liquid-shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.85), inset 0 -1px 0 rgba(0, 0, 0, 0.035);
+
+  /* Dropdowns / modal panels – starker Frost (nur auf der schwebenden Fläche) */
+  --liquid-popover-blur: 96px;
+  --liquid-popover-saturate: 2;
+  --liquid-popover-fill: rgba(255, 255, 255, 0.76);
+  /* Vollebild-Scrim: eher transparent, Umgebung bleibt lesbar */
+  --liquid-modal-scrim-bg: rgba(12, 10, 8, 0.34);
+
+  /* Sheened “liquid” tile surface (gradient + blur reads as glass) */
+  --liquid-tile-bg: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.52) 0%,
+    rgba(255, 255, 255, 0.2) 52%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  --liquid-tile-bg-strong: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.62) 0%,
+    rgba(255, 255, 255, 0.24) 52%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+  /* Nested rows / chips – still glass, less “lit” */
+  --liquid-tile-bg-inner: linear-gradient(
+    168deg,
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+
+  /* Semantic surfaces (glass-aware) */
+  --color-bg: transparent;
+  --color-bg-elevated: var(--liquid-bg-strong);
+  --color-bg-muted: rgba(255, 255, 255, 0.34);
+  --color-bg-hover: rgba(255, 255, 255, 0.5);
+
+  --color-border: rgba(255, 255, 255, 0.42);
+  --color-border-strong: rgba(0, 0, 0, 0.07);
+
+  --color-text: #1c1917;
+  --color-text-muted: #57534e;
+  --color-text-subtle: #78716c;
+
+  /* Accent – HANDS on TECHNOLOGY orange */
+  --color-accent: #ff7a00;
+  --color-accent-hover: #e66d00;
+  --color-accent-muted: rgba(255, 122, 0, 0.18);
+  --color-accent-soft: rgba(255, 122, 0, 0.14);
+  --color-on-accent: #ffffff;
+
+  --color-sidebar: transparent;
+  --color-sidebar-border: rgba(255, 255, 255, 0.35);
+
+  /* Enroll wizard: glass shell + tiles (blur on panel / options) */
+  --wizard-shell-fill: rgba(255, 252, 248, 0.78);
+  --wizard-card-fill: var(--liquid-tile-bg);
+  --wizard-input-fill: var(--liquid-tile-bg-inner);
+
+  /* Typography */
+  --font-sans: 'Uniform', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --text-base: 1rem;
+  --text-sm: 0.9375rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.5rem;
+
+  --touch: 2.75rem;
+  --touch-lg: 3rem;
+  --radius: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 26px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow: var(--liquid-shadow);
+  --shadow-lg: 0 26px 60px rgba(0, 0, 0, 0.1), 0 10px 24px rgba(0, 0, 0, 0.055),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+/* Dark theme – neutral depth, faint ember (orange stays subtle) */
+html[data-theme='dark'] {
+  --orbit-base: #0e0d0c;
+  --orbit-gradient: linear-gradient(168deg, #1a1817 0%, #121110 52%, #0a0909 100%);
+  --orbit-glow: radial-gradient(ellipse 95% 75% at 18% 0%, rgba(255, 130, 70, 0.06) 0%, transparent 52%),
+    radial-gradient(ellipse 65% 50% at 96% 94%, rgba(255, 90, 40, 0.045) 0%, transparent 50%);
+
+  --liquid-blur: 44px;
+  --liquid-saturate: 1.55;
+  --liquid-bg: rgba(38, 34, 32, 0.42);
+  --liquid-bg-strong: rgba(44, 40, 38, 0.76);
+  --liquid-bg-deep: rgba(52, 48, 46, 0.92);
+  --liquid-bg-subtle: rgba(255, 255, 255, 0.055);
+  --liquid-border: rgba(255, 255, 255, 0.2);
+  --liquid-border-soft: rgba(255, 255, 255, 0.1);
+  --liquid-shadow: 0 22px 56px rgba(0, 0, 0, 0.48), 0 8px 22px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+  --liquid-shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+
+  --liquid-tile-bg: linear-gradient(
+    168deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(56, 50, 48, 0.32) 48%,
+    rgba(26, 24, 22, 0.48) 100%
+  );
+  --liquid-tile-bg-strong: linear-gradient(
+    168deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(58, 52, 50, 0.42) 48%,
+    rgba(30, 28, 26, 0.55) 100%
+  );
+  --liquid-tile-bg-inner: linear-gradient(
+    168deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(48, 44, 42, 0.28) 100%
+  );
+
+  --color-bg: transparent;
+  --color-bg-elevated: var(--liquid-bg-strong);
+  --color-bg-muted: rgba(255, 255, 255, 0.08);
+  --color-bg-hover: rgba(255, 255, 255, 0.14);
+
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-border-strong: rgba(255, 255, 255, 0.18);
+
+  --color-text: #fafaf9;
+  --color-text-muted: #a8a29e;
+  --color-text-subtle: #78716c;
+
+  --color-accent: #ff9f4d;
+  --color-accent-hover: #ffb366;
+  --color-accent-muted: rgba(255, 159, 77, 0.22);
+  --color-accent-soft: rgba(255, 159, 77, 0.14);
+  --color-on-accent: #1c1917;
+
+  --color-sidebar: transparent;
+  --color-sidebar-border: rgba(255, 255, 255, 0.12);
+
+  --wizard-shell-fill: rgba(30, 26, 24, 0.82);
+  --wizard-card-fill: var(--liquid-tile-bg);
+  --wizard-input-fill: var(--liquid-tile-bg-inner);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow: var(--liquid-shadow);
+  --shadow-lg: 0 28px 70px rgba(0, 0, 0, 0.52), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  --liquid-popover-blur: 108px;
+  --liquid-popover-saturate: 1.88;
+  --liquid-popover-fill: rgba(44, 40, 38, 0.8);
+  --liquid-modal-scrim-bg: rgba(0, 0, 0, 0.42);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root {
+    --liquid-bg: rgba(255, 252, 248, 0.94);
+    --liquid-bg-strong: rgba(255, 255, 255, 0.97);
+    --liquid-bg-deep: #ffffff;
+    --liquid-bg-subtle: rgba(255, 255, 255, 0.88);
+    --liquid-tile-bg: rgba(255, 255, 255, 0.96);
+    --liquid-tile-bg-strong: #ffffff;
+    --liquid-tile-bg-inner: rgba(255, 255, 255, 0.9);
+    --wizard-shell-fill: #ffffff;
+    --wizard-card-fill: #ffffff;
+    --wizard-input-fill: #ffffff;
+    --liquid-popover-fill: rgba(255, 252, 248, 0.97);
+  }
+  html[data-theme='dark'] {
+    --liquid-bg: rgba(30, 26, 24, 0.94);
+    --liquid-bg-strong: rgba(36, 32, 30, 0.97);
+    --liquid-bg-deep: #292524;
+    --liquid-bg-subtle: rgba(40, 36, 34, 0.9);
+    --liquid-tile-bg: rgba(34, 30, 28, 0.96);
+    --liquid-tile-bg-strong: rgba(40, 36, 34, 0.98);
+    --liquid-tile-bg-inner: rgba(44, 40, 38, 0.92);
+    --wizard-shell-fill: #292524;
+    --wizard-card-fill: #3a3533;
+    --wizard-input-fill: #35302e;
+    --liquid-popover-fill: rgba(40, 36, 34, 0.97);
+  }
+}
+
+/* Legacy names for compatibility */
+:root {
+  --color-background: var(--color-bg);
+  --color-background-soft: var(--color-bg-elevated);
+  --color-background-mute: var(--color-bg-muted);
+  --color-heading: var(--color-text);
+  --color-primary: var(--color-accent);
+  --color-primary-dark: var(--color-accent-hover);
+  --color-primary-light: var(--color-accent-muted);
+  --font-size-base: var(--text-base);
+  --font-size-lg: var(--text-lg);
+  --font-size-xl: var(--text-xl);
+  --font-size-2xl: var(--text-2xl);
+  --font-size-3xl: var(--text-3xl);
+  --font-size-4xl: var(--text-4xl);
+  --touch-min: var(--touch);
+  --touch-comfortable: var(--touch-lg);
+}

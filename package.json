@@ -1,0 +1,33 @@
+{
+  "name": "@hands-on/design",
+  "version": "1.0.0",
+  "description": "Shared HANDS on TECHNOLOGY design tokens, liquid glass UI, and theme for Vue apps",
+  "type": "module",
+  "license": "UNLICENSED",
+  "files": [
+    "styles",
+    "theme",
+    "fonts",
+    "scripts",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "exports": {
+    "./styles.css": "./styles/index.css",
+    "./styles/tokens.css": "./styles/tokens.css",
+    "./styles/liquid-surface.css": "./styles/liquid-surface.css",
+    "./theme": "./theme/index.js",
+    "./fonts/*": "./fonts/*"
+  },
+  "scripts": {
+    "copy-fonts": "node scripts/copy-fonts.mjs"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "peerDependenciesMeta": {
+    "vue": {
+      "optional": true
+    }
+  }
+}

@@ -1,0 +1,117 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: var(--color-text);
+  background-color: var(--orbit-base);
+  background-image: var(--orbit-glow), var(--orbit-gradient);
+  background-attachment: fixed;
+  background-size: cover, cover;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: color 0.25s, background-color 0.25s;
+}
+
+/**
+ * Optional: add to any panel for frosted glass (background should use --liquid-*).
+ */
+.liquid-frost {
+  backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
+  -webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
+}
+
+@media (pointer: coarse) {
+  button:not(.no-touch-min),
+  .nav-link {
+    min-height: var(--touch);
+  }
+}
+
+/* Native <select>: einheitliche Optik */
+select.select-fancy,
+.field.field-select select,
+.form select,
+.select-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--color-text);
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--liquid-border, var(--color-border));
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2357534e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.2rem;
+  min-height: var(--touch);
+  padding: 0.65rem 2.5rem 0.65rem 0.85rem;
+  font-size: var(--text-base);
+  box-sizing: border-box;
+}
+
+.form select {
+  min-height: var(--touch-lg);
+  padding: 0.8rem 2.65rem 0.8rem 1rem;
+  font-size: var(--text-lg);
+}
+
+select.select-fancy,
+.field.field-select select {
+  min-height: var(--touch);
+  padding: 0.65rem 2.5rem 0.65rem 0.85rem;
+  font-size: var(--text-base);
+}
+
+select.select-fancy:hover,
+.field.field-select select:hover,
+.form select:hover,
+.select-input:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 28%, var(--color-border));
+  background-color: var(--color-bg-muted);
+}
+
+select.select-fancy:focus,
+.field.field-select select:focus,
+.form select:focus,
+.select-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft), var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+select.select-fancy:disabled,
+.field.field-select select:disabled,
+.form select:disabled,
+.select-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+html[data-theme='dark'] select.select-fancy,
+html[data-theme='dark'] .field.field-select select,
+html[data-theme='dark'] .form select,
+html[data-theme='dark'] .select-input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23a8a29e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.field input:disabled,
+.field textarea:disabled,
+.field select:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+}

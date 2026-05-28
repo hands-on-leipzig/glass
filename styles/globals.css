@@ -1,0 +1,30 @@
+/* Shared element defaults (from Join main.css, app-agnostic) */
+
+a {
+  text-decoration: none;
+  color: var(--color-accent);
+  transition: color 0.15s;
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+.bi {
+  display: inline-block;
+  flex-shrink: 0;
+}
