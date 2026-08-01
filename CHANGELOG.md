@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.1 — 2026-08-01
+
+Fix SidebarFooter popover layout.
+
+- Anchor menus to the full footer bar (not the tiny icon buttons)
+- Opaque panel background so sidebar content no longer shows through
+- Only the nav scrolls; footer chrome stays overflow-visible for popovers
+
 ## 1.2.0 — 2026-08-01
 
 Shared sidebar footer chrome for JOIN and FLOW.

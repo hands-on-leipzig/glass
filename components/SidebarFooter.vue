@@ -30,6 +30,7 @@ const rootEl = ref(null)
 
 const identityOpen = computed(() => openMenu.value === 'identity')
 const settingsOpen = computed(() => openMenu.value === 'settings')
+const anyOpen = computed(() => openMenu.value != null)
 
 function closeMenus() {
   openMenu.value = null
@@ -65,7 +66,11 @@ defineExpose({ closeMenus, toggleMenu })
 </script>
 
 <template>
-  <div ref="rootEl" class="glass-sidebar-footer">
+  <div
+    ref="rootEl"
+    class="glass-sidebar-footer"
+    :class="{ 'glass-sidebar-footer--menu-open': anyOpen }"
+  >
     <div v-if="$slots.prepend" class="glass-sidebar-footer__prepend">
       <slot name="prepend" />
     </div>
@@ -90,16 +95,6 @@ defineExpose({ closeMenus, toggleMenu })
         >
           <i class="bi bi-person-fill" aria-hidden="true" />
         </button>
-        <Transition name="glass-sidebar-footer-menu">
-          <div
-            v-if="identityOpen"
-            class="glass-sidebar-footer__menu"
-            role="menu"
-            :aria-label="identityAriaLabel"
-          >
-            <slot name="identity" :close="closeMenus" />
-          </div>
-        </Transition>
       </div>
 
       <div
@@ -117,17 +112,30 @@ defineExpose({ closeMenus, toggleMenu })
         >
           <i class="bi bi-gear-fill" aria-hidden="true" />
         </button>
-        <Transition name="glass-sidebar-footer-menu">
-          <div
-            v-if="settingsOpen"
-            class="glass-sidebar-footer__menu"
-            role="menu"
-            :aria-label="settingsAriaLabel"
-          >
-            <slot name="settings" :close="closeMenus" />
-          </div>
-        </Transition>
       </div>
+
+      <!-- Full-width popovers anchored to the bar, not the tiny icon buttons -->
+      <Transition name="glass-sidebar-footer-menu">
+        <div
+          v-if="identityOpen"
+          class="glass-sidebar-footer__menu"
+          role="menu"
+          :aria-label="identityAriaLabel"
+        >
+          <slot name="identity" :close="closeMenus" />
+        </div>
+      </Transition>
+
+      <Transition name="glass-sidebar-footer-menu">
+        <div
+          v-if="settingsOpen"
+          class="glass-sidebar-footer__menu"
+          role="menu"
+          :aria-label="settingsAriaLabel"
+        >
+          <slot name="settings" :close="closeMenus" />
+        </div>
+      </Transition>
     </div>
 
     <div v-if="$slots.partners" class="glass-sidebar__partners">

@@ -58,8 +58,8 @@
   flex-direction: column;
   padding: 1rem 0;
   border-radius: var(--radius-xl);
-  overflow-x: hidden;
-  overflow-y: auto;
+  /* Keep chrome fixed; only nav scrolls so footer popovers are not clipped. */
+  overflow: hidden;
 }
 
 /* When not using .liquid-surface on the aside, still get a glass panel */
@@ -100,6 +100,16 @@
   overflow-x: hidden;
   overflow-y: auto;
   margin-top: 0.85rem;
+}
+
+.glass-sidebar__lower {
+  position: relative;
+  flex-shrink: 0;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  z-index: 5;
 }
 
 .glass-sidebar__item {
@@ -187,13 +197,6 @@
   border-radius: var(--radius-full);
   background: #ef4444;
   flex-shrink: 0;
-}
-
-.glass-sidebar__lower {
-  flex-shrink: 0;
-  margin-top: auto;
-  display: flex;
-  flex-direction: column;
 }
 
 .glass-sidebar__footer {
