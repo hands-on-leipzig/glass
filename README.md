@@ -15,13 +15,13 @@ npm install ../glass
 ### Option B: Git dependency
 
 ```json
-"@hands-on/glass": "github:hands-on-leipzig/glass#v1.0.1"
+"@hands-on/glass": "github:hands-on-leipzig/glass#v1.0.2"
 ```
 
 ### Option C: private npm registry
 
 ```bash
-npm install @hands-on/glass@1.0.1
+npm install @hands-on/glass@1.0.2
 ```
 
 ## Usage in a Vue + Vite app
