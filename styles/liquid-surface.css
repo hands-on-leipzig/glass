@@ -86,6 +86,9 @@ html[data-theme='dark'] .liquid-surface-scope {
   backdrop-filter: blur(calc(var(--liquid-blur) * 0.55)) saturate(calc(var(--liquid-saturate) * 0.92));
   -webkit-backdrop-filter: blur(calc(var(--liquid-blur) * 0.55)) saturate(calc(var(--liquid-saturate) * 0.92));
   border: 1px solid var(--liquid-border-soft);
+  border-radius: var(--radius-lg);
+  /* Required so backdrop-filter respects border-radius (else square corners). */
+  overflow: hidden;
   box-shadow: var(--liquid-shadow-inset);
 }
 
