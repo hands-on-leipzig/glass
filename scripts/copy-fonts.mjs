@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Copy design fonts to public/font/ in the consuming app.
- * Run from app root: node node_modules/@hands-on/design/scripts/copy-fonts.mjs
+ * Run from app root: node node_modules/@hands-on/glass/scripts/copy-fonts.mjs
  */
 import { cpSync, existsSync, mkdirSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'

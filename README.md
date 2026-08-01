@@ -1,4 +1,4 @@
-# @hands-on/design
+# @hands-on/glass
 
 Shared design system for HANDS on TECHNOLOGY Vue apps (Join, FLOW, …).
 
@@ -6,23 +6,22 @@ Phase 1 includes CSS tokens, liquid-glass surfaces, global element defaults, fon
 
 ## Installation
 
-### Option A: local path (zum Testen in FLOW)
+### Option A: local path (sibling checkout)
 
 ```bash
-npm install ../handson-design
-# oder absoluter Pfad zum geklonten Repo
+npm install ../glass
 ```
 
 ### Option B: Git dependency
 
 ```json
-"@hands-on/design": "git+ssh://git@github.com:YOUR_ORG/handson-design.git#v1.0.0"
+"@hands-on/glass": "github:hands-on-leipzig/glass#v1.0.1"
 ```
 
 ### Option C: private npm registry
 
 ```bash
-npm install @hands-on/design@1.0.0
+npm install @hands-on/glass@1.0.1
 ```
 
 ## Usage in a Vue + Vite app
@@ -31,8 +30,8 @@ npm install @hands-on/design@1.0.0
 
 ```js
 import 'bootstrap-icons/font/bootstrap-icons.css' // optional, wenn Icons genutzt werden
-import '@hands-on/design/styles.css'
-import { initTheme } from '@hands-on/design/theme'
+import '@hands-on/glass/styles.css'
+import { initTheme } from '@hands-on/glass/theme'
 import { createApp } from 'vue'
 import App from './App.vue'
 
@@ -58,7 +57,7 @@ Accent variants: `liquid-surface--accent-blue`, `--accent-amber`, `--accent-teal
 ### 3. Theme umschalten
 
 ```js
-import { theme, setTheme, toggleTheme } from '@hands-on/design/theme'
+import { theme, setTheme, toggleTheme } from '@hands-on/glass/theme'
 
 setTheme('dark')
 toggleTheme()
@@ -71,11 +70,12 @@ Storage key: `hands-on-theme` (migriert automatisch von Joins altem `node-theme`
 
 Vite bundelt Fonts automatisch aus dem CSS (`url('../fonts/...')`).
 
-Falls du Fonts statisch unter `/font/` brauchst (z. B. ohne Vite-Bundling):
+Falls du Fonts statisch unter `/font/` brauchst (z. B. Canvas/`FontFace` ohne Bundle-URL):
 
 ```bash
-npx @hands-on/design copy-fonts
-# oder manuell: cp node_modules/@hands-on/design/fonts/* public/font/
+npx --package=@hands-on/glass copy-fonts
+# oder: node node_modules/@hands-on/glass/scripts/copy-fonts.mjs
+# oder manuell: cp node_modules/@hands-on/glass/fonts/* public/font/
 ```
 
 Das Script `scripts/copy-fonts.mjs` kopiert nach `./public/font/` relativ zum App-Root.
@@ -94,8 +94,8 @@ Das Script `scripts/copy-fonts.mjs` kopiert nach `./public/font/` relativ zum Ap
 
 - Vue components (`AppShell`, `CustomSelect`, …)
 - Globale `.btn` / `.btn-primary` (noch pro App in scoped styles)
-- Join-spezifische Selektoren (Wizard, Draht, …)
+- App-spezifische Layout-Patterns (z. B. FLOW `glass-layout.css`)
 
 ## Release
 
-Semver tags: `v1.0.0`, `v1.1.0`, … — siehe `CHANGELOG.md`.
+Semver tags: `v1.0.0`, `v1.0.1`, … — siehe `CHANGELOG.md`.

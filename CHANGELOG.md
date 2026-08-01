@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.2 — 2026-08-01
+
+Canonical package naming and consumer docs.
+
+- Document package as `@hands-on/glass` everywhere (removed leftover `@hands-on/design`)
+- Align `package.json` version with release tags
+- Clarify GitHub install (`hands-on-leipzig/glass`) and font copy script paths
+
+## 1.0.1 — 2026-05-28
+
+Package rename.
+
+- Published as `@hands-on/glass` (repo/package formerly referred to as design)
+
 ## 1.0.0 — 2026-05-28
 
 Initial release extracted from Join (`node`).
