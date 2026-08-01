@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.0 — 2026-08-01
+
+Shared sidebar footer chrome for JOIN and FLOW.
+
+- Add `SidebarFooter` with round identity (person) + settings (gear) icon buttons
+- Popover menus with shared item / pref / pill styles
+- Slots: `prepend`, `guest`, `identity`, `settings`, `partners`
+- Export `./sidebar-footer` and `./styles/sidebar-footer.css`
+
 ## 1.1.1 — 2026-08-01
 
 Fix AppShell package exports for Vite consumers.

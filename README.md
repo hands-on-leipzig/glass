@@ -15,13 +15,13 @@ npm install ../glass
 ### Option B: Git dependency
 
 ```json
-"@hands-on/glass": "github:hands-on-leipzig/glass#v1.1.1"
+"@hands-on/glass": "github:hands-on-leipzig/glass#v1.2.0"
 ```
 
 ### Option C: private npm registry
 
 ```bash
-npm install @hands-on/glass@1.1.1
+npm install @hands-on/glass@1.2.0
 ```
 
 ## Usage in a Vue + Vite app
@@ -108,8 +108,26 @@ import AppShell from '@hands-on/glass/app-shell'
     </RouterLink>
   </template>
   <template #lower>
-    <div class="glass-sidebar__footer"><!-- profile / actions --></div>
-    <div class="glass-sidebar__partners"><!-- partner logos --></div>
+    <SidebarFooter
+      :identity-aria-label="'Account'"
+      :settings-aria-label="'Settings'"
+    >
+      <template #identity="{ close }">
+        <div class="glass-sidebar-footer__menu-header">
+          <span class="glass-sidebar-footer__menu-title">Name</span>
+        </div>
+        <button type="button" class="glass-sidebar-footer__menu-item glass-sidebar-footer__menu-item--danger" @click="logout(); close()">
+          <i class="bi bi-box-arrow-right" />
+          <span>Logout</span>
+        </button>
+      </template>
+      <template #settings>
+        <!-- theme / help / admin -->
+      </template>
+      <template #partners>
+        <!-- partner logos -->
+      </template>
+    </SidebarFooter>
   </template>
   <div class="glass-app__panel">
     <RouterView />
@@ -117,7 +135,11 @@ import AppShell from '@hands-on/glass/app-shell'
 </AppShell>
 ```
 
-Nav item active state uses FLOW-style accent wash + left bar. Brand + icon rows follow JOIN.
+```js
+import SidebarFooter from '@hands-on/glass/sidebar-footer'
+```
+
+Footer: two round icons (person = identity, gear = settings). Nav active state uses FLOW-style accent wash + left bar.
 
 ## Was noch nicht enthalten ist (spätere Versionen)
 
