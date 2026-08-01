@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.1 — 2026-08-01
+
+Fix AppShell package exports for Vite consumers.
+
+- Export `./app-shell`, `./components/AppShell`, and `./components/*`
+- Keep `./components/AppShell.vue` for compatibility
+
 ## 1.1.0 — 2026-08-01
 
 Shared app shell / sidebar chrome for JOIN and FLOW.
