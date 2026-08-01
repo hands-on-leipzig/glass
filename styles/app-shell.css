@@ -1,0 +1,346 @@
+/**
+ * Shared app shell + sidebar chrome for JOIN / FLOW.
+ * Wrap with .liquid-surface-scope (AppShell does this).
+ */
+
+.glass-app {
+  --glass-sidebar-width: 16.75rem;
+  display: flex;
+  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
+  gap: 1rem;
+  padding: 0.85rem 1rem 1rem;
+  box-sizing: border-box;
+  background: transparent;
+  position: relative;
+  font-family: var(--font-sans);
+}
+
+.glass-app__menu-toggle {
+  display: none;
+  position: fixed;
+  top: max(0.75rem, env(safe-area-inset-top, 0px));
+  left: max(0.75rem, env(safe-area-inset-left, 0px));
+  z-index: 102;
+  width: var(--touch-lg);
+  height: var(--touch-lg);
+  padding: 0;
+  border: 1px solid var(--liquid-border);
+  border-radius: var(--radius-lg);
+  background: var(--liquid-tile-bg);
+  backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
+  -webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
+  color: var(--color-text);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  box-shadow: var(--liquid-shadow);
+}
+
+.glass-app__backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--liquid-modal-scrim-bg);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.glass-sidebar {
+  width: var(--glass-sidebar-width);
+  align-self: stretch;
+  min-height: 0;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+  border-radius: var(--radius-xl);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* When not using .liquid-surface on the aside, still get a glass panel */
+.glass-sidebar:not(.liquid-surface) {
+  background: var(--liquid-tile-bg);
+  backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
+  -webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
+  border: 1px solid var(--liquid-border);
+  box-shadow: var(--liquid-shadow);
+}
+
+.glass-sidebar__brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0.75rem;
+  padding: 0.35rem 0 0.85rem;
+  border-bottom: 1px solid var(--color-border);
+  text-decoration: none;
+  color: inherit;
+}
+
+.glass-sidebar__brand-logo {
+  width: 100%;
+  height: auto;
+  max-height: 3.25rem;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
+.glass-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin-top: 0.85rem;
+}
+
+.glass-sidebar__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.6rem;
+  width: calc(100% - 1rem);
+  max-width: 100%;
+  box-sizing: border-box;
+  min-height: 2.75rem;
+  margin: 0 0.5rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.glass-sidebar__item:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text);
+}
+
+.glass-sidebar__item--active {
+  background: var(--color-accent-muted);
+  color: var(--color-text);
+  font-weight: 700;
+  box-shadow: inset 3px 0 0 var(--color-accent);
+}
+
+.glass-sidebar__item--active .glass-sidebar__item-icon .bi {
+  color: var(--color-accent);
+  opacity: 1;
+}
+
+.glass-sidebar__item--back {
+  margin-bottom: 0.5rem;
+  background: var(--color-bg-muted);
+  color: var(--color-text);
+}
+
+.glass-sidebar__item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.25rem;
+  min-width: 2.25rem;
+}
+
+.glass-sidebar__item-icon .bi {
+  font-size: 1.35rem;
+  opacity: 0.9;
+  line-height: 1;
+}
+
+.glass-sidebar__item:hover .glass-sidebar__item-icon .bi {
+  opacity: 1;
+}
+
+.glass-sidebar__item-label {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.glass-sidebar__warning {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--radius-full);
+  background: #ef4444;
+  flex-shrink: 0;
+}
+
+.glass-sidebar__lower {
+  flex-shrink: 0;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.glass-sidebar__footer {
+  padding: 0.5rem 0.5rem 0.65rem;
+  border-top: 1px solid var(--color-border);
+  background: var(--liquid-bg-subtle);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  flex-shrink: 0;
+}
+
+.glass-sidebar__footer .glass-sidebar__item {
+  width: 100%;
+  margin: 0;
+}
+
+.glass-sidebar__partners {
+  margin: 0 0.5rem max(0.5rem, env(safe-area-inset-bottom, 0px));
+  padding: 0.75rem 0.5rem 0.5rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.glass-sidebar__partner-link {
+  display: block;
+  width: 100%;
+  line-height: 0;
+}
+
+.glass-sidebar__partner-logo {
+  object-fit: contain;
+  object-position: center;
+  transition: opacity 0.15s;
+}
+
+.glass-sidebar__partner-logo--primary {
+  width: auto;
+  max-width: 100%;
+  max-height: 4.5rem;
+  opacity: 0.98;
+}
+
+.glass-sidebar__partner-logo--secondary {
+  width: 100%;
+  height: auto;
+  max-height: 4.85rem;
+  opacity: 0.95;
+}
+
+.glass-sidebar__partner-link:hover .glass-sidebar__partner-logo--secondary {
+  opacity: 1;
+}
+
+.glass-app__main {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow: hidden;
+}
+
+.glass-app__panel {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--liquid-border);
+  background: var(--liquid-tile-bg-strong);
+  backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
+  -webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
+  box-shadow: var(--liquid-shadow);
+}
+
+.glass-app__panel.liquid-surface {
+  /* liquid-surface already provides fill/border/shadow */
+  background: var(--liquid-tile-bg);
+}
+
+@media (max-width: 768px) {
+  .glass-app {
+    gap: 0;
+    padding: 0.5rem 0.65rem 0.65rem;
+  }
+
+  .glass-app__menu-toggle {
+    display: flex;
+  }
+
+  .glass-app__backdrop {
+    display: block;
+  }
+
+  .glass-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 101;
+    width: min(var(--glass-sidebar-width), 86vw);
+    height: 100dvh;
+    max-height: none;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
+    border-left: none;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .glass-sidebar--open {
+    transform: translateX(0);
+  }
+
+  .glass-sidebar__brand {
+    padding-top: max(0.55rem, env(safe-area-inset-top, 0px));
+  }
+
+  .glass-sidebar__brand-logo {
+    max-height: 2.75rem;
+  }
+
+  .glass-sidebar__partner-logo--primary {
+    max-height: 3.75rem;
+  }
+
+  .glass-sidebar__partner-logo--secondary {
+    max-height: 4rem;
+  }
+
+  .glass-app__panel {
+    padding: 1rem;
+    padding-top: calc(var(--touch-lg) + 0.85rem);
+  }
+}
+
+@media (max-width: 420px) {
+  .glass-sidebar__brand-logo {
+    max-height: 2.35rem;
+  }
+}

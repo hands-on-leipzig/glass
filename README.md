@@ -2,7 +2,7 @@
 
 Shared design system for HANDS on TECHNOLOGY Vue apps (Join, FLOW, …).
 
-Phase 1 includes CSS tokens, liquid-glass surfaces, global element defaults, fonts, and light/dark theme helpers.
+Includes CSS tokens, liquid-glass surfaces, shared app shell / sidebar, global element defaults, fonts, and light/dark theme helpers.
 
 ## Installation
 
@@ -15,13 +15,13 @@ npm install ../glass
 ### Option B: Git dependency
 
 ```json
-"@hands-on/glass": "github:hands-on-leipzig/glass#v1.0.2"
+"@hands-on/glass": "github:hands-on-leipzig/glass#v1.1.0"
 ```
 
 ### Option C: private npm registry
 
 ```bash
-npm install @hands-on/glass@1.0.2
+npm install @hands-on/glass@1.1.0
 ```
 
 ## Usage in a Vue + Vite app
@@ -90,11 +90,41 @@ Das Script `scripts/copy-fonts.mjs` kopiert nach `./public/font/` relativ zum Ap
 | `styles/liquid-surface.css` | `.liquid-surface`, `.liquid-surface-scope`, controls |
 | `styles/index.css` | single import entry |
 
+## App shell (shared sidebar)
+
+```js
+import AppShell from '@hands-on/glass/components/AppShell.vue'
+```
+
+```vue
+<AppShell :open="sidebarOpen" menu-aria-label="Menü" @toggle="sidebarOpen = !sidebarOpen" @update:open="sidebarOpen = $event">
+  <template #brand>
+    <RouterLink to="/"><img class="glass-sidebar__brand-logo" :src="logo" alt="App" /></RouterLink>
+  </template>
+  <template #nav>
+    <RouterLink class="glass-sidebar__item" active-class="glass-sidebar__item--active" to="/…">
+      <span class="glass-sidebar__item-icon"><i class="bi bi-grid-1x2-fill" /></span>
+      <span class="glass-sidebar__item-label">Dashboard</span>
+    </RouterLink>
+  </template>
+  <template #lower>
+    <div class="glass-sidebar__footer"><!-- profile / actions --></div>
+    <div class="glass-sidebar__partners"><!-- partner logos --></div>
+  </template>
+  <div class="glass-app__panel">
+    <RouterView />
+  </div>
+</AppShell>
+```
+
+Nav item active state uses FLOW-style accent wash + left bar. Brand + icon rows follow JOIN.
+
 ## Was noch nicht enthalten ist (spätere Versionen)
 
-- Vue components (`AppShell`, `CustomSelect`, …)
+- Weitere Vue components (`CustomSelect`, …)
 - Globale `.btn` / `.btn-primary` (noch pro App in scoped styles)
-- App-spezifische Layout-Patterns (z. B. FLOW `glass-layout.css`)
+- App-spezifische Content-Patterns (z. B. FLOW `glass-card`)
+- App-Switcher in der Sidebar
 
 ## Release
 

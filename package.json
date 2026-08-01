@@ -1,12 +1,13 @@
 {
   "name": "@hands-on/glass",
-  "version": "1.0.2",
-  "description": "Shared HANDS on TECHNOLOGY design tokens, liquid glass UI, and theme for Vue apps",
+  "version": "1.1.0",
+  "description": "Shared HANDS on TECHNOLOGY design tokens, liquid glass UI, app shell, and theme for Vue apps",
   "type": "module",
   "license": "UNLICENSED",
   "files": [
     "styles",
     "theme",
+    "components",
     "fonts",
     "scripts",
     "README.md",
@@ -16,7 +17,9 @@
     "./styles.css": "./styles/index.css",
     "./styles/tokens.css": "./styles/tokens.css",
     "./styles/liquid-surface.css": "./styles/liquid-surface.css",
+    "./styles/app-shell.css": "./styles/app-shell.css",
     "./theme": "./theme/index.js",
+    "./components/AppShell.vue": "./components/AppShell.vue",
     "./fonts/*": "./fonts/*"
   },
   "scripts": {

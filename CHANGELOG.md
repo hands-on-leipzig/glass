@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.0 — 2026-08-01
+
+Shared app shell / sidebar chrome for JOIN and FLOW.
+
+- Add `styles/app-shell.css` (layout, sidebar, nav items, partners, mobile drawer)
+- Add Vue `components/AppShell.vue` with brand / nav / lower / main slots
+- Hybrid look: JOIN logo placement + icon rows, FLOW active accent bar
+- Export `./components/AppShell.vue` and `./styles/app-shell.css`
+
 ## 1.0.2 — 2026-08-01
 
 Canonical package naming and consumer docs.
