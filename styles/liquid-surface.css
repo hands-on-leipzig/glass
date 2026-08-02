@@ -4,27 +4,34 @@
  */
 
 .liquid-surface-scope {
-  --liquid-blur: 58px;
-  --liquid-saturate: 1.92;
+  --liquid-blur: 60px;
+  --liquid-saturate: 1.95;
   --liquid-tile-bg: linear-gradient(
-    168deg,
-    rgba(255, 255, 255, 0.44) 0%,
-    rgba(255, 255, 255, 0.16) 50%,
-    rgba(255, 255, 255, 0.07) 100%
+    158deg,
+    rgba(255, 255, 255, 0.58) 0%,
+    rgba(255, 255, 255, 0.22) 48%,
+    rgba(255, 255, 255, 0.1) 100%
   );
   --liquid-tile-bg-inner: linear-gradient(
-    168deg,
-    rgba(255, 255, 255, 0.25) 0%,
-    rgba(255, 255, 255, 0.08) 100%
+    165deg,
+    rgba(255, 255, 255, 0.38) 0%,
+    rgba(255, 255, 255, 0.12) 100%
   );
-  --liquid-border: rgba(255, 255, 255, 0.9);
-  --liquid-border-soft: rgba(255, 255, 255, 0.46);
-  --liquid-shadow: 0 24px 62px rgba(0, 0, 0, 0.09), 0 9px 26px rgba(0, 0, 0, 0.055),
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.98), inset 0 -1.5px 0 rgba(0, 0, 0, 0.036);
-  --liquid-shadow-inset: inset 0 1.5px 0 rgba(255, 255, 255, 0.82),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.032);
-  --shadow-lg: 0 30px 72px rgba(0, 0, 0, 0.11), 0 12px 28px rgba(0, 0, 0, 0.062),
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.82);
+  --liquid-border: rgba(255, 255, 255, 0.95);
+  --liquid-border-soft: rgba(255, 255, 255, 0.58);
+  /* Soft lift + bright top rim + bottom edge for glass thickness */
+  --liquid-shadow:
+    0 26px 56px rgba(15, 23, 42, 0.11),
+    0 10px 22px rgba(15, 23, 42, 0.065),
+    inset 0 2px 0 rgba(255, 255, 255, 1),
+    inset 0 -2px 0 rgba(15, 23, 42, 0.055);
+  --liquid-shadow-inset:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.96),
+    inset 0 -1.5px 0 rgba(15, 23, 42, 0.05);
+  --shadow-lg:
+    0 32px 72px rgba(15, 23, 42, 0.13),
+    0 14px 30px rgba(15, 23, 42, 0.075),
+    inset 0 2px 0 rgba(255, 255, 255, 0.95);
 }
 
 html[data-theme='dark'] .liquid-surface-scope {
@@ -104,7 +111,17 @@ html[data-theme='dark'] .liquid-surface-scope {
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
-    background 0.2s ease;
+    background 0.2s ease,
+    transform 0.08s ease;
+}
+
+/* Only true buttons get the physical press (not inputs/selects) */
+.liquid-surface-scope button.liquid-surface-control:active:not(:disabled) {
+  transform: translateY(1.5px) scale(0.99);
+  box-shadow:
+    0 0 0 transparent,
+    inset 0 3px 8px rgba(15, 23, 42, 0.14),
+    inset 0 1px 0 rgba(15, 23, 42, 0.08);
 }
 
 .liquid-surface-scope .liquid-surface-control:hover:not(:disabled) {

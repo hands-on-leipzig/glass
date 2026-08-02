@@ -25,77 +25,85 @@
 }
 
 :root {
-  /* Page backdrop – warm neutral, very subtle brand-orange wash */
-  --orbit-base: #f0ece6;
-  --orbit-gradient: linear-gradient(168deg, #faf9f7 0%, #f3f0eb 42%, #ebe6df 100%);
-  --orbit-glow: radial-gradient(ellipse 110% 85% at 14% 10%, rgba(255, 122, 0, 0.07) 0%, transparent 52%),
-    radial-gradient(ellipse 75% 60% at 92% 92%, rgba(255, 100, 40, 0.055) 0%, transparent 48%);
+  /*
+   * Page backdrop – cool neutral canvas so brand orange reads as accent.
+   * Warm beige + orange wash made glass edges disappear (same hue family).
+   */
+  --orbit-base: #e8ebf0;
+  --orbit-gradient: linear-gradient(168deg, #f4f6f9 0%, #e9edf3 45%, #e2e7ef 100%);
+  --orbit-glow: radial-gradient(ellipse 100% 80% at 12% 8%, rgba(255, 122, 0, 0.045) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 55% at 92% 90%, rgba(90, 130, 200, 0.06) 0%, transparent 50%);
 
-  /* Liquid glass – frosted tiles (stronger blur + specular rim) */
-  --liquid-blur: 40px;
-  --liquid-saturate: 1.62;
-  --liquid-bg: rgba(255, 255, 255, 0.32);
-  --liquid-bg-strong: rgba(255, 255, 255, 0.74);
-  --liquid-bg-deep: rgba(255, 255, 255, 0.9);
-  --liquid-bg-subtle: rgba(255, 255, 255, 0.2);
-  --liquid-border: rgba(255, 255, 255, 0.78);
-  --liquid-border-soft: rgba(255, 255, 255, 0.38);
-  --liquid-shadow: 0 18px 50px rgba(0, 0, 0, 0.07), 0 6px 18px rgba(0, 0, 0, 0.045),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(0, 0, 0, 0.04);
-  --liquid-shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.85), inset 0 -1px 0 rgba(0, 0, 0, 0.035);
+  /* Liquid glass – frost + specular rim (top light) for readable 3D edges */
+  --liquid-blur: 44px;
+  --liquid-saturate: 1.72;
+  --liquid-bg: rgba(255, 255, 255, 0.38);
+  --liquid-bg-strong: rgba(255, 255, 255, 0.78);
+  --liquid-bg-deep: rgba(255, 255, 255, 0.92);
+  --liquid-bg-subtle: rgba(255, 255, 255, 0.22);
+  --liquid-border: rgba(255, 255, 255, 0.92);
+  --liquid-border-soft: rgba(255, 255, 255, 0.55);
+  --liquid-shadow:
+    0 22px 48px rgba(15, 23, 42, 0.1),
+    0 8px 18px rgba(15, 23, 42, 0.06),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 0 rgba(15, 23, 42, 0.06);
+  --liquid-shadow-inset:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.05);
 
   /* Dropdowns / modal panels – starker Frost (nur auf der schwebenden Fläche) */
   --liquid-popover-blur: 96px;
   --liquid-popover-saturate: 2;
-  --liquid-popover-fill: rgba(255, 255, 255, 0.76);
+  --liquid-popover-fill: rgba(255, 255, 255, 0.82);
   /* Vollebild-Scrim: eher transparent, Umgebung bleibt lesbar */
-  --liquid-modal-scrim-bg: rgba(12, 10, 8, 0.34);
+  --liquid-modal-scrim-bg: rgba(15, 23, 42, 0.36);
 
   /* Sheened “liquid” tile surface (gradient + blur reads as glass) */
   --liquid-tile-bg: linear-gradient(
-    165deg,
-    rgba(255, 255, 255, 0.52) 0%,
-    rgba(255, 255, 255, 0.2) 52%,
-    rgba(255, 255, 255, 0.1) 100%
+    160deg,
+    rgba(255, 255, 255, 0.62) 0%,
+    rgba(255, 255, 255, 0.28) 48%,
+    rgba(255, 255, 255, 0.14) 100%
   );
   --liquid-tile-bg-strong: linear-gradient(
-    165deg,
-    rgba(255, 255, 255, 0.62) 0%,
-    rgba(255, 255, 255, 0.24) 52%,
-    rgba(255, 255, 255, 0.12) 100%
+    160deg,
+    rgba(255, 255, 255, 0.72) 0%,
+    rgba(255, 255, 255, 0.34) 48%,
+    rgba(255, 255, 255, 0.16) 100%
   );
   /* Nested rows / chips – still glass, less “lit” */
   --liquid-tile-bg-inner: linear-gradient(
-    168deg,
-    rgba(255, 255, 255, 0.28) 0%,
-    rgba(255, 255, 255, 0.1) 100%
+    165deg,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0.16) 100%
   );
 
   /* Semantic surfaces (glass-aware) */
   --color-bg: transparent;
   --color-bg-elevated: var(--liquid-bg-strong);
-  --color-bg-muted: rgba(255, 255, 255, 0.34);
-  --color-bg-hover: rgba(255, 255, 255, 0.5);
+  --color-bg-muted: rgba(255, 255, 255, 0.4);
+  --color-bg-hover: rgba(255, 255, 255, 0.58);
 
-  --color-border: rgba(255, 255, 255, 0.42);
-  --color-border-strong: rgba(0, 0, 0, 0.07);
+  --color-border: rgba(255, 255, 255, 0.5);
+  --color-border-strong: rgba(15, 23, 42, 0.1);
 
-  --color-text: #1c1917;
-  --color-text-muted: #57534e;
-  --color-text-subtle: #78716c;
+  --color-text: #0f172a;
+  --color-text-muted: #475569;
+  --color-text-subtle: #64748b;
 
-  /* Accent – HANDS on TECHNOLOGY orange */
+  /* Accent – HANDS on TECHNOLOGY orange (pops on cool canvas) */
   --color-accent: #ff7a00;
   --color-accent-hover: #e66d00;
-  --color-accent-muted: rgba(255, 122, 0, 0.18);
-  --color-accent-soft: rgba(255, 122, 0, 0.14);
+  --color-accent-muted: rgba(255, 122, 0, 0.22);
+  --color-accent-soft: rgba(255, 122, 0, 0.16);
   --color-on-accent: #ffffff;
 
   --color-sidebar: transparent;
-  --color-sidebar-border: rgba(255, 255, 255, 0.35);
+  --color-sidebar-border: rgba(255, 255, 255, 0.42);
 
   /* Enroll wizard: glass shell + tiles (blur on panel / options) */
-  --wizard-shell-fill: rgba(255, 252, 248, 0.78);
+  --wizard-shell-fill: rgba(248, 250, 252, 0.82);
   --wizard-card-fill: var(--liquid-tile-bg);
   --wizard-input-fill: var(--liquid-tile-bg-inner);
 
@@ -115,10 +123,12 @@
   --radius-lg: 20px;
   --radius-xl: 26px;
   --radius-full: 9999px;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.06);
   --shadow: var(--liquid-shadow);
-  --shadow-lg: 0 26px 60px rgba(0, 0, 0, 0.1), 0 10px 24px rgba(0, 0, 0, 0.055),
-    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  --shadow-lg:
+    0 28px 64px rgba(15, 23, 42, 0.12),
+    0 12px 28px rgba(15, 23, 42, 0.07),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.9);
 }
 
 /* Dark theme – neutral depth, faint ember (orange stays subtle) */
@@ -195,7 +205,7 @@ html[data-theme='dark'] {
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   :root {
-    --liquid-bg: rgba(255, 252, 248, 0.94);
+    --liquid-bg: rgba(248, 250, 252, 0.94);
     --liquid-bg-strong: rgba(255, 255, 255, 0.97);
     --liquid-bg-deep: #ffffff;
     --liquid-bg-subtle: rgba(255, 255, 255, 0.88);
@@ -205,7 +215,7 @@ html[data-theme='dark'] {
     --wizard-shell-fill: #ffffff;
     --wizard-card-fill: #ffffff;
     --wizard-input-fill: #ffffff;
-    --liquid-popover-fill: rgba(255, 252, 248, 0.97);
+    --liquid-popover-fill: rgba(248, 250, 252, 0.97);
   }
   html[data-theme='dark'] {
     --liquid-bg: rgba(30, 26, 24, 0.94);
