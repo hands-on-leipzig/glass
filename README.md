@@ -15,7 +15,7 @@ npm install ../glass
 ### Option B: Git dependency
 
 ```json
-"@hands-on/glass": "github:hands-on-leipzig/glass#v1.2.1"
+"@hands-on/glass": "github:hands-on-leipzig/glass#v1.3.0"
 ```
 
 ### Option C: private npm registry
@@ -87,7 +87,38 @@ Das Script `scripts/copy-fonts.mjs` kopiert nach `./public/font/` relativ zum Ap
 | `styles/base.css` | body, selects, `.field`, touch targets |
 | `styles/globals.css` | links, buttons, media defaults |
 | `styles/liquid-surface.css` | `.liquid-surface`, `.liquid-surface-scope`, controls |
+| `styles/field.css` | `.glass-input`, `.glass-field`, field stacks/rows |
 | `styles/index.css` | single import entry |
+
+### Form fields
+
+```html
+<!-- Comfortable (wizard) -->
+<label class="glass-field">
+  <span class="glass-field__label">Teamname</span>
+  <input class="glass-input glass-input--lg liquid-surface-control liquid-surface-control--accent-blue" />
+</label>
+
+<!-- Compact (tables) -->
+<div class="glass-field-stack">
+  <input class="glass-input glass-input--sm liquid-surface-control" type="date" />
+  <div class="glass-field-row">
+    <input class="glass-input glass-input--sm liquid-surface-control" type="time" />
+    <input class="glass-input glass-input--sm liquid-surface-control" type="time" />
+  </div>
+</div>
+```
+
+```js
+import GlassField from '@hands-on/glass/field'
+import GlassInput from '@hands-on/glass/input'
+```
+
+```vue
+<GlassField label="PLZ" :invalid="missing" error="Pflichtfeld">
+  <GlassInput v-model="zip" size="lg" accent :invalid="missing" />
+</GlassField>
+```
 
 ## App shell (shared sidebar)
 
@@ -142,7 +173,8 @@ Footer: two round icons (person = identity, gear = settings). Nav active state u
 
 ## Was noch nicht enthalten ist (spätere Versionen)
 
-- Weitere Vue components (`CustomSelect`, …)
+- `CustomSelect` / weitere komplexe Controls
+- Floating-label `.field` pattern (noch in JOIN app-lokal)
 - Globale `.btn` / `.btn-primary` (noch pro App in scoped styles)
 - App-spezifische Content-Patterns (z. B. FLOW `glass-card`)
 - App-Switcher in der Sidebar

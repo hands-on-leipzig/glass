@@ -98,7 +98,8 @@ html[data-theme='dark'] .liquid-surface-scope {
   backdrop-filter: blur(calc(var(--liquid-blur) * 0.55)) saturate(calc(var(--liquid-saturate) * 0.96));
   -webkit-backdrop-filter: blur(calc(var(--liquid-blur) * 0.55)) saturate(calc(var(--liquid-saturate) * 0.96));
   border: 1px solid var(--liquid-border);
-  border-radius: var(--radius-lg);
+  /* Moderate radius — pill/capsule look is reserved for chips/buttons, not text fields */
+  border-radius: var(--control-radius, var(--radius));
   box-shadow: var(--liquid-shadow);
   transition:
     border-color 0.2s ease,

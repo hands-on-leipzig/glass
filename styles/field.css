@@ -1,0 +1,223 @@
+/**
+ * Shared form field / input geometry for JOIN + FLOW.
+ * Chrome (frost, rim, focus) stays on .liquid-surface-control;
+ * sizing, padding and corner radius live here.
+ */
+
+:root {
+  --field-gap: 0.85rem;
+  --field-gap-lg: 1.1rem;
+  --field-row-gap: 0.65rem;
+
+  --field-min-height-sm: 2.5rem;
+  --field-min-height: var(--touch);
+  --field-min-height-lg: var(--touch-lg);
+
+  /* Generous inner padding so text doesn’t sit in the curve */
+  --field-padding-y-sm: 0.55rem;
+  --field-padding-x-sm: 0.9rem;
+  --field-padding-y: 0.7rem;
+  --field-padding-x: 1rem;
+  --field-padding-y-lg: 0.8rem;
+  --field-padding-x-lg: 1.1rem;
+
+  /* Same face/size family as the rest of the app — do not shrink sm to a “different” look */
+  --field-font-size-sm: var(--text-sm);
+  --field-font-size: var(--text-base);
+  --field-font-size-lg: var(--text-base);
+
+  /* Soft corners — not pills (short fields + large radius = capsules) */
+  --field-radius-sm: 8px;
+  --field-radius: 10px;
+  --field-radius-lg: 12px;
+
+  --field-label-size: 0.92rem;
+  --field-error: #dc2626;
+}
+
+/* ── Control geometry ── */
+
+.glass-input {
+  /* Lets .liquid-surface-control pick up the same radius via --control-radius */
+  --control-radius: var(--field-radius);
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  min-height: var(--field-min-height);
+  padding: var(--field-padding-y) var(--field-padding-x);
+  border-radius: var(--field-radius);
+  /* Explicit brand stack — native date/time otherwise fall back to system UI font */
+  font-family: var(--font-sans);
+  font-size: var(--field-font-size);
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-text);
+}
+
+.glass-input::placeholder {
+  color: var(--color-text-subtle);
+  opacity: 1;
+}
+
+textarea.glass-input {
+  min-height: calc(var(--field-min-height) * 2.1);
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.glass-input--sm {
+  --control-radius: var(--field-radius-sm);
+  min-height: var(--field-min-height-sm);
+  padding: var(--field-padding-y-sm) var(--field-padding-x-sm);
+  border-radius: var(--field-radius-sm);
+  font-size: var(--field-font-size-sm);
+}
+
+.glass-input--lg {
+  --control-radius: var(--field-radius-lg);
+  min-height: var(--field-min-height-lg);
+  padding: var(--field-padding-y-lg) var(--field-padding-x-lg);
+  border-radius: var(--field-radius-lg);
+  font-size: var(--field-font-size-lg);
+}
+
+/* Paired with liquid chrome: keep radius/padding/font locked to field tokens */
+.liquid-surface-control.glass-input,
+.liquid-surface-scope .liquid-surface-control.glass-input {
+  --control-radius: var(--field-radius);
+  border-radius: var(--field-radius);
+  padding: var(--field-padding-y) var(--field-padding-x);
+  min-height: var(--field-min-height);
+  font-family: var(--font-sans);
+}
+
+.liquid-surface-control.glass-input--sm,
+.liquid-surface-scope .liquid-surface-control.glass-input--sm {
+  --control-radius: var(--field-radius-sm);
+  border-radius: var(--field-radius-sm);
+  padding: var(--field-padding-y-sm) var(--field-padding-x-sm);
+  min-height: var(--field-min-height-sm);
+  font-size: var(--field-font-size-sm);
+}
+
+.liquid-surface-control.glass-input--lg,
+.liquid-surface-scope .liquid-surface-control.glass-input--lg {
+  --control-radius: var(--field-radius-lg);
+  border-radius: var(--field-radius-lg);
+  padding: var(--field-padding-y-lg) var(--field-padding-x-lg);
+  min-height: var(--field-min-height-lg);
+  font-size: var(--field-font-size-lg);
+}
+
+/* Native date/time: UA uses system UI font + eats padding — force brand face */
+input.glass-input[type='date'],
+input.glass-input[type='time'],
+input.glass-input[type='datetime-local'],
+.liquid-surface-control.glass-input[type='date'],
+.liquid-surface-control.glass-input[type='time'],
+.liquid-surface-control.glass-input[type='datetime-local'] {
+  min-width: 0;
+  padding-left: 0.95rem;
+  padding-right: 0.6rem;
+  font-family: var(--font-sans);
+}
+
+input.glass-input[type='date']::-webkit-datetime-edit,
+input.glass-input[type='time']::-webkit-datetime-edit,
+input.glass-input[type='datetime-local']::-webkit-datetime-edit,
+input.glass-input[type='date']::-webkit-datetime-edit-fields-wrapper,
+input.glass-input[type='time']::-webkit-datetime-edit-fields-wrapper {
+  font-family: var(--font-sans);
+  font-size: inherit;
+  padding: 0;
+}
+
+input.glass-input[type='date']::-webkit-calendar-picker-indicator,
+input.glass-input[type='time']::-webkit-calendar-picker-indicator {
+  opacity: 0.55;
+  cursor: pointer;
+  margin-left: 0.35rem;
+}
+
+/* ── Field composition ── */
+
+.glass-field {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.45rem;
+  margin: 0 0 var(--field-gap);
+  min-width: 0;
+}
+
+.glass-field:last-child {
+  margin-bottom: 0;
+}
+
+.glass-field__label {
+  display: block;
+  margin: 0;
+  font-size: var(--field-label-size);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-text);
+}
+
+.glass-field__hint {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--color-text-subtle);
+}
+
+.glass-field__error {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--field-error);
+}
+
+.glass-field--invalid .glass-field__label {
+  color: var(--field-error);
+}
+
+.glass-field-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--field-gap);
+  min-width: 0;
+}
+
+.glass-field-stack--lg {
+  gap: var(--field-gap-lg);
+}
+
+.glass-field-row {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: var(--field-row-gap);
+  min-width: 0;
+}
+
+.glass-field-row > .glass-input,
+.glass-field-row > .glass-field {
+  flex: 1 1 0;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.glass-field-cell {
+  padding: 1rem 0.85rem;
+  vertical-align: top;
+}
+
+.glass-field-stack--table {
+  gap: 0.75rem;
+}
+
+.glass-field-stack--table .glass-field-row {
+  gap: 0.75rem;
+}

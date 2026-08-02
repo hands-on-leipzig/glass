@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.3.0 — 2026-08-02
+
+Shared form field / input basis for JOIN and FLOW.
+
+- Add `styles/field.css`: `.glass-input` sizes (`sm` / default / `lg`), `.glass-field`, stacks/rows
+- Geometry aligned with JOIN wizard inputs (`lg`: ~3rem height, comfortable padding)
+- Compact `sm` size for dense tables; moderate corner radius (8–12px), not pills
+- Stronger padding inside fields (incl. native date/time)
+- `.liquid-surface-control` no longer forces `radius-lg` (was capsule on short fields)
+- Add Vue `GlassField` + `GlassInput` wrappers
+- Exports: `./field`, `./input`, `./styles/field.css`
+
 ## 1.2.1 — 2026-08-01
 
 Fix SidebarFooter popover layout.
