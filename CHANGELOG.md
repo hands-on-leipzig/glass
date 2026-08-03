@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.4.2 — 2026-08-03
+
+Tighter phone content gutters.
+
+- Further reduce `.glass-app__panel` horizontal padding on ≤768 / ≤420
+- Native date/time fields keep `min-width: 0` so half-width grids don’t clip values
+
+## 1.4.1 — 2026-08-03
+
+Fix toggle switches squashed into circles on touch devices.
+
+- Coarse-pointer `min-height: var(--touch)` no longer applies to `button[role=switch]` / `role=slider`
+- Compact controls can still opt out via `.no-touch-min`
+
+## 1.4.0 — 2026-08-03
+
+Denser mobile app shell for JOIN and FLOW.
+
+- Phone layout goes edge-to-edge (no floating outer frame around the main panel)
+- Menu toggle clearance uses safe-area + `--glass-mobile-chrome-top` (fixes notch overlap)
+- Tighter panel / sidebar / nav spacing on ≤768px; flatter panel (no side borders/radius/shadow)
+- Landscape short viewports reclaim extra vertical chrome
+- Form field gaps / horizontal padding tighten on narrow screens
+
 ## 1.3.0 — 2026-08-02
 
 Shared form field / input basis for JOIN and FLOW.

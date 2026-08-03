@@ -5,6 +5,8 @@
 
 .glass-app {
   --glass-sidebar-width: 16.75rem;
+  /* Reserved space under the floating menu control (overridden on mobile). */
+  --glass-mobile-chrome-top: 0px;
   display: flex;
   min-height: 100dvh;
   height: 100dvh;
@@ -351,12 +353,29 @@
 
 @media (max-width: 768px) {
   .glass-app {
+    /*
+     * Phone: fill the screen. Outer padding was a floating “picture frame”
+     * that stole ~1rem per edge without helping readability.
+     */
+    --glass-mobile-chrome-top: calc(
+      env(safe-area-inset-top, 0px) + var(--touch) + 0.45rem
+    );
     gap: 0;
-    padding: 0.5rem 0.65rem 0.65rem;
+    padding: 0;
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .glass-app__menu-toggle {
     display: flex;
+    /* Slightly smaller control; still ≥ 44px via --touch */
+    width: var(--touch);
+    height: var(--touch);
+    top: max(0.35rem, env(safe-area-inset-top, 0px));
+    left: max(0.35rem, env(safe-area-inset-left, 0px));
+    border-radius: var(--radius);
+    font-size: 1.2rem;
   }
 
   .glass-app__backdrop {
@@ -374,7 +393,7 @@
     max-height: none;
     transform: translateX(-100%);
     transition: transform 0.25s ease;
-    border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
     border-left: none;
     box-shadow: var(--shadow-lg);
   }
@@ -384,30 +403,97 @@
   }
 
   .glass-sidebar__brand {
-    padding-top: max(0.55rem, env(safe-area-inset-top, 0px));
+    padding-top: max(0.45rem, env(safe-area-inset-top, 0px));
+    padding-bottom: 0.65rem;
+    margin-left: 0.55rem;
+    margin-right: 0.55rem;
   }
 
   .glass-sidebar__brand-logo {
-    max-height: 2.75rem;
+    max-height: 2.5rem;
+  }
+
+  .glass-sidebar__nav {
+    margin-top: 0.55rem;
+    gap: 4px;
+  }
+
+  .glass-sidebar__item {
+    min-height: 2.5rem;
+    padding: 0.3rem 0.55rem;
+    gap: 0.5rem;
+  }
+
+  .glass-sidebar__item-icon {
+    width: 2rem;
+    min-width: 2rem;
+  }
+
+  .glass-sidebar__item-icon .bi {
+    font-size: 1.2rem;
   }
 
   .glass-sidebar__partner-logo--primary {
-    max-height: 3.75rem;
+    max-height: 3.25rem;
   }
 
   .glass-sidebar__partner-logo--secondary {
-    max-height: 4rem;
+    max-height: 3.5rem;
+  }
+
+  .glass-app__main {
+    gap: 0;
   }
 
   .glass-app__panel {
-    padding: 1rem;
-    padding-top: calc(var(--touch-lg) + 0.85rem);
+    /* Edge-to-edge content plane — no floating card inset */
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    box-shadow: none;
+    padding: 0.45rem 0.55rem 0.65rem;
+    /* Clear notch + hamburger (toggle is position:fixed to the viewport) */
+    padding-top: var(--glass-mobile-chrome-top);
   }
 }
 
 @media (max-width: 420px) {
+  .glass-app {
+    --glass-mobile-chrome-top: calc(
+      env(safe-area-inset-top, 0px) + var(--touch) + 0.35rem
+    );
+  }
+
+  .glass-app__panel {
+    padding-left: 0.45rem;
+    padding-right: 0.45rem;
+    padding-bottom: 0.55rem;
+  }
+
   .glass-sidebar__brand-logo {
-    max-height: 2.35rem;
+    max-height: 2.2rem;
+  }
+}
+
+/* Short viewports (landscape phones): reclaim vertical chrome */
+@media (max-width: 768px) and (max-height: 480px) {
+  .glass-app {
+    --glass-mobile-chrome-top: calc(
+      env(safe-area-inset-top, 0px) + 2.35rem + 0.3rem
+    );
+  }
+
+  .glass-app__menu-toggle {
+    width: 2.35rem;
+    height: 2.35rem;
+    font-size: 1.1rem;
+  }
+
+  .glass-app__panel {
+    padding-left: 0.65rem;
+    padding-right: 0.65rem;
+    padding-bottom: 0.55rem;
   }
 }
 

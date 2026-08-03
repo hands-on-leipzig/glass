@@ -15,7 +15,7 @@ npm install ../glass
 ### Option B: Git dependency
 
 ```json
-"@hands-on/glass": "github:hands-on-leipzig/glass#v1.3.0"
+"@hands-on/glass": "github:hands-on-leipzig/glass#v1.4.2"
 ```
 
 ### Option C: private npm registry
@@ -170,6 +170,8 @@ import SidebarFooter from '@hands-on/glass/sidebar-footer'
 ```
 
 Footer: two round icons (person = identity, gear = settings). Nav active state uses FLOW-style accent wash + left bar.
+
+On ≤768px the shell goes edge-to-edge. Content clearance under the menu button is exposed as `--glass-mobile-chrome-top` on `.glass-app` (safe-area + toggle height).
 
 ## Was noch nicht enthalten ist (spätere Versionen)
 

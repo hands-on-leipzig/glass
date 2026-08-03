@@ -27,6 +27,18 @@
   -webkit-backdrop-filter: blur(12px);
 }
 
+@media (max-width: 768px) {
+  .glass-sidebar-footer__bar {
+    gap: 0.5rem;
+    padding: 0.5rem 0.6rem max(0.5rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  .glass-sidebar-footer__icon-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
 .glass-sidebar-footer__slot {
   position: relative;
   flex: 0 0 auto;

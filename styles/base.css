@@ -31,7 +31,13 @@ body {
 }
 
 @media (pointer: coarse) {
-  button:not(.no-touch-min),
+  /*
+   * Raise tappable controls on touch devices — but skip compact chrome
+   * that already defines its own geometry (toggle pills, icon chips, …).
+   * Without this exclusion, role=switch buttons (h-6 w-11) become a
+   * circle: min-height stretches them to --touch while width stays w-11.
+   */
+  button:not(.no-touch-min):not([role='switch']):not([role='slider']),
   .nav-link {
     min-height: var(--touch);
   }

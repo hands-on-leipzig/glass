@@ -221,3 +221,40 @@ input.glass-input[type='time']::-webkit-calendar-picker-indicator {
 .glass-field-stack--table .glass-field-row {
   gap: 0.75rem;
 }
+
+/* Narrow screens: denser form rhythm without shrinking touch targets */
+@media (max-width: 768px) {
+  :root {
+    --field-gap: 0.65rem;
+    --field-gap-lg: 0.85rem;
+    --field-row-gap: 0.5rem;
+    --field-padding-x-sm: 0.65rem;
+    --field-padding-x: 0.75rem;
+    --field-padding-x-lg: 0.85rem;
+  }
+
+  .glass-field-cell {
+    padding: 0.75rem 0.65rem;
+  }
+
+  .glass-field-stack--table {
+    gap: 0.55rem;
+  }
+
+  .glass-field-stack--table .glass-field-row {
+    gap: 0.55rem;
+  }
+
+  /* Native time/date: keep value readable in half-width grids */
+  input.glass-input[type='date'],
+  input.glass-input[type='time'],
+  input.glass-input[type='datetime-local'],
+  .liquid-surface-control.glass-input[type='date'],
+  .liquid-surface-control.glass-input[type='time'],
+  .liquid-surface-control.glass-input[type='datetime-local'] {
+    min-width: 0;
+    max-width: 100%;
+    padding-left: 0.55rem;
+    padding-right: 0.35rem;
+  }
+}
