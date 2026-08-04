@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.0 — 2026-08-04
+
+Collapsible desktop sidebar (icon rail) + submenu support.
+
+- `AppShell`: `collapsed` / `update:collapsed`, desktop collapse toggle, optional `localStorage` persistence
+- Collapsed rail: icons only, compact brand + partner logos; footer menus open to the right
+- New `SidebarNavItem` (`@hands-on/glass/sidebar-nav-item`): accordion submenus when expanded, hover/focus flyouts when collapsed
+- Provide/inject `glassSidebarCollapsed` for consumers
+
 ## 1.4.2 — 2026-08-03
 
 Tighter phone content gutters.
