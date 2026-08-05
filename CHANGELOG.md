@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.6.0 — 2026-08-04
+
+Tertiary in-page tabs (nav level 3).
+
+- New `PageTabs` (`@hands-on/glass/page-tabs`) + `styles/page-tabs.css`
+- Document-style folder tabs (rounded top, baseline, active tab joins content)
+- Legacy `.glass-tabs` / `.glass-tab` restyled to match for FLOW compatibility
+
 ## 1.5.0 — 2026-08-04
 
 Collapsible desktop sidebar (icon rail) + submenu support.

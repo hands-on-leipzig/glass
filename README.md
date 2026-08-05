@@ -88,6 +88,7 @@ Das Script `scripts/copy-fonts.mjs` kopiert nach `./public/font/` relativ zum Ap
 | `styles/globals.css` | links, buttons, media defaults |
 | `styles/liquid-surface.css` | `.liquid-surface`, `.liquid-surface-scope`, controls |
 | `styles/field.css` | `.glass-input`, `.glass-field`, field stacks/rows |
+| `styles/page-tabs.css` | Level-3 page tabs (`.glass-page-tabs`, legacy `.glass-tabs`) |
 | `styles/index.css` | single import entry |
 
 ### Form fields
@@ -118,6 +119,27 @@ import GlassInput from '@hands-on/glass/input'
 <GlassField label="PLZ" :invalid="missing" error="Pflichtfeld">
   <GlassInput v-model="zip" size="lg" accent :invalid="missing" />
 </GlassField>
+```
+
+## Navigation levels
+
+1. **Primary** – sidebar main entries (`AppShell` / `SidebarNavItem`)
+2. **Secondary** – sidebar children / submenus (`SidebarNavItem` `children`)
+3. **Tertiary** – in-page section tabs (`PageTabs` / `.glass-page-tabs`)
+
+```js
+import PageTabs from '@hands-on/glass/page-tabs'
+```
+
+```vue
+<PageTabs
+  aria-label="Ablauf"
+  :tabs="[
+    { id: 'general', label: 'Allgemein', icon: 'bi-sliders2-vertical', active: true },
+    { id: 'blocks', label: 'Blöcke', icon: 'bi-puzzle' },
+  ]"
+  @select="onTab"
+/>
 ```
 
 ## App shell (shared sidebar)

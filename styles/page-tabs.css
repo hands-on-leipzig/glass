@@ -1,0 +1,291 @@
+/*
+ * Level-3 document tabs — clearer tab chrome, optional attach-to-panel mode.
+ *
+ * Use `.glass-page-tabs--attached` + `.glass-page-panel` so the orange
+ * baseline is also the top edge of the content card.
+ */
+
+.glass-page-tabs {
+  --glass-tab-radius: 12px;
+  --glass-tab-surface: #ffffff;
+  --glass-tab-idle: #dfe4ec;
+  --glass-tab-idle-hover: #edf0f5;
+  --glass-tab-accent: var(--color-accent);
+  --glass-tab-line-width: 2px;
+
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.28rem;
+  padding: 0.2rem 0.15rem var(--glass-tab-line-width);
+  margin: 0;
+  border: none;
+  background: transparent;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.glass-page-tabs::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--glass-tab-line-width);
+  background: var(--glass-tab-accent);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.glass-page-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.glass-page-tab {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  flex: 0 0 auto;
+  min-height: 2.45rem;
+  margin: 0;
+  padding: 0.55rem 1.2rem 0.55rem;
+  border: var(--glass-tab-line-width) solid color-mix(in srgb, var(--color-border-strong) 55%, transparent);
+  border-bottom: none;
+  border-radius: var(--glass-tab-radius) var(--glass-tab-radius) 0 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 55%),
+    var(--glass-tab-idle);
+  color: var(--color-text-muted);
+  font-family: inherit;
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.06),
+    0 1px 2px rgba(15, 23, 42, 0.04);
+  transform: translateY(3px);
+  transition:
+    color 0.14s ease,
+    background 0.14s ease,
+    border-color 0.14s ease,
+    box-shadow 0.14s ease,
+    transform 0.12s ease;
+}
+
+.glass-page-tab .bi {
+  font-size: 1em;
+  opacity: 0.8;
+}
+
+.glass-page-tab:hover:not(:disabled):not(.glass-page-tab--active) {
+  color: var(--color-text);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 55%),
+    var(--glass-tab-idle-hover);
+  transform: translateY(2px);
+}
+
+.glass-page-tab:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  outline-offset: 2px;
+  z-index: 3;
+}
+
+.glass-page-tab--active {
+  z-index: 2;
+  color: var(--color-text);
+  background: linear-gradient(180deg, #ffffff 0%, #ffffff 70%, #f7f8fb 100%);
+  border-color: var(--glass-tab-accent);
+  border-bottom: none;
+  margin-bottom: calc(-1 * var(--glass-tab-line-width));
+  padding-bottom: calc(0.6rem + var(--glass-tab-line-width));
+  transform: translateY(0);
+  box-shadow:
+    0 var(--glass-tab-line-width) 0 0 var(--glass-tab-surface),
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 6px 16px rgba(15, 23, 42, 0.1);
+}
+
+.glass-page-tab--active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--glass-tab-line-width);
+  background: var(--glass-tab-surface);
+  pointer-events: none;
+}
+
+.glass-page-tab--active .bi {
+  opacity: 1;
+  color: var(--color-accent);
+}
+
+.glass-page-tab:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Tabs sit on a content panel — orange line = panel top edge */
+.glass-page-tabs--attached {
+  z-index: 2;
+  margin-bottom: 0;
+}
+
+.glass-page-panel {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  background: var(--glass-tab-surface, #ffffff);
+  border: 1px solid color-mix(in srgb, var(--color-border-strong) 65%, transparent);
+  border-top: none;
+  border-radius: 0 0 var(--radius-lg, 16px) var(--radius-lg, 16px);
+  box-shadow:
+    0 10px 28px rgba(15, 23, 42, 0.07),
+    0 2px 6px rgba(15, 23, 42, 0.04);
+  overflow: hidden;
+}
+
+.glass-page-tabs--compact {
+  padding-top: 0.15rem;
+  gap: 0.18rem;
+  --glass-tab-radius: 10px;
+}
+
+.glass-page-tabs--compact .glass-page-tab {
+  min-height: 2.1rem;
+  padding: 0.4rem 0.95rem 0.42rem;
+  font-size: var(--text-xs, 0.8rem);
+  transform: translateY(2px);
+}
+
+.glass-page-tabs--compact .glass-page-tab--active {
+  padding-bottom: calc(0.45rem + var(--glass-tab-line-width));
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .glass-page-tab {
+    min-height: 2.25rem;
+    padding: 0.45rem 0.95rem 0.48rem;
+  }
+
+  .glass-page-tab--active {
+    padding-bottom: calc(0.5rem + var(--glass-tab-line-width));
+  }
+}
+
+html.dark .glass-page-tabs,
+html.dark .glass-tabs {
+  --glass-tab-surface: #1c2430;
+  --glass-tab-idle: #2a3340;
+  --glass-tab-idle-hover: #323c4c;
+}
+
+html.dark .glass-page-panel {
+  background: var(--glass-tab-surface);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Legacy aliases */
+.glass-tabs {
+  --glass-tab-radius: 12px;
+  --glass-tab-surface: #ffffff;
+  --glass-tab-idle: #dfe4ec;
+  --glass-tab-idle-hover: #edf0f5;
+  --glass-tab-accent: var(--color-accent);
+  --glass-tab-line-width: 2px;
+
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.28rem;
+  padding: 0.2rem 0.15rem var(--glass-tab-line-width);
+  margin-bottom: 0.65rem;
+  border: none;
+  background: transparent;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.glass-tabs::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--glass-tab-line-width);
+  background: var(--glass-tab-accent);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.glass-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.glass-tab {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-height: 2.45rem;
+  margin: 0;
+  padding: 0.55rem 1.2rem 0.55rem;
+  border: var(--glass-tab-line-width) solid color-mix(in srgb, var(--color-border-strong) 55%, transparent);
+  border-bottom: none;
+  border-radius: var(--glass-tab-radius) var(--glass-tab-radius) 0 0;
+  background: var(--glass-tab-idle);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transform: translateY(3px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.glass-tab:hover {
+  color: var(--color-text);
+  background: var(--glass-tab-idle-hover);
+}
+
+.glass-tab--active {
+  z-index: 2;
+  color: var(--color-text);
+  background: #ffffff;
+  border-color: var(--glass-tab-accent);
+  border-bottom: none;
+  margin-bottom: calc(-1 * var(--glass-tab-line-width));
+  padding-bottom: calc(0.6rem + var(--glass-tab-line-width));
+  transform: translateY(0);
+  box-shadow:
+    0 var(--glass-tab-line-width) 0 0 var(--glass-tab-surface),
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 6px 16px rgba(15, 23, 42, 0.1);
+}
+
+.glass-tab--active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--glass-tab-line-width);
+  background: var(--glass-tab-surface);
+  pointer-events: none;
+}
