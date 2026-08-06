@@ -54,11 +54,13 @@ const itemActive = computed(() => props.active || childActive.value)
 
 const internalOpen = ref(false)
 
+// Open when a child becomes active; do not force-reopen on every render.
 watch(
-  () => [childActive.value, props.submenuOpen],
-  () => {
+  () => childActive.value,
+  (active, wasActive) => {
     if (props.submenuOpen !== undefined) return
-    if (childActive.value) internalOpen.value = true
+    if (active && !wasActive) internalOpen.value = true
+    if (active && wasActive === undefined) internalOpen.value = true
   },
   { immediate: true }
 )
@@ -80,14 +82,27 @@ const isSubmenuOpen = computed({
 function onItemClick() {
   if (props.disabled) return
   if (hasChildren.value && !isCollapsed.value) {
-    isSubmenuOpen.value = !isSubmenuOpen.value
+    // Open submenu if closed; if already open, go to section default route.
+    if (!isSubmenuOpen.value) {
+      isSubmenuOpen.value = true
+    }
+    emit('select')
     return
   }
   emit('select')
 }
 
+function onChevronClick(event) {
+  if (props.disabled || !hasChildren.value || isCollapsed.value) return
+  event.preventDefault()
+  event.stopPropagation()
+  isSubmenuOpen.value = !isSubmenuOpen.value
+}
+
 function onChildClick(child) {
   if (child?.disabled) return
+  // Keep submenu open while switching between children
+  if (!isCollapsed.value) isSubmenuOpen.value = true
   emit('select-child', child)
 }
 
@@ -127,11 +142,14 @@ function onFlyoutParentClick() {
         class="glass-sidebar__warning"
         title="Achtung: Es gibt offene Punkte in diesem Bereich"
       />
-      <i
+      <span
         v-if="hasChildren"
-        class="bi bi-chevron-down glass-sidebar__chevron"
-        aria-hidden="true"
-      />
+        class="glass-sidebar__chevron-hit"
+        :title="isSubmenuOpen ? 'Untermenü schließen' : 'Untermenü öffnen'"
+        @click="onChevronClick"
+      >
+        <i class="bi bi-chevron-down glass-sidebar__chevron" aria-hidden="true"/>
+      </span>
     </button>
 
     <!-- Expanded sidebar: inline accordion -->

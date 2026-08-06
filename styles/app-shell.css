@@ -321,11 +321,26 @@
   flex-shrink: 0;
 }
 
-.glass-sidebar__chevron {
+.glass-sidebar__chevron-hit {
   margin-left: auto;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 999px;
+  color: var(--color-text-muted);
+}
+
+.glass-sidebar__chevron-hit:hover {
+  background: color-mix(in srgb, var(--color-bg-hover) 80%, transparent);
+  color: var(--color-text);
+}
+
+.glass-sidebar__chevron {
   font-size: 0.85rem;
-  opacity: 0.65;
+  opacity: 0.75;
   transition: transform 0.18s ease;
 }
 
@@ -466,16 +481,8 @@
   }
 
   .glass-sidebar--collapsed .glass-sidebar__item-label,
-  .glass-sidebar--collapsed .glass-sidebar__chevron {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+  .glass-sidebar--collapsed .glass-sidebar__chevron-hit {
+    display: none;
   }
 
   .glass-sidebar--collapsed .glass-sidebar__item-icon {
@@ -509,11 +516,19 @@
     gap: 2px;
     padding: 0.4rem;
     border-radius: var(--radius-lg);
-    border: 1px solid var(--liquid-border);
-    background: var(--liquid-popover-fill);
-    backdrop-filter: blur(var(--liquid-popover-blur)) saturate(var(--liquid-popover-saturate));
-    -webkit-backdrop-filter: blur(var(--liquid-popover-blur)) saturate(var(--liquid-popover-saturate));
-    box-shadow: var(--shadow-lg);
+    border: 1px solid color-mix(in srgb, var(--color-border-strong) 55%, transparent);
+    /* Opaque — content behind must not show through when the rail is collapsed */
+    background: #ffffff;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow:
+      0 12px 32px rgba(15, 23, 42, 0.14),
+      0 2px 8px rgba(15, 23, 42, 0.06);
+  }
+
+  html.dark .glass-sidebar--collapsed .glass-sidebar__flyout {
+    background: #2c2826;
+    border-color: color-mix(in srgb, #fff 14%, transparent);
   }
 
   /* Invisible bridge so the pointer can move into the flyout without a hover gap */
@@ -534,20 +549,32 @@
     width: 100%;
     min-height: 2.35rem;
     padding: 0.35rem 0.65rem;
-    border: none;
+    border: 1px solid transparent;
     border-radius: var(--radius);
     background: transparent;
-    color: var(--color-text);
+    color: var(--color-text-muted);
     font-family: inherit;
     font-size: var(--text-sm);
-    font-weight: 650;
+    font-weight: 600;
     text-align: left;
     cursor: pointer;
+    transform: translateY(0) scale(1);
+    box-shadow: none;
+    transition:
+      background 0.12s ease,
+      color 0.1s ease,
+      border-color 0.12s ease,
+      box-shadow 0.12s cubic-bezier(0.2, 0.8, 0.2, 1),
+      transform 0.1s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
   .glass-sidebar--collapsed .glass-sidebar__flyout-title {
     font-weight: 700;
+    color: var(--color-text);
     cursor: default;
+    margin-bottom: 0.1rem;
+    border-bottom-color: color-mix(in srgb, var(--color-border-strong) 28%, transparent);
+    border-radius: var(--radius) var(--radius) 0 0;
   }
 
   .glass-sidebar--collapsed .glass-sidebar__flyout-title:not(:disabled) {
@@ -557,22 +584,72 @@
   .glass-sidebar--collapsed .glass-sidebar__flyout-title:disabled {
     opacity: 1;
     color: var(--color-text);
+    cursor: default;
   }
 
-  .glass-sidebar--collapsed .glass-sidebar__flyout-item {
-    font-weight: 600;
-    color: var(--color-text-muted);
-  }
-
-  .glass-sidebar--collapsed .glass-sidebar__flyout-item:hover,
+  .glass-sidebar--collapsed .glass-sidebar__flyout-item:hover:not(.glass-sidebar__flyout-item--active),
   .glass-sidebar--collapsed .glass-sidebar__flyout-title:not(:disabled):hover {
-    background: var(--color-bg-hover);
+    background: color-mix(in srgb, #ffffff 78%, var(--color-bg-muted));
     color: var(--color-text);
+    border-color: color-mix(in srgb, var(--color-border-strong) 28%, transparent);
+    box-shadow:
+      0 4px 10px rgba(15, 23, 42, 0.07),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
   }
 
+  .glass-sidebar--collapsed .glass-sidebar__flyout-item:active:not(.glass-sidebar__flyout-item--active),
+  .glass-sidebar--collapsed .glass-sidebar__flyout-title:not(:disabled):active {
+    transition:
+      background 0.04s ease,
+      color 0.04s ease,
+      border-color 0.04s ease,
+      box-shadow 0.05s ease-out,
+      transform 0.05s ease-out;
+    transform: translateY(2px) scale(0.985);
+    background: color-mix(in srgb, var(--color-bg-muted) 88%, #94a3b8 10%);
+    border-color: color-mix(in srgb, var(--color-border-strong) 45%, transparent);
+    box-shadow:
+      0 0 0 transparent,
+      inset 0 3px 8px rgba(15, 23, 42, 0.16),
+      inset 0 1px 0 rgba(15, 23, 42, 0.1),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  /* Same latched “key” treatment as main sidebar items — no orange fill */
   .glass-sidebar--collapsed .glass-sidebar__flyout-item--active {
-    background: var(--color-accent-muted);
+    background: color-mix(in srgb, var(--color-bg-muted) 72%, #94a3b8 12%);
+    color: var(--color-text);
+    font-weight: 700;
+    border-color: color-mix(in srgb, var(--color-border-strong) 55%, transparent);
+    transform: translateY(2px) scale(0.985);
+    box-shadow:
+      0 0 0 transparent,
+      inset 0 3.5px 9px rgba(15, 23, 42, 0.2),
+      inset 0 1px 0 rgba(15, 23, 42, 0.12),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.28);
+  }
+
+  .glass-sidebar--collapsed .glass-sidebar__flyout-item--active:active {
+    transition:
+      box-shadow 0.05s ease-out,
+      transform 0.05s ease-out;
+    transform: translateY(2.5px) scale(0.98);
+    box-shadow:
+      0 0 0 transparent,
+      inset 0 4px 10px rgba(15, 23, 42, 0.24),
+      inset 0 1px 0 rgba(15, 23, 42, 0.14),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.22);
+  }
+
+  .glass-sidebar--collapsed .glass-sidebar__flyout-item--active .bi {
     color: var(--color-accent);
+  }
+
+  html.dark .glass-sidebar--collapsed .glass-sidebar__flyout-item:hover:not(.glass-sidebar__flyout-item--active),
+  html.dark .glass-sidebar--collapsed .glass-sidebar__flyout-title:not(:disabled):hover {
+    background: color-mix(in srgb, #fff 8%, transparent);
+    border-color: color-mix(in srgb, #fff 12%, transparent);
+    box-shadow: none;
   }
 
   .glass-sidebar--collapsed .glass-sidebar__lower {
