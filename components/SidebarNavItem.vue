@@ -41,26 +41,45 @@ const props = defineProps({
     type: Boolean,
     default: undefined,
   },
+  /** Stable key for accordion coordination (defaults to label). */
+  submenuKey: {
+    type: String,
+    default: '',
+  },
 })
 
 const emit = defineEmits(['select', 'select-child', 'update:submenuOpen'])
 
 const collapsedRef = inject('glassSidebarCollapsed', ref(false))
 const isCollapsed = computed(() => !!collapsedRef.value)
+const accordion = inject('glassSidebarSubmenuAccordion', null)
 
 const hasChildren = computed(() => Array.isArray(props.children) && props.children.length > 0)
 const childActive = computed(() => hasChildren.value && props.children.some((c) => c?.active))
 const itemActive = computed(() => props.active || childActive.value)
+const accordionKey = computed(() => props.submenuKey || props.label)
 
 const internalOpen = ref(false)
+
+function setSubmenuOpen(value) {
+  if (props.submenuOpen !== undefined) {
+    emit('update:submenuOpen', value)
+    return
+  }
+  if (accordion) {
+    accordion.setOpen(accordionKey.value, value)
+    return
+  }
+  internalOpen.value = value
+}
 
 // Open when a child becomes active; do not force-reopen on every render.
 watch(
   () => childActive.value,
   (active, wasActive) => {
     if (props.submenuOpen !== undefined) return
-    if (active && !wasActive) internalOpen.value = true
-    if (active && wasActive === undefined) internalOpen.value = true
+    if (active && !wasActive) setSubmenuOpen(true)
+    if (active && wasActive === undefined) setSubmenuOpen(true)
   },
   { immediate: true }
 )
@@ -68,14 +87,11 @@ watch(
 const isSubmenuOpen = computed({
   get() {
     if (props.submenuOpen !== undefined) return props.submenuOpen
+    if (accordion) return accordion.isOpen(accordionKey.value)
     return internalOpen.value
   },
   set(value) {
-    if (props.submenuOpen !== undefined) {
-      emit('update:submenuOpen', value)
-    } else {
-      internalOpen.value = value
-    }
+    setSubmenuOpen(value)
   },
 })
 

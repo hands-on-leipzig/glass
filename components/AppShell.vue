@@ -77,6 +77,16 @@ watch(isCollapsed, (value) => {
 
 provide('glassSidebarCollapsed', isCollapsed)
 
+/** Only one expanded-sidebar submenu open at a time (accordion). */
+const openSubmenuId = ref(null)
+provide('glassSidebarSubmenuAccordion', {
+  isOpen: (id) => openSubmenuId.value === id,
+  setOpen: (id, open) => {
+    if (open) openSubmenuId.value = id
+    else if (openSubmenuId.value === id) openSubmenuId.value = null
+  },
+})
+
 function onToggle() {
   emit('toggle')
 }

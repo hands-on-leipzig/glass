@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.6.1 — 2026-08-07
+
+Sidebar submenu accordion.
+
+- Only one expanded-sidebar submenu stays open at a time (`AppShell` provide/inject)
+- Opening another parent closes the previous; chevron still toggles the active one
+
 ## 1.6.0 — 2026-08-04
 
 Tertiary in-page tabs (nav level 3).
