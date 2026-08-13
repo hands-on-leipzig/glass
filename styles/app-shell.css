@@ -30,6 +30,11 @@
   display: none;
 }
 
+/* Sheet drag handle only on mobile (see ≤768 block). */
+.glass-sidebar__sheet-handle {
+  display: none;
+}
+
 .glass-app__mobile-tab {
   appearance: none;
   flex: 1 1 0;
@@ -1019,25 +1024,46 @@
     height: min(88dvh, 40rem);
     max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 0.5rem);
     transform: translateY(105%);
+    transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
     border-left: 1px solid var(--liquid-border);
     border-top: 1px solid var(--liquid-border);
     padding-bottom: env(safe-area-inset-bottom, 0px);
+    touch-action: pan-y;
   }
 
   .glass-app--mobile-tabs .glass-sidebar--open {
     transform: translateY(0);
   }
 
-  .glass-app--mobile-tabs .glass-sidebar::before {
-    content: '';
+  .glass-app--mobile-tabs .glass-sidebar--dragging {
+    transition: none;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar__sheet-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 0;
+    padding: 0.55rem 0 0.2rem;
+    border: 0;
+    background: transparent;
+    cursor: grab;
+    touch-action: none;
+    flex-shrink: 0;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar__sheet-handle:active {
+    cursor: grabbing;
+  }
+
+  .glass-sidebar__sheet-handle-bar {
     display: block;
     width: 2.5rem;
     height: 0.28rem;
-    margin: 0.55rem auto 0.15rem;
     border-radius: 999px;
     background: color-mix(in srgb, var(--color-text-muted, #64748b) 45%, transparent);
-    flex-shrink: 0;
   }
 
   .glass-app--mobile-tabs .glass-sidebar__collapse-toggle {

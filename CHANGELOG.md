@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.7.1 — 2026-08-13
+
+Mobile bottom sheet polish.
+
+- Swipe down (handle or pull from top of sheet) dismisses the `#mobile-tabs` drawer
+- Real sheet handle replaces the CSS `::before` grabber
+
 ## 1.7.0 — 2026-08-13
 
 Mobile app chrome (optional).

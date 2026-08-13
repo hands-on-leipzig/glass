@@ -7,6 +7,7 @@
  * Mobile:
  *   - Default: floating hamburger (FLOW-compatible)
  *   - With `#mobile-tabs` slot: app-style top bar + bottom tab bar; drawer via toggle
+ *     (bottom sheet, swipe-down to dismiss)
  */
 import { computed, onMounted, provide, ref, useSlots, watch } from 'vue'
 
@@ -46,6 +47,15 @@ const slots = useSlots()
 const hasMobileTabs = computed(() => typeof slots['mobile-tabs'] === 'function')
 
 const internalCollapsed = ref(false)
+const sidebarEl = ref(null)
+
+/** Bottom-sheet drag state (mobile-tabs only). */
+const sheetDragY = ref(0)
+const sheetDragging = ref(false)
+let sheetTouchStartY = 0
+let sheetTouchStartX = 0
+let sheetDragActive = false
+let sheetIgnoreScroll = false
 
 onMounted(() => {
   if (props.collapsed !== undefined) return
@@ -80,6 +90,17 @@ watch(isCollapsed, (value) => {
   }
 })
 
+watch(
+  () => props.open,
+  (open) => {
+    if (!open) {
+      sheetDragY.value = 0
+      sheetDragging.value = false
+      sheetDragActive = false
+    }
+  },
+)
+
 provide('glassSidebarCollapsed', isCollapsed)
 
 /** Only one expanded-sidebar submenu open at a time (accordion). */
@@ -109,6 +130,81 @@ function onMenuToggleClick(event) {
 function toggleCollapsed() {
   isCollapsed.value = !isCollapsed.value
 }
+
+function isMobileSheetMode() {
+  return (
+    hasMobileTabs.value
+    && typeof window !== 'undefined'
+    && window.matchMedia('(max-width: 768px)').matches
+  )
+}
+
+function onSheetTouchStart(event, { fromHandle = false } = {}) {
+  if (!props.open || !isMobileSheetMode()) return
+  const touch = event.changedTouches?.[0] || event.touches?.[0]
+  if (!touch) return
+  sheetTouchStartY = touch.clientY
+  sheetTouchStartX = touch.clientX
+  sheetDragActive = false
+  sheetDragging.value = false
+  sheetIgnoreScroll = !fromHandle
+  if (fromHandle) {
+    sheetDragActive = true
+    sheetDragging.value = true
+  }
+}
+
+function onSheetTouchMove(event) {
+  if (!props.open || !isMobileSheetMode()) return
+  const touch = event.changedTouches?.[0] || event.touches?.[0]
+  if (!touch) return
+  const dy = touch.clientY - sheetTouchStartY
+  const dx = touch.clientX - sheetTouchStartX
+
+  if (!sheetDragActive) {
+    if (sheetIgnoreScroll) {
+      // Only start drag when pulling down from the top of the scrollable sheet.
+      const nav = sidebarEl.value?.querySelector?.('.glass-sidebar__nav')
+      const scrollTop = nav ? nav.scrollTop : 0
+      if (dy < 8 || Math.abs(dx) > Math.abs(dy) || scrollTop > 0) return
+    }
+    if (dy < 8) return
+    sheetDragActive = true
+    sheetDragging.value = true
+  }
+
+  if (dy <= 0) {
+    sheetDragY.value = 0
+    return
+  }
+  sheetDragY.value = dy
+  if (event.cancelable) event.preventDefault()
+}
+
+function onSheetTouchEnd() {
+  if (!sheetDragActive) {
+    sheetDragging.value = false
+    sheetDragY.value = 0
+    return
+  }
+  const dismiss = sheetDragY.value > 96
+  sheetDragging.value = false
+  sheetDragActive = false
+  if (dismiss) {
+    sheetDragY.value = 0
+    onClose()
+    return
+  }
+  sheetDragY.value = 0
+}
+
+const sheetStyle = computed(() => {
+  if (!hasMobileTabs.value || sheetDragY.value <= 0) return undefined
+  return {
+    transform: `translateY(${sheetDragY.value}px)`,
+    transition: sheetDragging.value ? 'none' : undefined,
+  }
+})
 </script>
 
 <template>
@@ -117,6 +213,7 @@ function toggleCollapsed() {
     :class="{
       'glass-app--sidebar-collapsed': isCollapsed,
       'glass-app--mobile-tabs': hasMobileTabs,
+      'glass-app--sheet-dragging': sheetDragging,
     }"
   >
     <!-- Legacy floating hamburger (FLOW / apps without mobile-tabs). -->
@@ -153,12 +250,30 @@ function toggleCollapsed() {
     />
 
     <aside
+      ref="sidebarEl"
       class="glass-sidebar liquid-surface"
       :class="{
         'glass-sidebar--open': open,
         'glass-sidebar--collapsed': isCollapsed,
+        'glass-sidebar--dragging': sheetDragging,
       }"
+      :style="sheetStyle"
+      @touchstart.passive="onSheetTouchStart($event, { fromHandle: false })"
+      @touchmove="onSheetTouchMove"
+      @touchend="onSheetTouchEnd"
+      @touchcancel="onSheetTouchEnd"
     >
+      <button
+        v-if="hasMobileTabs"
+        type="button"
+        class="glass-sidebar__sheet-handle"
+        :aria-label="menuAriaLabel"
+        @touchstart.passive="onSheetTouchStart($event, { fromHandle: true })"
+        @click="onClose"
+      >
+        <span class="glass-sidebar__sheet-handle-bar" aria-hidden="true" />
+      </button>
+
       <div class="glass-sidebar__brand-row">
         <div class="glass-sidebar__brand-slot">
           <slot name="brand" />
