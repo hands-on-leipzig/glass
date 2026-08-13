@@ -200,7 +200,10 @@ import SidebarFooter from '@hands-on/glass/sidebar-footer'
 
 Footer: two round icons (person = identity, gear = settings). Nav active state uses FLOW-style accent wash + left bar.
 
-On ≤768px the shell goes edge-to-edge. Content clearance under the menu button is exposed as `--glass-mobile-chrome-top` on `.glass-app` (safe-area + toggle height).
+On ≤768px the shell goes edge-to-edge.
+
+- **Default:** floating hamburger; content clearance via `--glass-mobile-chrome-top`
+- **App chrome (JOIN):** provide `#mobile-tabs` (and optionally `#mobile-top` / `#mobile-top-actions`) for a top bar + bottom tab bar; the drawer becomes a bottom sheet. Tab buttons use `.glass-app__mobile-tab`. Clearance uses `--glass-mobile-chrome-top` and `--glass-mobile-chrome-bottom`.
 
 Desktop (≥769px): collapse toggle on the brand row shrinks the sidebar to an icon rail (`--glass-sidebar-width-collapsed`). Prefer `SidebarNavItem` so collapsed icons get hover flyouts and expanded items can host submenus.
 

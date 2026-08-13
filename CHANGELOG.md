@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.7.0 — 2026-08-13
+
+Mobile app chrome (optional).
+
+- `AppShell` slots `#mobile-top`, `#mobile-top-actions`, `#mobile-tabs`
+- When `#mobile-tabs` is provided: top bar + bottom tab bar on ≤768px; drawer becomes a bottom sheet
+- Without `#mobile-tabs`: legacy floating hamburger (FLOW unchanged)
+- Tab button helper class `.glass-app__mobile-tab` (+ `--active` / `--more`)
+
 ## 1.6.1 — 2026-08-07
 
 Sidebar submenu accordion.

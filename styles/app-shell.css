@@ -6,8 +6,11 @@
 .glass-app {
   --glass-sidebar-width: 16.75rem;
   --glass-sidebar-width-collapsed: 4.35rem;
-  /* Reserved space under the floating menu control (overridden on mobile). */
+  /* Reserved space for mobile chrome (overridden ≤768). */
   --glass-mobile-chrome-top: 0px;
+  --glass-mobile-chrome-bottom: 0px;
+  --glass-mobile-top-height: 3.15rem;
+  --glass-mobile-tabs-height: 3.65rem;
   display: flex;
   min-height: 100dvh;
   height: 100dvh;
@@ -19,6 +22,71 @@
   position: relative;
   font-family: var(--font-sans);
   transition: gap 0.2s ease;
+}
+
+/* Mobile top / bottom chrome — desktop hidden; phones with --mobile-tabs show them. */
+.glass-app__mobile-top,
+.glass-app__mobile-tabs {
+  display: none;
+}
+
+.glass-app__mobile-tab {
+  appearance: none;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  min-width: 0;
+  min-height: 100%;
+  margin: 0;
+  padding: 0.35rem 0.25rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: inherit;
+  font-size: 0.65rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.glass-app__mobile-tab .bi {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.glass-app__mobile-tab-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.glass-app__mobile-tab:hover,
+.glass-app__mobile-tab:focus-visible {
+  color: var(--color-text);
+  outline: none;
+}
+
+.glass-app__mobile-tab--active {
+  color: var(--color-accent, var(--color-primary, #e85d04));
+}
+
+.glass-app__mobile-tab--active .bi {
+  color: inherit;
+}
+
+.glass-app__mobile-tab--more[aria-pressed='true'] {
+  color: var(--color-accent, var(--color-primary, #e85d04));
+  background: color-mix(in srgb, var(--color-accent, #e85d04) 12%, transparent);
 }
 
 .glass-app__menu-toggle {
@@ -805,11 +873,90 @@
     --glass-mobile-chrome-top: calc(
       env(safe-area-inset-top, 0px) + var(--touch) + 0.45rem
     );
+    --glass-mobile-chrome-bottom: 0px;
     gap: 0;
     padding: 0;
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* App chrome: top bar + bottom tabs (when #mobile-tabs slot is used). */
+  .glass-app--mobile-tabs {
+    --glass-mobile-chrome-top: calc(
+      env(safe-area-inset-top, 0px) + var(--glass-mobile-top-height)
+    );
+    --glass-mobile-chrome-bottom: calc(
+      env(safe-area-inset-bottom, 0px) + var(--glass-mobile-tabs-height)
+    );
+  }
+
+  .glass-app--mobile-tabs .glass-app__mobile-top {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1080;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+    background: color-mix(in srgb, var(--liquid-tile-bg-strong, var(--liquid-tile-bg)) 92%, transparent);
+    backdrop-filter: blur(18px) saturate(var(--liquid-saturate, 1.2));
+    -webkit-backdrop-filter: blur(18px) saturate(var(--liquid-saturate, 1.2));
+    border-bottom: 1px solid var(--liquid-border);
+  }
+
+  .glass-app__mobile-top-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    height: var(--glass-mobile-top-height);
+    padding: 0 0.75rem;
+  }
+
+  .glass-app__mobile-top-brand {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .glass-app__mobile-top-brand .glass-sidebar__brand {
+    margin: 0;
+    padding: 0;
+    min-height: 0;
+  }
+
+  .glass-app__mobile-top-brand .glass-sidebar__brand-logo {
+    max-height: 1.85rem;
+  }
+
+  .glass-app__mobile-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  .glass-app--mobile-tabs .glass-app__mobile-tabs {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1080;
+    align-items: stretch;
+    justify-content: space-around;
+    gap: 0.15rem;
+    height: calc(var(--glass-mobile-tabs-height) + env(safe-area-inset-bottom, 0px));
+    padding: 0.25rem 0.35rem calc(0.25rem + env(safe-area-inset-bottom, 0px));
+    box-sizing: border-box;
+    background: color-mix(in srgb, var(--liquid-tile-bg-strong, var(--liquid-tile-bg)) 94%, transparent);
+    backdrop-filter: blur(20px) saturate(var(--liquid-saturate, 1.2));
+    -webkit-backdrop-filter: blur(20px) saturate(var(--liquid-saturate, 1.2));
+    border-top: 1px solid var(--liquid-border);
+    box-shadow: 0 -8px 28px rgba(15, 23, 42, 0.06);
   }
 
   .glass-app__menu-toggle {
@@ -821,10 +968,19 @@
     left: max(0.35rem, env(safe-area-inset-left, 0px));
     border-radius: var(--radius);
     font-size: 1.2rem;
+    z-index: 1100;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .glass-app--mobile-tabs .glass-app__menu-toggle {
+    display: none;
   }
 
   .glass-app__backdrop {
     display: block;
+    z-index: 1090;
   }
 
   .glass-sidebar {
@@ -832,7 +988,7 @@
     top: 0;
     left: 0;
     bottom: 0;
-    z-index: 101;
+    z-index: 1095;
     width: min(var(--glass-sidebar-width), 86vw);
     height: 100dvh;
     max-height: none;
@@ -841,10 +997,55 @@
     border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
     border-left: none;
     box-shadow: var(--shadow-lg);
+    /* Closed drawer must not steal taps in the hamburger zone */
+    pointer-events: none;
+    visibility: hidden;
   }
 
   .glass-sidebar--open {
     transform: translateX(0);
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar {
+    /* Sheet from the bottom feels more native with a tab bar. */
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: none;
+    height: min(88dvh, 40rem);
+    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 0.5rem);
+    transform: translateY(105%);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    border-left: 1px solid var(--liquid-border);
+    border-top: 1px solid var(--liquid-border);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar--open {
+    transform: translateY(0);
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar::before {
+    content: '';
+    display: block;
+    width: 2.5rem;
+    height: 0.28rem;
+    margin: 0.55rem auto 0.15rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-text-muted, #64748b) 45%, transparent);
+    flex-shrink: 0;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar__collapse-toggle {
+    display: none;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar__brand {
+    padding-top: 0.35rem;
   }
 
   .glass-sidebar__brand {
@@ -898,13 +1099,14 @@
     border-top: none;
     box-shadow: none;
     padding: 0.45rem 0.55rem 0.65rem;
-    /* Clear notch + hamburger (toggle is position:fixed to the viewport) */
+    /* Clear notch + hamburger / top bar / bottom tabs */
     padding-top: var(--glass-mobile-chrome-top);
+    padding-bottom: calc(0.65rem + var(--glass-mobile-chrome-bottom));
   }
 }
 
 @media (max-width: 420px) {
-  .glass-app {
+  .glass-app:not(.glass-app--mobile-tabs) {
     --glass-mobile-chrome-top: calc(
       env(safe-area-inset-top, 0px) + var(--touch) + 0.35rem
     );
@@ -913,7 +1115,6 @@
   .glass-app__panel {
     padding-left: 0.45rem;
     padding-right: 0.45rem;
-    padding-bottom: 0.55rem;
   }
 
   .glass-sidebar__brand-logo {
@@ -923,10 +1124,15 @@
 
 /* Short viewports (landscape phones): reclaim vertical chrome */
 @media (max-width: 768px) and (max-height: 480px) {
-  .glass-app {
+  .glass-app:not(.glass-app--mobile-tabs) {
     --glass-mobile-chrome-top: calc(
       env(safe-area-inset-top, 0px) + 2.35rem + 0.3rem
     );
+  }
+
+  .glass-app--mobile-tabs {
+    --glass-mobile-top-height: 2.6rem;
+    --glass-mobile-tabs-height: 3.1rem;
   }
 
   .glass-app__menu-toggle {
@@ -938,7 +1144,10 @@
   .glass-app__panel {
     padding-left: 0.65rem;
     padding-right: 0.65rem;
-    padding-bottom: 0.55rem;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar {
+    height: min(92dvh, 100%);
   }
 }
 

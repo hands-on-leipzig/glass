@@ -4,9 +4,11 @@
  * App-specific nav, brand assets, and footer actions go into slots.
  *
  * Desktop: sidebar can collapse to an icon rail (`collapsed`).
- * Mobile: `open` still controls the drawer overlay.
+ * Mobile:
+ *   - Default: floating hamburger (FLOW-compatible)
+ *   - With `#mobile-tabs` slot: app-style top bar + bottom tab bar; drawer via toggle
  */
-import { computed, onMounted, provide, ref, watch } from 'vue'
+import { computed, onMounted, provide, ref, useSlots, watch } from 'vue'
 
 const props = defineProps({
   /** Mobile drawer open */
@@ -39,6 +41,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:open', 'toggle', 'update:collapsed'])
+
+const slots = useSlots()
+const hasMobileTabs = computed(() => typeof slots['mobile-tabs'] === 'function')
 
 const internalCollapsed = ref(false)
 
@@ -95,6 +100,12 @@ function onClose() {
   emit('update:open', false)
 }
 
+function onMenuToggleClick(event) {
+  event?.stopPropagation?.()
+  event?.preventDefault?.()
+  onToggle()
+}
+
 function toggleCollapsed() {
   isCollapsed.value = !isCollapsed.value
 }
@@ -103,17 +114,36 @@ function toggleCollapsed() {
 <template>
   <div
     class="glass-app liquid-surface-scope"
-    :class="{ 'glass-app--sidebar-collapsed': isCollapsed }"
+    :class="{
+      'glass-app--sidebar-collapsed': isCollapsed,
+      'glass-app--mobile-tabs': hasMobileTabs,
+    }"
   >
+    <!-- Legacy floating hamburger (FLOW / apps without mobile-tabs). -->
     <button
+      v-if="!hasMobileTabs"
       type="button"
       class="glass-app__menu-toggle"
       :aria-label="menuAriaLabel"
       :aria-expanded="open"
-      @click="onToggle"
+      @click="onMenuToggleClick"
     >
-      <i class="bi bi-list" aria-hidden="true" />
+      <i class="bi" :class="open ? 'bi-x-lg' : 'bi-list'" aria-hidden="true" />
     </button>
+
+    <!-- App-style mobile top bar (JOIN when mobile-tabs is provided). -->
+    <header v-if="hasMobileTabs" class="glass-app__mobile-top">
+      <div class="glass-app__mobile-top-inner">
+        <div class="glass-app__mobile-top-brand">
+          <slot name="mobile-top">
+            <slot name="brand" />
+          </slot>
+        </div>
+        <div v-if="$slots['mobile-top-actions']" class="glass-app__mobile-top-actions">
+          <slot name="mobile-top-actions" />
+        </div>
+      </div>
+    </header>
 
     <div
       v-if="open"
@@ -161,5 +191,14 @@ function toggleCollapsed() {
     <main class="glass-app__main">
       <slot />
     </main>
+
+    <!-- App-style bottom tabs (mobile only via CSS). -->
+    <nav
+      v-if="hasMobileTabs"
+      class="glass-app__mobile-tabs"
+      aria-label="Primary"
+    >
+      <slot name="mobile-tabs" :open="open" :toggle="onToggle" />
+    </nav>
   </div>
 </template>
