@@ -29,7 +29,8 @@ const props = defineProps({
     default: false,
   },
   /**
-   * Submenu entries: { id?, label, icon?, active?, warning?, disabled? }
+   * Submenu entries: { id?, label, icon?, iconSrc?, active?, warning?, disabled? }
+   * `icon` is a Bootstrap Icons class; `iconSrc` is an image URL (program logos).
    * Emit `select-child` with the entry when clicked.
    */
   children: {
@@ -185,8 +186,9 @@ function onFlyoutParentClick() {
         :aria-current="child.active ? 'page' : undefined"
         @click="onChildClick(child)"
       >
-        <span v-if="child.icon" class="glass-sidebar__subitem-icon">
-          <i class="bi" :class="child.icon" aria-hidden="true" />
+        <span v-if="child.iconSrc || child.icon" class="glass-sidebar__subitem-icon">
+          <img v-if="child.iconSrc" :src="child.iconSrc" alt="" class="glass-sidebar__subitem-img"/>
+          <i v-else class="bi" :class="child.icon" aria-hidden="true"/>
         </span>
         <span class="glass-sidebar__subitem-label">{{ child.label }}</span>
         <span v-if="child.warning" class="glass-sidebar__warning" />
@@ -220,7 +222,10 @@ function onFlyoutParentClick() {
           :disabled="child.disabled"
           @click="onChildClick(child)"
         >
-          <i v-if="child.icon" class="bi" :class="child.icon" aria-hidden="true" />
+          <span v-if="child.iconSrc || child.icon" class="glass-sidebar__subitem-icon">
+            <img v-if="child.iconSrc" :src="child.iconSrc" alt="" class="glass-sidebar__subitem-img"/>
+            <i v-else class="bi" :class="child.icon" aria-hidden="true"/>
+          </span>
           <span>{{ child.label }}</span>
           <span v-if="child.warning" class="glass-sidebar__warning" />
         </button>

@@ -1,6 +1,6 @@
 {
   "name": "@hands-on/glass",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "Shared HANDS on TECHNOLOGY design tokens, liquid glass UI, app shell, and theme for Vue apps",
   "type": "module",
   "license": "UNLICENSED",
