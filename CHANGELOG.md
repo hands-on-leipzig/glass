@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.2 — 2026-08-20
+
+Sidebar child icons can be images.
+
+- `SidebarNavItem` children accept `iconSrc` (program logos) in addition to Bootstrap `icon`
+
 ## 1.7.1 — 2026-08-13
 
 Mobile bottom sheet polish.
