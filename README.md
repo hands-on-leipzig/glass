@@ -207,6 +207,8 @@ On ≤768px the shell goes edge-to-edge.
 
 Desktop (≥769px): collapse toggle on the brand row shrinks the sidebar to an icon rail (`--glass-sidebar-width-collapsed`). Prefer `SidebarNavItem` so collapsed icons get hover flyouts and expanded items can host submenus.
 
+Optional `#nav-pinned` sits above `#nav` and does not scroll with the rest of the list (e.g. a back item).
+
 ## Was noch nicht enthalten ist (spätere Versionen)
 
 - `CustomSelect` / weitere komplexe Controls
