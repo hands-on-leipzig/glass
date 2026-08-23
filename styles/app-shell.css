@@ -233,6 +233,15 @@
   display: block;
 }
 
+.glass-sidebar__nav-pinned {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-top: 0.85rem;
+  overflow: visible;
+}
+
 .glass-sidebar__nav {
   display: flex;
   flex-direction: column;
@@ -242,6 +251,10 @@
   overflow-x: hidden;
   overflow-y: auto;
   margin-top: 0.85rem;
+}
+
+.glass-sidebar:has(.glass-sidebar__nav-pinned) .glass-sidebar__nav {
+  margin-top: 6px;
 }
 
 .glass-sidebar__lower {
@@ -544,12 +557,22 @@
     margin: 0;
   }
 
+  .glass-sidebar--collapsed .glass-sidebar__nav-pinned {
+    overflow: visible;
+    gap: 4px;
+    margin-top: 0.55rem;
+  }
+
   .glass-sidebar--collapsed .glass-sidebar__nav {
     /* Must stay visible so hover flyouts aren’t clipped (overflow-x:visible + y:auto → both auto). */
     overflow: visible;
     align-items: stretch;
     gap: 4px;
     margin-top: 0.55rem;
+  }
+
+  .glass-sidebar--collapsed:has(.glass-sidebar__nav-pinned) .glass-sidebar__nav {
+    margin-top: 4px;
   }
 
   .glass-sidebar--collapsed .glass-sidebar__item {
@@ -1090,6 +1113,15 @@
 
   .glass-sidebar__brand-logo {
     max-height: 2.5rem;
+  }
+
+  .glass-sidebar__nav-pinned {
+    margin-top: 0.55rem;
+    gap: 4px;
+  }
+
+  .glass-sidebar:has(.glass-sidebar__nav-pinned) .glass-sidebar__nav {
+    margin-top: 4px;
   }
 
   .glass-sidebar__nav {
