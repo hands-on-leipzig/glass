@@ -306,7 +306,7 @@
     transform 0.1s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.glass-sidebar__item:hover:not(.glass-sidebar__item--active) {
+.glass-sidebar__item:hover:not(.glass-sidebar__item--active):not(:disabled) {
   background: color-mix(in srgb, #ffffff 78%, transparent);
   color: var(--color-text);
   box-shadow:
@@ -317,7 +317,7 @@
 }
 
 /* Momentary press before the new key latches — near-instant downstroke */
-.glass-sidebar__item:active:not(.glass-sidebar__item--active) {
+.glass-sidebar__item:active:not(.glass-sidebar__item--active):not(:disabled) {
   transition:
     background 0.04s ease,
     color 0.04s ease,
@@ -360,6 +360,14 @@
     inset 0 -1px 0 rgba(255, 255, 255, 0.22);
 }
 
+.glass-sidebar__item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
 .glass-sidebar__item--active .glass-sidebar__item-icon .bi {
   color: var(--color-accent);
   opacity: 1;
@@ -384,7 +392,7 @@
   line-height: 1;
 }
 
-.glass-sidebar__item:hover .glass-sidebar__item-icon .bi {
+.glass-sidebar__item:hover:not(:disabled) .glass-sidebar__item-icon .bi {
   opacity: 1;
 }
 

@@ -5,6 +5,7 @@
 Pinned sidebar nav.
 
 - `AppShell` slot `#nav-pinned` sits above the scrolling `#nav` list so a back item stays visible
+- Disabled `.glass-sidebar__item` is visibly muted; `SidebarNavItem` accepts optional `title`
 
 ## 1.7.2 — 2026-08-20
 
