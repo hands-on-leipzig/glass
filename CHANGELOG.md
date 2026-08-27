@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.7.3 — 2026-08-23
+
+Pinned sidebar nav.
+
+- `AppShell` slot `#nav-pinned` sits above the scrolling `#nav` list so a back item stays visible
+- Disabled `.glass-sidebar__item` is visibly muted; `SidebarNavItem` accepts optional `title`
+
 ## 1.7.2 — 2026-08-20
 
 Sidebar child icons can be images.

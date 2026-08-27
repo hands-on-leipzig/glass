@@ -294,6 +294,13 @@ const sheetStyle = computed(() => {
         </button>
       </div>
 
+      <div
+        v-if="$slots['nav-pinned']"
+        class="glass-sidebar__nav-pinned"
+      >
+        <slot name="nav-pinned" :collapsed="isCollapsed" />
+      </div>
+
       <nav class="glass-sidebar__nav">
         <slot name="nav" :collapsed="isCollapsed" />
       </nav>

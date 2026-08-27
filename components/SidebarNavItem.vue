@@ -28,6 +28,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  title: {
+    type: String,
+    default: '',
+  },
   /**
    * Submenu entries: { id?, label, icon?, iconSrc?, active?, warning?, disabled? }
    * `icon` is a Bootstrap Icons class; `iconSrc` is an image URL (program logos).
@@ -141,11 +145,15 @@ function onFlyoutParentClick() {
     <button
       type="button"
       class="glass-sidebar__item"
-      :class="{ 'glass-sidebar__item--active': itemActive }"
+      :class="{
+        'glass-sidebar__item--active': itemActive,
+        'glass-sidebar__item--disabled': disabled,
+      }"
       :disabled="disabled"
+      :aria-disabled="disabled ? 'true' : undefined"
       :aria-current="itemActive && !hasChildren ? 'page' : undefined"
       :aria-expanded="hasChildren ? isSubmenuOpen : undefined"
-      :title="isCollapsed ? label : undefined"
+      :title="title || (isCollapsed ? label : undefined)"
       @click="onItemClick"
     >
       <span class="glass-sidebar__item-icon">

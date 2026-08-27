@@ -233,6 +233,15 @@
   display: block;
 }
 
+.glass-sidebar__nav-pinned {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-top: 0.85rem;
+  overflow: visible;
+}
+
 .glass-sidebar__nav {
   display: flex;
   flex-direction: column;
@@ -242,6 +251,10 @@
   overflow-x: hidden;
   overflow-y: auto;
   margin-top: 0.85rem;
+}
+
+.glass-sidebar:has(.glass-sidebar__nav-pinned) .glass-sidebar__nav {
+  margin-top: 6px;
 }
 
 .glass-sidebar__lower {
@@ -293,7 +306,7 @@
     transform 0.1s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.glass-sidebar__item:hover:not(.glass-sidebar__item--active) {
+.glass-sidebar__item:hover:not(.glass-sidebar__item--active):not(:disabled) {
   background: color-mix(in srgb, #ffffff 78%, transparent);
   color: var(--color-text);
   box-shadow:
@@ -304,7 +317,7 @@
 }
 
 /* Momentary press before the new key latches — near-instant downstroke */
-.glass-sidebar__item:active:not(.glass-sidebar__item--active) {
+.glass-sidebar__item:active:not(.glass-sidebar__item--active):not(:disabled) {
   transition:
     background 0.04s ease,
     color 0.04s ease,
@@ -347,6 +360,14 @@
     inset 0 -1px 0 rgba(255, 255, 255, 0.22);
 }
 
+.glass-sidebar__item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
 .glass-sidebar__item--active .glass-sidebar__item-icon .bi {
   color: var(--color-accent);
   opacity: 1;
@@ -371,7 +392,7 @@
   line-height: 1;
 }
 
-.glass-sidebar__item:hover .glass-sidebar__item-icon .bi {
+.glass-sidebar__item:hover:not(:disabled) .glass-sidebar__item-icon .bi {
   opacity: 1;
 }
 
@@ -544,12 +565,22 @@
     margin: 0;
   }
 
+  .glass-sidebar--collapsed .glass-sidebar__nav-pinned {
+    overflow: visible;
+    gap: 4px;
+    margin-top: 0.55rem;
+  }
+
   .glass-sidebar--collapsed .glass-sidebar__nav {
     /* Must stay visible so hover flyouts aren’t clipped (overflow-x:visible + y:auto → both auto). */
     overflow: visible;
     align-items: stretch;
     gap: 4px;
     margin-top: 0.55rem;
+  }
+
+  .glass-sidebar--collapsed:has(.glass-sidebar__nav-pinned) .glass-sidebar__nav {
+    margin-top: 4px;
   }
 
   .glass-sidebar--collapsed .glass-sidebar__item {
@@ -1090,6 +1121,15 @@
 
   .glass-sidebar__brand-logo {
     max-height: 2.5rem;
+  }
+
+  .glass-sidebar__nav-pinned {
+    margin-top: 0.55rem;
+    gap: 4px;
+  }
+
+  .glass-sidebar:has(.glass-sidebar__nav-pinned) .glass-sidebar__nav {
+    margin-top: 4px;
   }
 
   .glass-sidebar__nav {
