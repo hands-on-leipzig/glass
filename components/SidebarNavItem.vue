@@ -59,6 +59,11 @@ const collapsedRef = inject('glassSidebarCollapsed', ref(false))
 const isCollapsed = computed(() => !!collapsedRef.value)
 const accordion = inject('glassSidebarSubmenuAccordion', null)
 
+function closeSiblingSubmenus() {
+  if (props.submenuOpen !== undefined) return
+  if (accordion && !isCollapsed.value) accordion.closeAll()
+}
+
 const hasChildren = computed(() => Array.isArray(props.children) && props.children.length > 0)
 const childActive = computed(() => hasChildren.value && props.children.some((c) => c?.active))
 const itemActive = computed(() => props.active || childActive.value)
@@ -89,6 +94,14 @@ watch(
   { immediate: true }
 )
 
+// Leaf top-level item: collapse any open sibling submenu (click or route).
+watch(
+  () => props.active && !hasChildren.value,
+  (active) => {
+    if (active) closeSiblingSubmenus()
+  },
+)
+
 const isSubmenuOpen = computed({
   get() {
     if (props.submenuOpen !== undefined) return props.submenuOpen
@@ -110,6 +123,7 @@ function onItemClick() {
     emit('select')
     return
   }
+  closeSiblingSubmenus()
   emit('select')
 }
 

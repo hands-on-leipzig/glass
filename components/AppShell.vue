@@ -111,6 +111,9 @@ provide('glassSidebarSubmenuAccordion', {
     if (open) openSubmenuId.value = id
     else if (openSubmenuId.value === id) openSubmenuId.value = null
   },
+  closeAll: () => {
+    openSubmenuId.value = null
+  },
 })
 
 function onToggle() {
