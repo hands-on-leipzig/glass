@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.7.4 — 2026-09-07
+
+Optional extra icon in the sidebar footer bar.
+
+- `SidebarFooter` slot `#extra` sits after identity and settings (same round icon-btn row)
+- Slot receives `{ close }` so a click can dismiss open popovers; use `.glass-sidebar-footer__icon-btn` for the control
+
 ## 1.7.3 — 2026-08-23
 
 Pinned sidebar nav.
