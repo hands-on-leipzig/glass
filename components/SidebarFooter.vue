@@ -114,6 +114,13 @@ defineExpose({ closeMenus, toggleMenu })
         </button>
       </div>
 
+      <div
+        v-if="$slots.extra"
+        class="glass-sidebar-footer__slot glass-sidebar-footer__slot--extra"
+      >
+        <slot name="extra" :close="closeMenus" />
+      </div>
+
       <!-- Full-width popovers anchored to the bar, not the tiny icon buttons -->
       <Transition name="glass-sidebar-footer-menu">
         <div

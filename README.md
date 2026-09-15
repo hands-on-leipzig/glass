@@ -181,7 +181,17 @@ import SidebarNavItem from '@hands-on/glass/sidebar-nav-item'
         </button>
       </template>
       <template #settings>
-        <!-- theme / help / admin -->
+        <!-- theme / admin -->
+      </template>
+      <template #extra="{ close }">
+        <button
+          type="button"
+          class="glass-sidebar-footer__icon-btn"
+          aria-label="Help"
+          @click="goHelp(); close()"
+        >
+          <i class="bi bi-question-circle-fill" aria-hidden="true" />
+        </button>
       </template>
       <template #partners>
         <!-- partner logos -->
@@ -198,7 +208,7 @@ import SidebarNavItem from '@hands-on/glass/sidebar-nav-item'
 import SidebarFooter from '@hands-on/glass/sidebar-footer'
 ```
 
-Footer: two round icons (person = identity, gear = settings). Nav active state uses FLOW-style accent wash + left bar.
+Footer: round icons (person = identity, gear = settings, optional `#extra` for app actions such as help). Nav active state uses FLOW-style accent wash + left bar.
 
 On ≤768px the shell goes edge-to-edge.
 

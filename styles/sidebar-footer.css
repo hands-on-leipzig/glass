@@ -1,5 +1,6 @@
 /**
- * Shared sidebar footer: identity + settings icon buttons with popovers.
+ * Shared sidebar footer: identity + settings icon buttons with popovers,
+ * plus optional extra bar actions (e.g. help).
  */
 
 .glass-sidebar-footer {
