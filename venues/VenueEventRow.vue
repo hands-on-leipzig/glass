@@ -35,40 +35,48 @@ const countryCode = computed(() => String(props.venue.country || '').toUpperCase
 </script>
 
 <template>
-  <button type="button" class="venue-row" @click="emit('select', venue)">
-    <time class="venue-row__date" :datetime="venue.date || undefined">
-      <template v-if="dayParts">
-        <span class="venue-row__day">{{ dayParts.day }}</span>
-        <span class="venue-row__mon">{{ dayParts.month }}</span>
-      </template>
-      <i v-else class="bi bi-calendar-x venue-row__date-empty" aria-hidden="true" />
-    </time>
-    <span class="venue-row__body">
-      <span class="venue-row__title-line">
-        <span class="venue-row__name">{{ name }}</span>
-        <span
-          v-if="showProgram && programLabel"
-          class="venue-row__chip"
-          :style="chipStyle"
-        >{{ programLabel }}</span>
+  <div class="venue-row">
+    <button type="button" class="venue-row__hit" @click="emit('select', venue)">
+      <time class="venue-row__date" :datetime="venue.date || undefined">
+        <template v-if="dayParts">
+          <span class="venue-row__day">{{ dayParts.day }}</span>
+          <span class="venue-row__mon">{{ dayParts.month }}</span>
+        </template>
+        <i v-else class="bi bi-calendar-x venue-row__date-empty" aria-hidden="true" />
+      </time>
+      <span class="venue-row__body">
+        <span class="venue-row__title-line">
+          <span class="venue-row__name">{{ name }}</span>
+          <span
+            v-if="showProgram && programLabel"
+            class="venue-row__chip"
+            :style="chipStyle"
+          >{{ programLabel }}</span>
+        </span>
+        <span class="venue-row__meta">
+          <span v-if="showCountry && countryCode" class="venue-row__code">{{ countryCode }}</span>
+          <span v-if="capacity">{{ capacity }}</span>
+          <span v-if="venue.program === 'future5'">{{ t('venues.futureTrack5') }}</span>
+        </span>
       </span>
-      <span class="venue-row__meta">
-        <span v-if="showCountry && countryCode" class="venue-row__code">{{ countryCode }}</span>
-        <span v-if="capacity">{{ capacity }}</span>
-        <span v-if="venue.program === 'future5'">{{ t('venues.futureTrack5') }}</span>
-      </span>
-      <span class="venue-row__extra">
-        <slot />
-      </span>
-    </span>
-  </button>
+    </button>
+    <div class="venue-row__extra">
+      <slot />
+    </div>
+  </div>
 </template>
 
 <style scoped>
 .venue-row {
   width: 100%;
+}
+.venue-row:hover {
+  background: var(--color-bg-muted);
+}
+.venue-row__hit {
+  width: 100%;
   margin: 0;
-  padding: 0.85rem 1rem;
+  padding: 0.85rem 1rem 0.35rem;
   border: none;
   border-radius: 0;
   background: transparent;
@@ -81,10 +89,10 @@ const countryCode = computed(() => String(props.venue.country || '').toUpperCase
   font: inherit;
   cursor: pointer;
 }
-.venue-row:hover {
-  background: var(--color-bg-muted);
+.venue-row:not(:has(.venue-row__extra > *)) .venue-row__hit {
+  padding-bottom: 0.85rem;
 }
-.venue-row:focus-visible {
+.venue-row__hit:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: -2px;
 }
@@ -166,12 +174,14 @@ const countryCode = computed(() => String(props.venue.country || '').toUpperCase
   color: var(--color-text);
   background: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
 }
-.venue-row__extra:empty {
+.venue-row__extra:empty,
+.venue-row__extra:not(:has(*)) {
   display: none;
 }
 .venue-row__extra {
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem;
+  padding: 0 1rem 0.85rem calc(3.4rem + 2rem);
 }
 </style>

@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.9.1 — 2026-09-16
+
+Main panel corners match the sidebar.
+
+- `.glass-app__panel` uses `overflow: hidden` so `backdrop-filter` follows `border-radius` (scroll on `.glass-app__panel-body`)
+- `.glass-app__main` uses the same radius so it does not clip the panel shadow into a square
+
+## 1.9.0 — 2026-09-16
+
+SharePoint folder listing for FLOW / JOIN / HERO (`@hands-on/glass/documents`).
+
+- `DocumentsFolderList`: FLOW-style folder browsing, JOIN file/folder tiles
+- `DocumentViewerModal` / `DocumentOpeningOverlay` for in-app PDF and image
+- `sharePointHost` helpers (PDF/image/.url detection, file-type icons)
+- `VenueEventRow`: extra slot sits outside the row button so chips can be clicked
+
 ## 1.8.0 — 2026-09-16
 
 Shared venues catalog (`@hands-on/glass/venues`).

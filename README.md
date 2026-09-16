@@ -199,7 +199,9 @@ import SidebarNavItem from '@hands-on/glass/sidebar-nav-item'
     </SidebarFooter>
   </template>
   <div class="glass-app__panel">
-    <RouterView />
+    <div class="glass-app__panel-body">
+      <RouterView />
+    </div>
   </div>
 </AppShell>
 ```
@@ -243,6 +245,20 @@ On select, push an in-app route and render `PublicEventFrame` in the main panel 
 Grouping: Datum (default), Ort, or Programm — same accordion list in all three.
 
 Optional `#nav-pinned` sits above `#nav` and does not scroll with the rest of the list (e.g. a back item).
+
+## Documents folder list (FLOW / JOIN / HERO)
+
+Presentational SharePoint folder browser: breadcrumbs, enter a folder, JOIN-style tiles. The host app loads the current folder (FLOW/HERO Graph proxy) or maps a loaded tree onto the current path (JOIN) and opens files.
+
+```js
+import {
+  DocumentsFolderList,
+  DocumentViewerModal,
+  DocumentOpeningOverlay,
+} from '@hands-on/glass/documents'
+```
+
+`VenueEventRow` keeps `#default` / host `#event-extra` outside the row button so chips and links stay clickable.
 
 ## Was noch nicht enthalten ist (spätere Versionen)
 

@@ -886,13 +886,20 @@
   flex-direction: column;
   gap: 0.75rem;
   overflow: hidden;
+  /* Same radius as the panel so overflow:hidden clips its shadow/blur to a curve,
+     not a rectangle (which reads as square nubs on the rounded corners). */
+  border-radius: var(--radius-xl);
 }
 
 .glass-app__panel {
   flex: 1;
   min-height: 0;
   min-width: 0;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  /* Same clip as .glass-sidebar / .liquid-surface-inner: backdrop-filter only
+     follows border-radius with overflow:hidden. overflow:auto leaves square corners. */
+  overflow: hidden;
   padding: 1.25rem 1.5rem;
   border-radius: var(--radius-xl);
   border: 1px solid var(--liquid-border);
@@ -902,6 +909,18 @@
   box-shadow: var(--liquid-shadow);
 }
 
+.glass-app__panel-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+}
+
+/* Hosts that have not wrapped slot content in .glass-app__panel-body still scroll. */
+.glass-app__panel:not(:has(> .glass-app__panel-body)) {
+  overflow: auto;
+}
+
 .glass-app__panel.liquid-surface {
   /* liquid-surface already provides fill/border/shadow */
   background: var(--liquid-tile-bg);
@@ -909,6 +928,12 @@
 
 .glass-app__panel--embed {
   padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.glass-app__panel--embed > .glass-app__panel-body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1169,6 +1194,7 @@
 
   .glass-app__main {
     gap: 0;
+    border-radius: 0;
   }
 
   .glass-app__panel {
