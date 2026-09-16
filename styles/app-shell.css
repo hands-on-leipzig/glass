@@ -907,6 +907,13 @@
   background: var(--liquid-tile-bg);
 }
 
+.glass-app__panel--embed {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
 @media (max-width: 768px) {
   .glass-app {
     /*

@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.8.0 — 2026-09-16
+
+Shared venues catalog (`@hands-on/glass/venues`).
+
+- `VenuesCatalog`: map, country/offer filters, date / place / program views, detail modal
+- `PublicEventFrame` + `publicEventPathFromUrl` / `publicEventEmbedSrc` for in-shell public event pages
+- Host panel class `.glass-app__panel--embed` (no padding, iframe fills the main column)
+- Slots `#event-extra`, `#detail-extra`, `#detail-links` for host apps (JOIN schedule, HERO needs)
+- Host apps that import the catalog need `leaflet` and `vue-i18n`
+
 ## 1.7.4 — 2026-09-07
 
 Optional extra icon in the sidebar footer bar.

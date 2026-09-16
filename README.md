@@ -217,6 +217,31 @@ On ≤768px the shell goes edge-to-edge.
 
 Desktop (≥769px): collapse toggle on the brand row shrinks the sidebar to an icon rail (`--glass-sidebar-width-collapsed`). Prefer `SidebarNavItem` so collapsed icons get hover flyouts and expanded items can host submenus.
 
+## Venues catalog (JOIN / HERO / FLOW)
+
+Map + filtered list of public event locations. The host app must depend on `leaflet` and `vue-i18n` and provide the `venues.*` message keys used by JOIN.
+
+```js
+import { VenuesCatalog, PublicEventFrame, publicEventPathFromUrl } from '@hands-on/glass/venues'
+```
+
+```vue
+<VenuesCatalog
+  :venues="venues"
+  :selected-venue="selected"
+  @select="openPublicPage"
+  @close="selected = null"
+>
+  <template #event-extra="{ venue }">
+    <!-- optional row overlay, e.g. volunteer needs -->
+  </template>
+</VenuesCatalog>
+```
+
+On select, push an in-app route and render `PublicEventFrame` in the main panel (keep the host sidebar). Add `.glass-app__panel--embed` on that panel. `PublicEventFrame` appends `embed=1` to the public URL.
+
+Grouping: Datum (default), Ort, or Programm — same accordion list in all three.
+
 Optional `#nav-pinned` sits above `#nav` and does not scroll with the rest of the list (e.g. a back item).
 
 ## Was noch nicht enthalten ist (spätere Versionen)
