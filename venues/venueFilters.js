@@ -120,10 +120,11 @@ export function venueComments(venue, locale) {
   }
 }
 
+/** Keep in sync with styles/tokens.css --program-* (FLOW catalog hex). */
 export const OFFER_COLORS = {
-  future: '#1565c0',
-  exhibition: '#2e7d32',
-  competition: '#c62828',
+  future: '#51BFB4',
+  exhibition: '#00A651',
+  competition: '#ED1C24',
   other: '#64748b',
 }
 

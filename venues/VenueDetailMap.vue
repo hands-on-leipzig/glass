@@ -3,6 +3,7 @@ import { ref, watch, onMounted, onUnmounted, shallowRef, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { OFFER_COLORS } from './venueFilters.js'
 
 const props = defineProps({
   lat: { type: Number, default: null },
@@ -13,6 +14,7 @@ const props = defineProps({
   zip: { type: String, default: '' },
   /** ISO country code (de, at, ch) – used for countrycodes= filter */
   country: { type: String, default: '' },
+  pinColor: { type: String, default: OFFER_COLORS.other },
 })
 
 const { t } = useI18n()
@@ -77,7 +79,7 @@ function syncMarker(precise = false) {
     radius: 14,
     color: '#fff',
     weight: 2,
-    fillColor: '#1565c0',
+    fillColor: props.pinColor || OFFER_COLORS.other,
     fillOpacity: 0.92,
   })
   marker.addTo(layer)
@@ -187,6 +189,11 @@ watch(
     syncMarker(false)
     geocodeAddress()
   },
+)
+
+watch(
+  () => props.pinColor,
+  () => syncMarker(false),
 )
 
 onUnmounted(() => {

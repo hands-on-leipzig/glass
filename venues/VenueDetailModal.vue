@@ -104,6 +104,7 @@ useModalDismiss(() => props.show, {
                 :address="venue.address || ''"
                 :zip="venue.zip || ''"
                 :country="venue.country || ''"
+                :pin-color="OFFER_COLORS[programKey] || OFFER_COLORS.other"
               />
             </div>
             <aside class="venue-detail-modal-side">
