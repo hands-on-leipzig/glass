@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.11.0 — 2026-09-18
+
+SSO handshake for in-shell public event pages.
+
+- `PublicEventFrame` accepts `ssoToken` (string or getter) and `ssoReady`; it posts the Keycloak token into the FLOW iframe so Dateneingabe can skip OTP
+- `publicEventSso` helpers (`emailFromAccessToken`, request/response messages) shared with FLOW
+
 ## 1.10.0 — 2026-09-17
 
 Shared button styles.

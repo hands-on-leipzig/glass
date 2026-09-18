@@ -272,6 +272,18 @@ import { VenuesCatalog, PublicEventFrame, publicEventPathFromUrl } from '@hands-
 
 On select, push an in-app route and render `PublicEventFrame` in the main panel (keep the host sidebar). Add `.glass-app__panel--embed` on that panel. `PublicEventFrame` appends `embed=1` to the public URL.
 
+When the host is signed in, pass the Keycloak access token so the public Dateneingabe can use that email and skip OTP:
+
+```vue
+<PublicEventFrame
+  :src="src"
+  :title="title"
+  :sso-token="getToken"
+  :sso-ready="authenticated"
+  @back="goBack"
+/>
+```
+
 Grouping: Datum (default), Ort, or Programm — same accordion list in all three.
 
 Optional `#nav-pinned` sits above `#nav` and does not scroll with the rest of the list (e.g. a back item).

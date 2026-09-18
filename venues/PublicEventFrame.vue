@@ -1,19 +1,68 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { publicEventEmbedSrc } from './publicEventUrl.js'
+import {
+  isPublicEventSsoRequest,
+  publicEventSsoMessage,
+  resolveSsoToken,
+} from './publicEventSso.js'
 
 const props = defineProps({
   src: { type: String, default: '' },
   title: { type: String, default: '' },
+  /** Keycloak access token, or a getter so JOIN/HERO can pass a fresh token. */
+  ssoToken: { type: [String, Function], default: '' },
+  /** Flip true when SSO is ready (HERO silent check finishes after the iframe loads). */
+  ssoReady: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['back'])
 
 const { t } = useI18n()
+const iframeRef = ref(null)
 
 const iframeSrc = computed(() => publicEventEmbedSrc(props.src))
 const frameTitle = computed(() => props.title || t('venues.publicFrameLabel'))
+
+function iframeOrigin() {
+  try {
+    return new URL(iframeSrc.value).origin
+  } catch {
+    return ''
+  }
+}
+
+function postSsoToIframe(targetOrigin) {
+  const win = iframeRef.value?.contentWindow
+  const token = resolveSsoToken(props.ssoToken)
+  if (!win || !token) return
+  const origin = targetOrigin || iframeOrigin()
+  if (!origin) return
+  win.postMessage(publicEventSsoMessage(token), origin)
+}
+
+function onMessage(event) {
+  if (event.source !== iframeRef.value?.contentWindow) return
+  const origin = iframeOrigin()
+  if (origin && event.origin !== origin) return
+  if (!isPublicEventSsoRequest(event.data)) return
+  postSsoToIframe(event.origin)
+}
+
+function onIframeLoad() {
+  postSsoToIframe()
+}
+
+watch(
+  () => props.ssoReady,
+  (ready) => {
+    if (ready) postSsoToIframe()
+  },
+)
+
+onMounted(() => window.addEventListener('message', onMessage))
+onUnmounted(() => window.removeEventListener('message', onMessage))
 </script>
 
 <template>
@@ -27,10 +76,12 @@ const frameTitle = computed(() => props.title || t('venues.publicFrameLabel'))
     </header>
     <iframe
       v-if="iframeSrc"
+      ref="iframeRef"
       class="public-event-frame__iframe"
       :src="iframeSrc"
       :title="frameTitle"
       referrerpolicy="no-referrer-when-downgrade"
+      @load="onIframeLoad"
     />
     <p v-else class="public-event-frame__empty">
       {{ t('venues.noPublicPage') }}
