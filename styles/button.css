@@ -1,0 +1,415 @@
+/**
+ * Shared buttons for JOIN / FLOW / HERO.
+ *
+ * Accent / warn / danger = same CTA geometry, different fill.
+ * Secondary = default glass chrome. Text = quiet, no fill.
+ * Press-in: sink 2px, no scale. Hover stays in plane.
+ */
+
+.glass-btn-accent,
+.glass-btn-secondary,
+.glass-btn-text,
+.glass-btn-warn,
+.glass-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-family: inherit;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transform: translateY(0);
+}
+
+.glass-btn-accent,
+.glass-btn-warn,
+.glass-btn-danger {
+  padding: 0.9rem 1.35rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius);
+  border: 1px solid color-mix(in srgb, #fff 28%, var(--_fill));
+  color: var(--_on);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, #fff 14%, var(--_fill)) 0%,
+    var(--_fill) 55%,
+    var(--_fill-deep) 100%
+  );
+  box-shadow:
+    inset 0 1px 2px rgba(15, 23, 42, 0.12),
+    0 1px 2px rgba(15, 23, 42, 0.08);
+  transition:
+    background 0.08s ease-out,
+    border-color 0.08s ease-out,
+    box-shadow 0.04s ease-out,
+    transform 0.04s ease-out;
+}
+
+.glass-btn-accent {
+  --_fill: var(--color-accent);
+  --_fill-deep: var(--color-accent-hover);
+  --_on: var(--color-on-accent);
+}
+
+.glass-btn-warn {
+  --_fill: var(--color-warn);
+  --_fill-deep: var(--color-warn-hover);
+  --_on: var(--color-on-warn);
+}
+
+.glass-btn-danger {
+  --_fill: var(--color-danger);
+  --_fill-deep: var(--color-danger-hover);
+  --_on: var(--color-on-danger);
+}
+
+.glass-btn-accent:hover:not(:disabled),
+.glass-btn-warn:hover:not(:disabled),
+.glass-btn-danger:hover:not(:disabled) {
+  transform: none;
+  color: var(--_on);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, #fff 8%, var(--_fill-deep)) 0%,
+    var(--_fill-deep) 100%
+  );
+  box-shadow:
+    inset 0 1px 2px rgba(15, 23, 42, 0.14),
+    0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+.glass-btn-accent:active:not(:disabled),
+.glass-btn-accent:hover:active:not(:disabled),
+.glass-btn-warn:active:not(:disabled),
+.glass-btn-warn:hover:active:not(:disabled),
+.glass-btn-danger:active:not(:disabled),
+.glass-btn-danger:hover:active:not(:disabled) {
+  transform: translateY(2px);
+  color: var(--_on);
+  background: linear-gradient(
+    135deg,
+    var(--_fill-deep) 0%,
+    color-mix(in srgb, #000 14%, var(--_fill-deep)) 100%
+  );
+  border-color: color-mix(in srgb, #000 18%, var(--_fill-deep));
+  box-shadow:
+    inset 0 4px 10px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(0, 0, 0, 0.22);
+}
+
+.glass-btn-secondary {
+  padding: 0.5rem 1rem;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border-radius: var(--radius);
+  border: 1px solid var(--liquid-border);
+  background: var(--liquid-tile-bg);
+  color: var(--color-text);
+  box-shadow:
+    0 6px 14px rgba(15, 23, 42, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.04);
+  transition:
+    background 0.08s ease-out,
+    box-shadow 0.04s ease-out,
+    transform 0.04s ease-out;
+}
+
+.glass-btn-secondary:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  box-shadow:
+    0 8px 18px rgba(15, 23, 42, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.05);
+}
+
+.glass-btn-secondary:active:not(:disabled),
+.glass-btn-secondary:hover:active:not(:disabled) {
+  transform: translateY(2px);
+  background: color-mix(in srgb, var(--color-bg-muted) 72%, var(--color-text-subtle));
+  box-shadow:
+    0 0 0 transparent,
+    0 1px 1px rgba(15, 23, 42, 0.06),
+    inset 0 3px 8px rgba(15, 23, 42, 0.16),
+    inset 0 1px 0 rgba(15, 23, 42, 0.1);
+}
+
+.glass-btn-text {
+  padding: 0.5rem 0.65rem;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--color-text-muted);
+  box-shadow: none;
+  transition:
+    color 0.08s ease-out,
+    background 0.08s ease-out,
+    transform 0.04s ease-out,
+    box-shadow 0.04s ease-out;
+}
+
+.glass-btn-text:hover:not(:disabled) {
+  color: var(--color-text);
+  background: var(--color-bg-hover);
+}
+
+.glass-btn-text:active:not(:disabled),
+.glass-btn-text:hover:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 3px 7px rgba(15, 23, 42, 0.12),
+    inset 0 1px 0 rgba(15, 23, 42, 0.08);
+}
+
+.glass-btn-accent.glass-btn--sm,
+.glass-btn-warn.glass-btn--sm,
+.glass-btn-danger.glass-btn--sm {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8125rem;
+}
+
+.glass-btn-secondary.glass-btn--sm,
+.glass-btn-text.glass-btn--sm {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.glass-btn-accent.glass-btn--block,
+.glass-btn-secondary.glass-btn--block,
+.glass-btn-text.glass-btn--block,
+.glass-btn-warn.glass-btn--block,
+.glass-btn-danger.glass-btn--block {
+  width: 100%;
+}
+
+.glass-btn-accent:disabled,
+.glass-btn-secondary:disabled,
+.glass-btn-text:disabled,
+.glass-btn-warn:disabled,
+.glass-btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  filter: none;
+}
+
+.glass-btn-accent:focus-visible,
+.glass-btn-secondary:focus-visible,
+.glass-btn-text:focus-visible,
+.glass-btn-icon:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  outline-offset: 2px;
+}
+
+.glass-btn-warn:focus-visible,
+.glass-btn-danger:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--_fill) 70%, transparent);
+  outline-offset: 2px;
+}
+
+.glass-btn-accent .bi,
+.glass-btn-secondary .bi,
+.glass-btn-text .bi,
+.glass-btn-warn .bi,
+.glass-btn-danger .bi {
+  font-size: 1.05em;
+  line-height: 1;
+}
+
+/* Borderless icon — FLOW vol-icon-btn / icon-danger-btn */
+.glass-btn-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1.15rem;
+  line-height: 1;
+  transform: translateY(0);
+  transition:
+    color 0.08s ease-out,
+    background 0.08s ease-out,
+    box-shadow 0.04s ease-out,
+    transform 0.04s ease-out;
+}
+
+.glass-btn-icon:hover:not(:disabled) {
+  transform: none;
+  color: var(--color-accent);
+  background: var(--color-accent-muted);
+}
+
+.glass-btn-icon--danger:hover:not(:disabled) {
+  color: var(--color-danger-hover);
+  background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+}
+
+.glass-btn-icon:active:not(:disabled),
+.glass-btn-icon:hover:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 3px 7px rgba(15, 23, 42, 0.18),
+    inset 0 1px 0 rgba(15, 23, 42, 0.1);
+}
+
+.glass-btn-icon--danger:active:not(:disabled),
+.glass-btn-icon--danger:hover:active:not(:disabled) {
+  box-shadow:
+    inset 0 3px 7px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(0, 0, 0, 0.14);
+}
+
+.glass-btn-icon:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.glass-btn-icon .bi {
+  font-size: 1.05rem;
+  line-height: 1;
+  display: block;
+}
+
+/* Venues view chips — one of the three shared toggle looks */
+.venues-view-btn {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--liquid-border);
+  border-radius: var(--radius-full);
+  background: var(--liquid-tile-bg);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transform: translateY(0);
+  transition:
+    background 0.08s ease-out,
+    color 0.08s ease-out,
+    border-color 0.08s ease-out,
+    box-shadow 0.04s ease-out,
+    transform 0.04s ease-out;
+}
+
+.venues-view-btn:hover:not(:disabled):not(.is-active):not([aria-pressed='true']) {
+  background: var(--color-bg-hover);
+  border-color: color-mix(in srgb, var(--liquid-border) 55%, var(--color-accent));
+  color: var(--color-text);
+}
+
+.venues-view-btn.is-active,
+.venues-view-btn[aria-pressed='true'] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.venues-view-btn.is-active:hover,
+.venues-view-btn[aria-pressed='true']:hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+  color: var(--color-on-accent);
+}
+
+.venues-view-btn:active:not(:disabled),
+.venues-view-btn:hover:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 3px 7px rgba(15, 23, 42, 0.16),
+    inset 0 1px 0 rgba(15, 23, 42, 0.1);
+}
+
+.venues-view-btn.is-active:active:not(:disabled),
+.venues-view-btn[aria-pressed='true']:active:not(:disabled) {
+  box-shadow:
+    inset 0 3px 7px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(0, 0, 0, 0.16);
+}
+
+.venues-view-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+html[data-theme='dark'] .glass-btn-accent,
+html[data-theme='dark'] .glass-btn-warn,
+html[data-theme='dark'] .glass-btn-danger {
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.28),
+    0 1px 2px rgba(0, 0, 0, 0.28);
+}
+
+html[data-theme='dark'] .glass-btn-accent:hover:not(:disabled),
+html[data-theme='dark'] .glass-btn-warn:hover:not(:disabled),
+html[data-theme='dark'] .glass-btn-danger:hover:not(:disabled) {
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.32),
+    0 1px 2px rgba(0, 0, 0, 0.28);
+}
+
+html[data-theme='dark'] .glass-btn-accent:active:not(:disabled),
+html[data-theme='dark'] .glass-btn-accent:hover:active:not(:disabled),
+html[data-theme='dark'] .glass-btn-warn:active:not(:disabled),
+html[data-theme='dark'] .glass-btn-warn:hover:active:not(:disabled),
+html[data-theme='dark'] .glass-btn-danger:active:not(:disabled),
+html[data-theme='dark'] .glass-btn-danger:hover:active:not(:disabled) {
+  box-shadow:
+    inset 0 4px 12px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+html[data-theme='dark'] .glass-btn-secondary {
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+}
+
+html[data-theme='dark'] .glass-btn-icon--danger:hover:not(:disabled) {
+  color: #fca5a5;
+  background: color-mix(in srgb, var(--color-danger) 22%, transparent);
+}
+
+html[data-theme='dark'] .glass-btn-icon:active:not(:disabled),
+html[data-theme='dark'] .glass-btn-icon:hover:active:not(:disabled) {
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(0, 0, 0, 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-btn-accent,
+  .glass-btn-secondary,
+  .glass-btn-text,
+  .glass-btn-warn,
+  .glass-btn-danger,
+  .glass-btn-icon,
+  .venues-view-btn {
+    transition: background 0.08s ease-out, color 0.08s ease-out, box-shadow 0.04s ease-out;
+  }
+
+  .glass-btn-accent:hover:not(:disabled),
+  .glass-btn-accent:active:not(:disabled),
+  .glass-btn-warn:hover:not(:disabled),
+  .glass-btn-warn:active:not(:disabled),
+  .glass-btn-danger:hover:not(:disabled),
+  .glass-btn-danger:active:not(:disabled),
+  .glass-btn-secondary:active:not(:disabled),
+  .glass-btn-text:active:not(:disabled),
+  .glass-btn-icon:active:not(:disabled),
+  .venues-view-btn:active:not(:disabled) {
+    transform: none;
+  }
+}

@@ -99,6 +99,13 @@
   --color-accent-soft: rgba(255, 122, 0, 0.16);
   --color-on-accent: #ffffff;
 
+  --color-warn: #ca8a04;
+  --color-warn-hover: #a16207;
+  --color-on-warn: #ffffff;
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
+  --color-on-danger: #ffffff;
+
   --color-sidebar: transparent;
   --color-sidebar-border: rgba(255, 255, 255, 0.42);
 
@@ -185,6 +192,13 @@ html[data-theme='dark'] {
   --color-accent-muted: rgba(255, 159, 77, 0.22);
   --color-accent-soft: rgba(255, 159, 77, 0.14);
   --color-on-accent: #1c1917;
+
+  --color-warn: #fbbf24;
+  --color-warn-hover: #f59e0b;
+  --color-on-warn: #1c1917;
+  --color-danger: #f87171;
+  --color-danger-hover: #ef4444;
+  --color-on-danger: #1c1917;
 
   --color-sidebar: transparent;
   --color-sidebar-border: rgba(255, 255, 255, 0.12);

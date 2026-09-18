@@ -1,0 +1,33 @@
+.story-chrome {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.25rem;
+  border-bottom: 1px solid var(--liquid-border);
+  background: var(--liquid-tile-bg-strong);
+  backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
+  -webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.story-chrome a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.story-chrome a:hover {
+  color: var(--color-text);
+}
+
+.story-chrome__sep {
+  color: var(--color-text-subtle);
+}
+
+.story-chrome__current {
+  color: var(--color-text);
+}

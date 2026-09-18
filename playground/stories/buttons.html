@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Buttons — Glass Stories</title>
+  <script type="module">
+    import '../../styles/tokens.css'
+    import '../../styles/button.css'
+    import '../../styles/sidebar-footer.css'
+    import '../../styles/page-tabs.css'
+    import 'bootstrap-icons/font/bootstrap-icons.css'
+    import '../src/story-chrome.css'
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      min-height: 100vh;
+      color: var(--color-text);
+      background-color: var(--orbit-base);
+      background-image: var(--orbit-glow), var(--orbit-gradient);
+      background-attachment: fixed;
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      line-height: 1.5;
+    }
+    button { font-family: inherit; -webkit-tap-highlight-color: transparent; }
+    a { color: var(--color-accent); }
+
+    .page { max-width: 72rem; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+    .hero {
+      padding: 1.5rem 1.6rem 1.35rem;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--liquid-border);
+      background: var(--liquid-tile-bg-strong);
+      backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
+      -webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
+      box-shadow: var(--liquid-shadow);
+      margin-bottom: 1.25rem;
+    }
+    .hero h1 { margin: 0 0 0.4rem; font-size: var(--text-3xl); font-weight: 700; letter-spacing: -0.03em; }
+    .hero p { margin: 0 0 0.85rem; color: var(--color-text-muted); max-width: 46rem; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+    .stat {
+      display: inline-flex; align-items: baseline; gap: 0.35rem;
+      padding: 0.35rem 0.7rem; border-radius: var(--radius-full);
+      background: var(--color-bg-muted); border: 1px solid var(--color-border);
+      font-size: 0.85rem;
+    }
+    .stat b { font-weight: 700; font-size: 1.05rem; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-left: auto; }
+    .theme-btn, .filter-btn {
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-muted);
+      color: var(--color-text);
+      border-radius: var(--radius-full);
+      padding: 0.35rem 0.75rem;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+    .filter-btn:hover {
+      background: var(--color-bg-hover);
+    }
+    .filter-btn.is-on { background: var(--color-accent); color: var(--color-on-accent); border-color: var(--color-accent); }
+    .filter-btn.is-on:hover,
+    .view-switch button.is-on:hover {
+      background: var(--color-accent-hover);
+      border-color: var(--color-accent-hover);
+      color: var(--color-on-accent);
+    }
+    .view-switch {
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+      width: 100%; margin-top: 0.75rem;
+    }
+    .view-switch button {
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-muted);
+      color: var(--color-text);
+      border-radius: var(--radius);
+      padding: 0.45rem 0.85rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .view-switch button.is-on {
+      background: var(--color-accent);
+      color: var(--color-on-accent);
+      border-color: var(--color-accent);
+    }
+    .use-list { display: flex; flex-direction: column; gap: 0.65rem; width: 100%; }
+    .use-row {
+      display: grid;
+      grid-template-columns: minmax(9rem, 14rem) 1fr;
+      gap: 0.65rem 1rem;
+      align-items: center;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .use-row:last-child { border-bottom: none; }
+    .use-row > div:last-child {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .use-from { font-size: 0.78rem; color: var(--color-text-subtle); }
+    .use-from code { font-size: 0.72rem; }
+    @media (max-width: 640px) {
+      .use-row { grid-template-columns: 1fr; gap: 0.25rem; }
+    }
+
+    nav.toc {
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+      margin: 0 0 1.5rem; padding: 0.75rem 0.9rem;
+      border-radius: var(--radius-lg);
+      background: var(--liquid-bg-subtle);
+      border: 1px solid var(--liquid-border-soft);
+    }
+    nav.toc a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.2rem 0.45rem;
+      border-radius: 8px;
+    }
+    nav.toc a:hover { color: var(--color-text); background: var(--color-bg-hover); }
+
+    .section { margin: 0 0 2.25rem; }
+    .section h2 { margin: 0 0 0.35rem; font-size: var(--text-xl); font-weight: 700; }
+    .section > p { margin: 0 0 1rem; color: var(--color-text-muted); font-size: 0.95rem; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(17.5rem, 1fr)); gap: 0.85rem; }
+    .grid.wide { grid-template-columns: 1fr; }
+    .card {
+      padding: 1rem 1.05rem 1.1rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--liquid-border-soft);
+      background: var(--liquid-tile-bg-inner);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    .card.span-2 { grid-column: 1 / -1; }
+    .card h3 { margin: 0 0 0.2rem; font-size: 0.95rem; font-weight: 700; }
+    .card .apps { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0 0 0.75rem; }
+    .badge {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+      padding: 0.12rem 0.4rem; border-radius: 999px;
+      background: var(--color-accent-soft); color: var(--color-accent);
+    }
+    .badge.glass { background: color-mix(in srgb, #2563eb 16%, transparent); color: #1d4ed8; }
+    html[data-theme='dark'] .badge.glass { color: #93c5fd; }
+    .badge.note { background: color-mix(in srgb, #ca8a04 18%, transparent); color: #a16207; }
+    .preview {
+      min-height: 4.25rem;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
+      padding: 0.65rem;
+      border-radius: var(--radius);
+      background: color-mix(in srgb, #fff 35%, transparent);
+      border: 1px dashed var(--color-border);
+    }
+    html[data-theme='dark'] .preview { background: rgba(255,255,255,0.04); }
+    .preview.darkish { background: #111827; border-color: #374151; }
+    .meta { margin: 0.65rem 0 0; font-size: 0.78rem; color: var(--color-text-subtle); }
+    .meta code { font-size: 0.74rem; color: var(--color-text-muted); }
+    .dup { margin-top: 0.45rem; font-size: 0.78rem; color: var(--color-text-muted); }
+
+    /* ========== FLOW glass-btn ========== */
+    .inv-accent {
+      font-size: 0.75rem; font-weight: 600; padding: 0.375rem 0.75rem;
+      border-radius: var(--radius);
+      border: 1px solid color-mix(in srgb, #fff 35%, var(--color-accent));
+      background: linear-gradient(180deg, color-mix(in srgb, #fff 18%, var(--color-accent)) 0%, var(--color-accent) 55%, var(--color-accent-hover) 100%);
+      color: var(--color-on-accent); cursor: pointer;
+      box-shadow: 0 8px 18px rgba(255, 122, 0, 0.28), 0 2px 6px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+    .inv-accent.lg { font-size: 1rem; padding: 0.85rem 1rem; }
+    .inv-secondary {
+      padding: 0.5rem 1rem; font-size: var(--text-sm); font-weight: 500;
+      border-radius: var(--radius); border: 1px solid var(--liquid-border);
+      background: var(--liquid-tile-bg); color: var(--color-text); cursor: pointer;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(15, 23, 42, 0.04);
+    }
+    .icon-danger-btn, .vol-icon-btn {
+      width: 2.25rem; height: 2.25rem; display: inline-flex; align-items: center; justify-content: center;
+      border: none; border-radius: var(--radius); background: transparent; color: var(--color-text-muted); cursor: pointer;
+    }
+    .icon-danger-btn:hover { color: #b91c1c; background: color-mix(in srgb, #dc2626 10%, transparent); }
+    .vol-icon-btn:hover { color: var(--color-accent); background: var(--color-accent-muted); }
+    .ci-btn-danger {
+      padding: 0.5rem 1rem; font-size: var(--text-sm); font-weight: 600; border-radius: var(--radius);
+      border: 1px solid color-mix(in srgb, #dc2626 55%, var(--color-border-strong));
+      background: color-mix(in srgb, #dc2626 12%, var(--color-bg-muted));
+      color: color-mix(in srgb, #dc2626 75%, var(--color-text)); cursor: pointer;
+    }
+    .screen-help-btn {
+      display: inline-flex; border: 0; background: transparent; color: var(--color-accent);
+      font-size: 1.35rem; cursor: pointer; padding: 0;
+    }
+    .round-toggle {
+      min-height: 3rem; border-radius: var(--radius); padding: 0.75rem 1rem;
+      font-size: 0.875rem; font-weight: 600; cursor: pointer;
+    }
+    .round-toggle--on {
+      border: 1px solid color-mix(in srgb, #000 12%, #16a34a); color: #fff;
+      background: linear-gradient(180deg, color-mix(in srgb, #fff 14%, #16a34a) 0%, #16a34a 55%, #15803d 100%);
+    }
+    .glass-choice {
+      padding: 0.45rem 0.8rem; border-radius: var(--radius);
+      border: 1px solid color-mix(in srgb, var(--color-border-strong) 65%, var(--color-border));
+      background: color-mix(in srgb, var(--color-bg-elevated, #fff) 70%, transparent);
+      font-size: 0.875rem; font-weight: 500; cursor: pointer;
+    }
+    .glass-choice--active {
+      border-color: color-mix(in srgb, var(--color-text) 55%, var(--color-border));
+      background: var(--color-bg-muted);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text) 12%, transparent);
+    }
+    .event-modal__chip {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.35rem 0.65rem 0.35rem 0.55rem; border-radius: 999px;
+      border: 1px solid color-mix(in srgb, var(--color-border-strong) 40%, transparent);
+      background: #fff; color: var(--color-text-muted); font-size: 0.78rem; font-weight: 650; cursor: pointer;
+    }
+    html[data-theme='dark'] .event-modal__chip { background: var(--color-bg-elevated); }
+    .event-modal__chip.is-active {
+      color: #9a3412; background: color-mix(in srgb, var(--color-accent) 14%, #fff);
+      border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+    }
+    .swap-btn { padding: 0 0.15rem; border: none; background: transparent; color: var(--color-text-muted); cursor: pointer; }
+    .legacy-blue { padding: 0.5rem 0.75rem; border: 0; border-radius: 4px; background: #3b82f6; color: #fff; cursor: pointer; }
+    .legacy-gray { padding: 0.5rem 0.75rem; border: 0; border-radius: 4px; background: #e5e7eb; color: #111827; cursor: pointer; }
+    .legacy-red { padding: 0.45rem 0.85rem; border: 0; border-radius: 4px; background: #dc2626; color: #fff; cursor: pointer; }
+    .legacy-red-soft { width: 2.5rem; height: 2.5rem; border: 0; border-radius: 4px; background: #fecaca; cursor: pointer; }
+    .slide-circle {
+      width: 2.5rem; height: 2.5rem; border: 0; border-radius: 999px; background: #fff;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.12); cursor: pointer; color: #64748b;
+    }
+    .ps-role {
+      width: 100%; min-height: 3.25rem; display: flex; align-items: center; gap: 0.7rem;
+      padding: 0.7rem 1rem; text-align: left; color: #111827; background: #fff;
+      border: 1px solid #e5e7eb; border-radius: 0.75rem; cursor: pointer;
+    }
+    .ps-role-accent { width: 3px; align-self: stretch; border-radius: 999px; background: var(--color-accent); }
+    .ps-app {
+      width: 2.35rem; height: 2.35rem; border: none; border-radius: 0.65rem;
+      background: transparent; color: #6b7280; font-size: 1.05rem; cursor: pointer;
+    }
+    .ps-chip-action {
+      display: inline-flex; align-items: center; min-height: 2.4rem; padding: 0.35rem 0.65rem;
+      border-radius: 0.65rem; background: #fff7ed; color: #9a3412; font-weight: 700; font-size: 0.85rem;
+      border: 0; cursor: pointer;
+    }
+    .ps-text { color: #c2410c; font-weight: 700; font-size: 0.9rem; background: transparent; border: 0; cursor: pointer; }
+
+    /* ========== JOIN / HERO btn ========== */
+    .join-btn {
+      padding: 1rem 1.5rem; min-height: var(--touch-lg); border-radius: var(--radius-lg);
+      font-size: var(--text-lg); font-weight: 600; cursor: pointer; border: none;
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    }
+    .join-btn-primary { background: var(--color-accent); color: white; box-shadow: 0 4px 14px rgba(255, 122, 0, 0.35); }
+    .join-btn-secondary { background: var(--color-bg-muted); color: var(--color-text); }
+    .hero-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+      padding: 0.7rem 1.15rem; min-height: var(--touch); border-radius: var(--radius-lg);
+      font-weight: 600; font-size: var(--text-base); border: none; cursor: pointer;
+    }
+    .hero-btn-primary { background: var(--color-accent); color: white; box-shadow: 0 4px 14px rgba(255, 122, 0, 0.35); }
+    .hero-btn-secondary { background: var(--color-bg-muted); color: var(--color-text); }
+    .hero-btn-sm { padding: 0.4rem 0.75rem; font-size: var(--text-sm); }
+    .venues-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1rem;
+      border-radius: var(--radius); font-weight: 600; border: none; cursor: pointer; font-size: var(--text-sm);
+    }
+    .venues-btn-primary { background: var(--color-accent); color: #fff; }
+    .venues-btn-secondary { background: var(--color-bg-muted); color: var(--color-text); }
+    .detail-btn {
+      font-size: var(--text-sm); padding: 0.35rem 0.75rem; border-radius: var(--radius);
+      border: 1px solid var(--color-border); background: var(--color-bg); cursor: pointer; color: var(--color-text);
+    }
+    .detail-btn-primary { background: var(--color-accent); color: var(--color-on-accent); border-color: var(--color-accent); font-weight: 600; }
+    .detail-btn-ghost { padding: 0.25rem; border: none; background: transparent; color: var(--color-text-muted); }
+    .admin-btn-secondary {
+      display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.5rem 0.85rem;
+      border-radius: var(--radius); border: 1px solid var(--color-border); background: var(--color-bg);
+      color: var(--color-text); font-weight: 600; cursor: pointer;
+    }
+    .tqem-btn { padding: 0.5rem 1rem; font-weight: 600; border-radius: var(--radius); cursor: pointer; font-size: 0.9rem; border: 1px solid transparent; }
+    .tqem-btn-ghost { background: transparent; border-color: var(--color-border); color: var(--color-text); }
+    .tqem-btn-primary { background: var(--color-accent); color: #fff; }
+    .sidebar-login-btn {
+      border: 1px solid var(--color-border); background: var(--color-accent-soft); color: var(--color-accent);
+      font-weight: 700; cursor: pointer; font-size: var(--text-sm); border-radius: var(--radius);
+      padding: 0.55rem 0.85rem; min-height: var(--touch);
+    }
+    .icon-btn {
+      width: var(--touch-lg); height: var(--touch-lg); display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--liquid-border-soft); border-radius: var(--radius-lg);
+      background: var(--liquid-bg-subtle); color: var(--color-text-muted); cursor: pointer; font-size: 1.25rem;
+    }
+    .icon-btn.active { color: var(--color-accent); background: var(--color-accent-soft); }
+    .pill-btn {
+      padding: 0.4rem 0.75rem; min-height: var(--touch); font-size: var(--text-sm); font-weight: 600;
+      border: 1px solid var(--liquid-border-soft); border-radius: var(--radius-full);
+      background: var(--liquid-bg-subtle); color: var(--color-text-muted); cursor: pointer;
+    }
+    .pill-btn.active { color: white; background: var(--color-accent); border-color: var(--color-accent); }
+    .yes-no-btn {
+      padding: 0.65rem 1rem; min-height: var(--touch); border: 2px solid var(--color-border);
+      border-radius: var(--radius); background: var(--color-bg-elevated); color: var(--color-text);
+      font-weight: 500; cursor: pointer;
+    }
+    .yes-no-btn.active {
+      border-color: var(--color-accent); background: var(--color-accent-soft);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-accent) 25%, transparent);
+    }
+    .header-install-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem; min-height: var(--touch);
+      padding: 0.45rem 0.8rem; border-radius: var(--radius-full); border: 1px solid var(--color-border);
+      background: var(--color-bg); color: var(--color-text); font-weight: 600; font-size: var(--text-sm); cursor: pointer;
+    }
+    .wizard-header-cluster {
+      display: inline-flex; align-items: stretch; border: 1px solid var(--liquid-border);
+      border-radius: 999px; background: var(--liquid-tile-bg-inner); overflow: hidden;
+    }
+    .wizard-header-btn {
+      border: none; background: transparent; color: var(--color-text-muted); cursor: pointer;
+      font-size: 1.05rem; font-weight: 500; display: inline-flex; align-items: center; justify-content: center;
+      gap: 0.45rem; min-height: 2.85rem;
+    }
+    .wizard-header-btn--close { width: 2.85rem; border-right: 1px solid var(--liquid-border); }
+    .wizard-header-btn--back { padding: 0 1.1rem 0 0.95rem; border-right: 1px solid var(--liquid-border); }
+    .wizard-header-btn--primary { padding: 0 1.35rem; background: var(--color-accent); color: #fff; font-weight: 600; }
+    .wizard-option {
+      padding: 1.4rem 1.5rem; font-size: 1.05rem; font-weight: 500; color: var(--color-text);
+      background: var(--liquid-tile-bg); border: 1px solid var(--liquid-border); border-radius: var(--radius-xl);
+      cursor: pointer; min-height: 5.5rem; width: 100%;
+      box-shadow: var(--shadow-sm), var(--liquid-shadow-inset);
+    }
+    .wizard-option.active {
+      border-color: color-mix(in srgb, var(--color-accent) 48%, var(--liquid-border));
+      background: var(--liquid-tile-bg-strong);
+    }
+    .wizard-btn-add-participant {
+      padding: 0.6rem 1rem; border: 1px dashed var(--color-border); border-radius: var(--radius);
+      background: transparent; color: var(--color-text-muted); cursor: pointer;
+    }
+    .wizard-counter {
+      display: inline-flex; align-items: center; gap: 1rem; padding: 0.6rem 1rem; border-radius: 999px;
+      background: var(--liquid-tile-bg); border: 1px solid var(--liquid-border);
+    }
+    .wizard-counter-btn {
+      width: 2.5rem; height: 2.5rem; border-radius: 999px; border: none;
+      background: var(--color-accent-soft); color: var(--color-accent); font-size: 1.25rem; font-weight: 700; cursor: pointer;
+    }
+    .role-chip {
+      display: inline-flex; align-items: center; padding: 0.2rem 0.55rem; border: none;
+      border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600;
+      background: var(--color-accent-soft); color: var(--color-accent); cursor: pointer;
+    }
+    .ghost-undefined {
+      padding: 0.2rem 0.5rem; min-height: 2rem; cursor: pointer;
+    }
+    .dashboard-cta {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.9rem 1.35rem; font-size: 1rem; font-weight: 600; color: white;
+      background: linear-gradient(135deg, #2563eb, #0ea5e9); border: none;
+      border-radius: var(--radius); cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+    .dashboard-cta--disabled, .dashboard-cta:disabled {
+      cursor: not-allowed; opacity: 0.55; box-shadow: none; filter: grayscale(0.25);
+    }
+    .dashboard-cta-coach {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 0.75rem 1.15rem; font-size: 0.9375rem; font-weight: 600;
+      color: var(--color-accent); background: var(--color-bg);
+      border: 2px solid var(--color-border); border-radius: var(--radius); cursor: pointer;
+    }
+    .wizard-back-link {
+      padding: 0.5rem 0; font-size: 0.95rem; color: var(--color-text-muted);
+      background: none; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 0.35rem;
+    }
+    .tekla-point-action {
+      padding: 0; border: 0; background: none; color: var(--color-accent);
+      font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline;
+    }
+
+    .preview .glass-app__menu-toggle,
+    .use-row .glass-app__menu-toggle {
+      position: static;
+      display: inline-flex;
+    }
+    .glass-app__menu-toggle {
+      width: var(--touch-lg); height: var(--touch-lg); padding: 0;
+      border: 1px solid var(--liquid-border); border-radius: var(--radius-lg);
+      background: var(--liquid-tile-bg); color: var(--color-text); cursor: pointer; font-size: 1.35rem;
+      box-shadow: var(--liquid-shadow);
+    }
+    .glass-app__mobile-tab {
+      display: inline-flex; flex-direction: column; align-items: center; gap: 0.15rem;
+      padding: 0.45rem 0.85rem; border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--color-text-muted); font-size: 0.65rem; font-weight: 650; cursor: pointer;
+    }
+    .glass-app__mobile-tab .bi { font-size: 1.35rem; }
+    .glass-app__mobile-tab.is-on { color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 12%, transparent); }
+    .glass-page-tabs { display: flex; align-items: flex-end; gap: 0.28rem; position: relative; padding-bottom: 2px; }
+    .glass-page-tabs::after {
+      content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--color-accent);
+    }
+    .glass-page-tab {
+      position: relative; z-index: 1; display: inline-flex; align-items: center; min-height: 2.45rem;
+      padding: 0.55rem 1.2rem; border: 2px solid color-mix(in srgb, var(--color-border-strong) 55%, transparent);
+      border-bottom: none; border-radius: 12px 12px 0 0; background: #dfe4ec; color: var(--color-text-muted);
+      font-weight: 700; font-size: var(--text-sm); cursor: pointer; transform: translateY(3px);
+    }
+    .glass-page-tab--active {
+      background: #fff; color: var(--color-text); border-color: var(--color-accent); transform: none;
+    }
+    html[data-theme='dark'] .glass-page-tab { background: #2a3340; }
+    html[data-theme='dark'] .glass-page-tab--active { background: #1c2430; }
+
+    .classes {
+      width: 100%; border-collapse: collapse; font-size: 0.82rem;
+    }
+    .classes th, .classes td { text-align: left; padding: 0.45rem 0.5rem; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+    .classes th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-subtle); }
+    .classes code { font-size: 0.75rem; }
+
+    [hidden] { display: none !important; }
+
+    /*
+     * Orange fill + white label must stay a pair on hover (Heute-Kopien).
+     * Glass-Standard kommt aus styles/button.css + sidebar-footer.css.
+     */
+    .pill-btn.active:hover,
+    .wizard-header-btn--primary:hover,
+    .join-btn-primary:hover,
+    .hero-btn-primary:hover,
+    .venues-btn-primary:hover,
+    .detail-btn-primary:hover,
+    .tqem-btn-primary:hover,
+    .inv-accent:hover {
+      background: var(--color-accent-hover);
+      border-color: var(--color-accent-hover);
+      color: var(--color-on-accent);
+    }
+  </style>
+</head>
+<body>
+  <nav class="story-chrome" aria-label="Stories">
+    <a href="/">Stories</a>
+    <span class="story-chrome__sep" aria-hidden="true">/</span>
+    <span class="story-chrome__current">Buttons</span>
+  </nav>
+  <div class="page">
+    <header class="hero">
+      <h1>Button-Inventar</h1>
+      <p>
+        Oben umschalten: <strong>Heute</strong> ist das Inventar aller aktuellen Looks.
+        <strong>Glass-Standard</strong> ist der Satz aus <code>styles/button.css</code> (v1.10).
+      </p>
+      <div class="hero-meta">
+        <span class="stat"><b>5</b> Text-Buttons</span>
+        <span class="stat"><b>2</b> Icon-Typen</span>
+        <span class="stat"><b>2</b> Toggles</span>
+        <div class="toolbar">
+          <button type="button" class="filter-btn is-on" data-app="all">Alle</button>
+          <button type="button" class="filter-btn" data-app="flow">FLOW</button>
+          <button type="button" class="filter-btn" data-app="join">JOIN</button>
+          <button type="button" class="filter-btn" data-app="hero">HERO</button>
+          <button type="button" class="filter-btn" data-app="glass">Glass</button>
+          <button type="button" class="theme-btn" id="themeBtn">Dunkel</button>
+        </div>
+        <div class="view-switch" role="tablist" aria-label="Ansicht">
+          <button type="button" data-view="current" role="tab" aria-selected="false">Heute — alle Looks</button>
+          <button type="button" class="is-on" data-view="next" role="tab" aria-selected="true">Glass-Standard</button>
+        </div>
+      </div>
+    </header>
+
+    <div id="view-current" hidden>
+    <nav class="toc">
+      <a href="#primary">Primary</a>
+      <a href="#blue">Blau (JOIN)</a>
+      <a href="#secondary">Secondary</a>
+      <a href="#ghost">Ghost</a>
+      <a href="#danger">Danger</a>
+      <a href="#icon">Icon</a>
+      <a href="#pill">Pills / Toggle</a>
+      <a href="#choice">Choice / Cards</a>
+      <a href="#cluster">Cluster</a>
+      <a href="#chrome">Chrome</a>
+      <a href="#legacy">Legacy FLOW</a>
+      <a href="#classes">Klassenliste</a>
+    </nav>
+
+    <section class="section" id="primary">
+      <h2>1. Primary / Accent — orangefüllend</h2>
+      <p>Gleiche Markenfarbe, fünf verschiedene Oberflächen: Gradient+Press (FLOW), Lift-Shadow (JOIN Login / HERO), flach ohne Schatten (JOIN Venues), kompakt mit Border (JOIN Detail), weich eingefärbt (JOIN Sidebar-Login).</p>
+      <div class="grid">
+        <article class="card" data-apps="flow">
+          <h3>glass-btn-accent</h3>
+          <div class="apps"><span class="badge">FLOW</span></div>
+          <div class="preview">
+            <button type="button" class="inv-accent">Speichern</button>
+            <button type="button" class="inv-accent lg">Weiter</button>
+            <button type="button" class="inv-accent" disabled>Disabled</button>
+          </div>
+          <p class="meta">Gradient, orange Glow, physischer Press-in. Default klein (12px). Oft per Tailwind überschrieben (<code>!px-4 !py-2</code>).</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>btn-primary — Login</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="join-btn join-btn-primary"><i class="bi bi-box-arrow-in-right"></i> Anmelden</button>
+          </div>
+          <p class="meta">Flach orange, großer Radius, Hover hebt an (<code>translateY(-2px)</code>). Nur <code>HomeView</code> (scoped).</p>
+        </article>
+        <article class="card" data-apps="hero">
+          <h3>btn-primary — HERO</h3>
+          <div class="apps"><span class="badge">HERO</span></div>
+          <div class="preview">
+            <button type="button" class="hero-btn hero-btn-primary">Anfrage senden</button>
+            <button type="button" class="hero-btn hero-btn-primary hero-btn-sm">Jetzt öffnen</button>
+          </div>
+          <p class="meta">Wie JOIN-Login, aber kleineres Default-Padding. Hover <code>translateY(-1px)</code>. Global in <code>hero/src/assets/main.css</code>.</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>btn-primary — Venues</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="venues-btn venues-btn-primary">Anmelden</button>
+          </div>
+          <p class="meta">Gleiche Farbe, <em>kein</em> Schatten, kleinerer Radius (<code>--radius</code> 14px). Dritte Kopie von <code>.btn</code>.</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>detail / tekla / modal primary</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="detail-btn detail-btn-primary">Speichern</button>
+            <button type="button" class="tqem-btn tqem-btn-primary">Übernehmen</button>
+          </div>
+          <p class="meta">Kompakt, Border in Accent, Hover dunkelt ab. Vier fast identische Kopien: <code>detail-btn-primary</code>, <code>tekla-btn-primary</code>, <code>co-coach-modal-btn-primary</code>, <code>tqem-btn-primary</code>.</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>sidebar-login-btn</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="sidebar-login-btn">Anmelden</button>
+          </div>
+          <p class="meta">Kein Fill, sondern Accent-Soft. Sieht nach Secondary/Chip aus, ist aber der Login-CTA in der Sidebar.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="blue">
+      <h2>1b. Blau — JOIN Dashboard-CTA</h2>
+      <p>
+        Das ist der Button, den du meinst: auf dem Coach-Dashboard, Karte „Neu registrieren“.
+        Label <code>wizard.ctaButton</code> = „Anmeldung starten“. Farbe ist <strong>nicht</strong> Brand-Orange,
+        sondern fest kodiertes Tailwind-Blau → Cyan. Daneben sitzt ein zweiter, ebenfalls JOIN-spezifischer Coach-Button.
+      </p>
+      <div class="grid">
+        <article class="card" data-apps="join">
+          <h3>dashboard-cta</h3>
+          <div class="apps"><span class="badge">JOIN</span><span class="badge note">blau</span></div>
+          <div class="preview">
+            <button type="button" class="dashboard-cta"><i class="bi bi-magic"></i> Anmeldung starten</button>
+            <button type="button" class="dashboard-cta dashboard-cta--disabled" disabled><i class="bi bi-magic"></i> Disabled</button>
+          </div>
+          <p class="meta"><code>DashboardView.vue</code> → öffnet den EnrollWizard. Gradient <code>#2563eb → #0ea5e9</code>, blauer Glow, Hover hebt an. Dieselbe Blau-Familie wie Glass <code>liquid-surface--accent-blue</code> (Kachel-Rand), aber als voller Fill-CTA sonst nirgends.</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>dashboard-cta-coach</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="dashboard-cta-coach"><i class="bi bi-person-plus"></i> Co-Coach hinzufügen</button>
+          </div>
+          <p class="meta">Direkt darunter. 2px Border, Orange-Text, Hover Accent-Soft. Weder Secondary noch Ghost — eigene Outline-Variante.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="secondary">
+      <h2>2. Secondary / Surface</h2>
+      <p>Alles „nicht-orange“. FLOW hat echtes Liquid-Glass. JOIN/HERO sind oft nur graue Füllung ohne Border — oder Border ohne Glass.</p>
+      <div class="grid">
+        <article class="card" data-apps="flow">
+          <h3>glass-btn-secondary</h3>
+          <div class="apps"><span class="badge">FLOW</span></div>
+          <div class="preview">
+            <button type="button" class="inv-secondary">Abbrechen</button>
+            <button type="button" class="inv-secondary" disabled>Disabled</button>
+          </div>
+          <p class="meta">Glass-Kachel, Inset-Highlight, Press-in. Default größer als Accent. Wird in FLOW auch für Icon-Leisten und Danger-Text (<code>text-red-700</code>) missbraucht.</p>
+        </article>
+        <article class="card" data-apps="join hero">
+          <h3>btn-secondary</h3>
+          <div class="apps"><span class="badge">JOIN</span><span class="badge">HERO</span></div>
+          <div class="preview">
+            <button type="button" class="join-btn join-btn-secondary">Abmelden</button>
+            <button type="button" class="hero-btn hero-btn-secondary hero-btn-sm">Neu laden</button>
+            <button type="button" class="venues-btn venues-btn-secondary">Neu laden</button>
+          </div>
+          <p class="meta">Muted Fill, kein Border, kein Schatten. Drei Größen (Login groß / HERO mittel / Venues klein).</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>bordered secondary</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="admin-btn-secondary">Testlauf</button>
+            <button type="button" class="detail-btn">Abbrechen</button>
+          </div>
+          <p class="meta"><code>admin-btn-secondary</code>, <code>detail-btn</code>, <code>tekla-btn</code> — Border + Fläche, kompakt. Drei Kopien.</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>header-install-btn</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="header-install-btn"><i class="bi bi-download"></i> App installieren</button>
+          </div>
+          <p class="meta">Pill-Radius, Border, wie Secondary. Mobile-Variante wird zum Quadrat.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="ghost">
+      <h2>3. Ghost / Text</h2>
+      <p>Transparent, oft nur Icon oder Unterstrich-Feeling. In JOIN ist <code>btn-ghost</code> <strong>nirgends global definiert</strong> — Settings und Wizard erben nur Browser-Default plus lokalem <code>btn-sm</code>.</p>
+      <div class="grid">
+        <article class="card" data-apps="join">
+          <h3>bordered ghost</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="tqem-btn tqem-btn-ghost">Schließen</button>
+          </div>
+          <p class="meta"><code>tqem-btn-ghost</code>, <code>co-coach-modal-btn-ghost</code>.</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>icon ghost</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="detail-btn detail-btn-ghost" aria-label="Bearbeiten"><i class="bi bi-pencil"></i></button>
+            <button type="button" class="detail-btn detail-btn-ghost" aria-label="Löschen"><i class="bi bi-trash"></i></button>
+          </div>
+          <p class="meta"><code>detail-btn-ghost</code> — kein Hover-Rot, trotz Trash-Icon.</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>wizard-back-link</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="wizard-back-link"><i class="bi bi-arrow-left"></i> Zurück</button>
+          </div>
+          <p class="meta">EnrollWizard. Nackter Text, muted. Nutzt zusätzlich undefiniertes <code>btn-ghost</code>.</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>tekla-point-action</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="tekla-point-action">Adresse ergänzen</button>
+          </div>
+          <p class="meta">Unterstrichener Accent-Text. Sieht aus wie ein Link, ist ein Button.</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>btn-ghost (undefiniert)</h3>
+          <div class="apps"><span class="badge">JOIN</span><span class="badge note">kein CSS</span></div>
+          <div class="preview">
+            <button type="button" class="ghost-undefined">Abbrechen</button>
+          </div>
+          <p class="meta">Settings + EnrollWizard. Sieht aus wie nativer Button. Kandidat zum Entfernen oder erstmalig definieren.</p>
+        </article>
+        <article class="card" data-apps="flow">
+          <h3>Text-Links als Button</h3>
+          <div class="apps"><span class="badge">FLOW</span></div>
+          <div class="preview darkish">
+            <button type="button" class="ps-text">Alle anzeigen</button>
+          </div>
+          <p class="meta">Public Schedule: orange Fett-Text auf Weiß/Dunkel, ohne Chrome.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="danger">
+      <h2>4. Danger</h2>
+      <p>Kein gemeinsames Danger-Token. FLOW hat Soft-Red und Icon-Hover-Red; JOIN färbt Danger oft nur per Hover am Ghost-Icon.</p>
+      <div class="grid">
+        <article class="card" data-apps="flow">
+          <h3>ci-btn-danger</h3>
+          <div class="apps"><span class="badge">FLOW</span></div>
+          <div class="preview">
+            <button type="button" class="ci-btn-danger">Check-in zurücknehmen</button>
+          </div>
+          <p class="meta">Einzige echte Danger-Fläche (Check-In). Soft-Red, Border.</p>
+        </article>
+        <article class="card" data-apps="flow">
+          <h3>icon-danger-btn</h3>
+          <div class="apps"><span class="badge">FLOW</span></div>
+          <div class="preview">
+            <button type="button" class="icon-danger-btn" aria-label="Löschen"><i class="bi bi-trash3"></i></button>
+          </div>
+          <p class="meta">Komponente <code>IconDangerButton.vue</code>. Hover wird rot. Neutral im Ruhezustand.</p>
+        </article>
+        <article class="card" data-apps="flow">
+          <h3>Tailwind solid red</h3>
+          <div class="apps"><span class="badge">FLOW</span><span class="badge note">legacy</span></div>
+          <div class="preview">
+            <button type="button" class="legacy-red">Löschen</button>
+          </div>
+          <p class="meta"><code>StatisticsDeleteModal</code>: <code>bg-red-600</code>.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="icon">
+      <h2>5. Icon-only</h2>
+      <p>Kreis (Glass Footer), abgerundetes Quadrat mit Glass (Menu / JOIN Home), nacktes Glyph (FLOW Hilfe / Swap), Hover-Accent (JOIN Name, FLOW vol-icon).</p>
+      <div class="grid">
+        <article class="card" data-apps="glass">
+          <h3>sidebar footer circle</h3>
+          <div class="apps"><span class="badge glass">Glass</span></div>
+          <div class="preview">
+            <button type="button" class="glass-sidebar-footer__icon-btn" aria-label="Konto"><i class="bi bi-person"></i></button>
+            <button type="button" class="glass-sidebar-footer__icon-btn glass-sidebar-footer__icon-btn--active" aria-label="Einstellungen"><i class="bi bi-gear"></i></button>
+          </div>
+          <p class="meta"><code>glass-sidebar-footer__icon-btn</code> — schon in Glass, JOIN + HERO + FLOW.</p>
+        </article>
+        <article class="card" data-apps="glass">
+          <h3>menu-toggle</h3>
+          <div class="apps"><span class="badge glass">Glass</span></div>
+          <div class="preview">
+            <button type="button" class="glass-app__menu-toggle" aria-label="Menü"><i class="bi bi-list"></i></button>
+          </div>
+          <p class="meta">Quadrat, Glass-Kachel, Schatten. FLOW-Hamburger.</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>icon-btn (Home)</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="icon-btn"><i class="bi bi-sun"></i></button>
+            <button type="button" class="icon-btn active"><i class="bi bi-moon"></i></button>
+          </div>
+          <p class="meta">Login-Karte JOIN. Ähnlich Menu-Toggle, aber ohne Schatten.</p>
+        </article>
+        <article class="card" data-apps="flow">
+          <h3>vol-icon-btn</h3>
+          <div class="apps"><span class="badge">FLOW</span></div>
+          <div class="preview">
+            <button type="button" class="vol-icon-btn" aria-label="Bearbeiten"><i class="bi bi-pencil"></i></button>
+            <button type="button" class="screen-help-btn" aria-label="Hilfe"><i class="bi bi-question-circle"></i></button>
+            <button type="button" class="swap-btn">↕</button>
+          </div>
+          <p class="meta">Drei Stufen: Hover-Accent-Fill · nacktes Orange · nacktes Grau.</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>detail-name-edit-btn</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="detail-btn detail-btn-ghost" style="width:2rem;height:2rem;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;" aria-label="Name"><i class="bi bi-pencil"></i></button>
+          </div>
+          <p class="meta">2rem Quadrat, Hover Accent-Soft. Nahe <code>vol-icon-btn</code>.</p>
+        </article>
+        <article class="card" data-apps="flow">
+          <h3>public-schedule app / filter</h3>
+          <div class="apps"><span class="badge">FLOW</span></div>
+          <div class="preview" style="background:#fff;">
+            <button type="button" class="ps-app"><i class="bi bi-three-dots"></i></button>
+            <button type="button" class="ps-app"><i class="bi bi-funnel"></i></button>
+          </div>
+          <p class="meta">Besucher-UI, harte Grau-Werte statt Tokens.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="pill">
+      <h2>6. Pills, Chips, Segmented Toggles</h2>
+      <p>Mindestens sechs Capsule-Looks für „Auswahl an / aus“. Das ist der größte Dubletten-Block für Glass.</p>
+      <div class="grid">
+        <article class="card" data-apps="join">
+          <h3>pill-btn</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="pill-btn">DE</button>
+            <button type="button" class="pill-btn active">EN</button>
+          </div>
+          <p class="meta">Login-Karte. Inactive glass, active solid orange + weiß.</p>
+        </article>
+        <article class="card" data-apps="glass">
+          <h3>footer pill</h3>
+          <div class="apps"><span class="badge glass">Glass</span></div>
+          <div class="preview">
+            <button type="button" class="glass-sidebar-footer__pill">DE</button>
+            <button type="button" class="glass-sidebar-footer__pill active">EN</button>
+          </div>
+          <p class="meta">Schon in Glass. Visuell nah an JOIN <code>pill-btn</code>.</p>
+        </article>
+        <article class="card" data-apps="glass">
+          <h3>venues-view-btn</h3>
+          <div class="apps"><span class="badge glass">Glass</span></div>
+          <div class="preview">
+            <button type="button" class="venues-view-btn">Liste</button>
+            <button type="button" class="venues-view-btn is-active">Karte</button>
+          </div>
+          <p class="meta">Glass Venues-Katalog. Wieder Capsule + solid orange.</p>
+        </article>
+        <article class="card" data-apps="glass">
+          <h3>pref-btn (segmented)</h3>
+          <div class="apps"><span class="badge glass">Glass</span></div>
+          <div class="preview">
+            <button type="button" class="glass-sidebar-footer__pref-btn"><i class="bi bi-sun"></i> Hell</button>
+            <button type="button" class="glass-sidebar-footer__pref-btn glass-sidebar-footer__pref-btn--active"><i class="bi bi-moon"></i> Dunkel</button>
+          </div>
+          <p class="meta">Kein Capsule — 14px Radius. Theme-Switcher.</p>
+        </article>
+        <article class="card" data-apps="hero">
+          <h3>role-chip</h3>
+          <div class="apps"><span class="badge">HERO</span></div>
+          <div class="preview">
+            <button type="button" class="role-chip role-chip--action">Schiedsrichter</button>
+            <span class="role-chip" style="cursor:default;">Coach</span>
+          </div>
+          <p class="meta">Chip und Button teilen dieselbe Klasse. Soft-Orange, nie solid fill.</p>
+        </article>
+        <article class="card" data-apps="flow">
+          <h3>glass-choice</h3>
+          <div class="apps"><span class="badge">FLOW</span></div>
+          <div class="preview">
+            <button type="button" class="glass-choice">Aus</button>
+            <button type="button" class="glass-choice glass-choice--active">An</button>
+          </div>
+          <p class="meta">FLOW-Settings Ja/Nein. Active ist dunkel-neutral, <em>nicht</em> orange.</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>yes-no-btn</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="yes-no-btn">Nein</button>
+            <button type="button" class="yes-no-btn active">Ja</button>
+          </div>
+          <p class="meta">2px Border, Active = Accent-Soft. AddressSelector.</p>
+        </article>
+        <article class="card" data-apps="flow">
+          <h3>event-modal chip</h3>
+          <div class="apps"><span class="badge">FLOW</span></div>
+          <div class="preview">
+            <button type="button" class="event-modal__chip">2025/26</button>
+            <button type="button" class="event-modal__chip is-active">aktuell</button>
+          </div>
+          <p class="meta">Weiße Capsule, Active rost-orange statt Brand-Fill.</p>
+        </article>
+        <article class="card" data-apps="flow">
+          <h3>round-toggle on</h3>
+          <div class="apps"><span class="badge">FLOW</span></div>
+          <div class="preview">
+            <button type="button" class="inv-secondary round-toggle">Runde aus</button>
+            <button type="button" class="round-toggle round-toggle--on">Runde an</button>
+          </div>
+          <p class="meta">Einziger grüner Button. Off = secondary, On = Green-Gradient + Press.</p>
+        </article>
+        <article class="card" data-apps="flow">
+          <h3>public-schedule chip-action</h3>
+          <div class="apps"><span class="badge">FLOW</span></div>
+          <div class="preview" style="background:#fff;">
+            <button type="button" class="ps-chip-action">ICS herunterladen</button>
+          </div>
+          <p class="meta">Harte Peach-Werte, nicht Token-basiert. Besucherseite.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="choice">
+      <h2>7. Choice-Cards &amp; große Trefferflächen</h2>
+      <p>JOIN-Wizard und FLOW Public Schedule behandeln ganze Karten/Zeilen als Button.</p>
+      <div class="grid">
+        <article class="card span-2" data-apps="join">
+          <h3>wizard-option</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="wizard-option">FIRST LEGO League Challenge</button>
+            <button type="button" class="wizard-option active">FIRST LEGO League Explore</button>
+          </div>
+          <p class="meta">Große Glass-Karte, Hover hebt an. Active nur Accent-Ring, kein Fill. Einziger „Choice-Card“-Look.</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>dashed add</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <button type="button" class="wizard-btn-add-participant">+ Teilnehmer:in</button>
+          </div>
+          <p class="meta">Gestrichelter Border. Nur EnrollWizard.</p>
+        </article>
+        <article class="card" data-apps="join">
+          <h3>counter ±</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <div class="wizard-counter">
+              <button type="button" class="wizard-counter-btn">−</button>
+              <span>8</span>
+              <button type="button" class="wizard-counter-btn">+</button>
+            </div>
+          </div>
+          <p class="meta">Runde Accent-Soft-Buttons in einer Pill-Schiene.</p>
+        </article>
+        <article class="card span-2" data-apps="flow">
+          <h3>public-schedule role row</h3>
+          <div class="apps"><span class="badge">FLOW</span></div>
+          <div class="preview" style="background:#f8fafc;">
+            <button type="button" class="ps-role">
+              <span class="ps-role-accent"></span>
+              <span style="font-weight:700;flex:1;">Schiedsrichter</span>
+              <i class="bi bi-chevron-right" style="color:#9ca3af;"></i>
+            </button>
+          </div>
+          <p class="meta">Volle Breite, transparente Fläche, 3px Accent-Balken. Eigenes Besucher-System, nicht Glass.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="cluster">
+      <h2>8. Button-Cluster (Wizard-Header)</h2>
+      <p>JOIN packt Schließen + Zurück + Primary in eine gemeinsame Capsule. Nirgendwo sonst.</p>
+      <div class="grid">
+        <article class="card span-2" data-apps="join">
+          <h3>wizard-header-btn</h3>
+          <div class="apps"><span class="badge">JOIN</span></div>
+          <div class="preview">
+            <div class="wizard-header-cluster">
+              <button type="button" class="wizard-header-btn wizard-header-btn--close" aria-label="Schließen"><i class="bi bi-x-lg"></i></button>
+              <button type="button" class="wizard-header-btn wizard-header-btn--back">Zurück</button>
+              <button type="button" class="wizard-header-btn wizard-header-btn--primary">Weiter</button>
+            </div>
+          </div>
+          <p class="meta">Primary sitzt <em>in</em> der Capsule, nicht daneben. Eigener Look, schwer mit normalen Primary/Secondary zu mischen.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="chrome">
+      <h2>9. App-Chrome (schon in Glass)</h2>
+      <p>Keine Content-CTAs. Trotzdem Buttons — Tabs, Mobile-Nav. Bleiben eher Chrome als Button-API.</p>
+      <div class="grid">
+        <article class="card span-2" data-apps="glass">
+          <h3>page tabs</h3>
+          <div class="apps"><span class="badge glass">Glass</span></div>
+          <div class="preview" style="background:transparent;border:0;padding:0.4rem 0 0;">
+            <div class="glass-page-tabs">
+              <button type="button" class="glass-page-tab glass-page-tab--active">Übersicht</button>
+              <button type="button" class="glass-page-tab">Teams</button>
+              <button type="button" class="glass-page-tab">Helfer</button>
+            </div>
+          </div>
+          <p class="meta"><code>glass-page-tab</code> / Legacy <code>glass-tab</code>.</p>
+        </article>
+        <article class="card" data-apps="glass">
+          <h3>mobile tabs</h3>
+          <div class="apps"><span class="badge glass">Glass</span></div>
+          <div class="preview">
+            <button type="button" class="glass-app__mobile-tab is-on"><i class="bi bi-house"></i> Home</button>
+            <button type="button" class="glass-app__mobile-tab"><i class="bi bi-calendar"></i> Termine</button>
+          </div>
+          <p class="meta"><code>glass-app__mobile-tab</code> — JOIN.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="legacy">
+      <h2>10. Legacy FLOW (Tailwind, nicht Token)</h2>
+      <p>Fabric-Editor, Slide-Thumbs, Delete-Modal. Blau/Grau/Rot aus Tailwind, nicht Accent. Kandidaten zum Ersetzen, sobald Glass-Buttons stehen.</p>
+      <div class="grid">
+        <article class="card" data-apps="flow">
+          <h3>FabricEditor toolbar</h3>
+          <div class="apps"><span class="badge">FLOW</span><span class="badge note">legacy</span></div>
+          <div class="preview">
+            <button type="button" class="legacy-blue">T</button>
+            <button type="button" class="legacy-gray"><b>B</b></button>
+            <button type="button" class="legacy-red-soft"><i class="bi bi-trash"></i></button>
+          </div>
+          <p class="meta"><code>bg-blue-500</code>, <code>bg-gray-200</code>, <code>bg-red-200</code>.</p>
+        </article>
+        <article class="card" data-apps="flow">
+          <h3>SlideThumb circles</h3>
+          <div class="apps"><span class="badge">FLOW</span><span class="badge note">legacy</span></div>
+          <div class="preview" style="background:#e2e8f0;">
+            <button type="button" class="slide-circle"><i class="bi bi-pencil"></i></button>
+            <button type="button" class="slide-circle"><i class="bi bi-trash"></i></button>
+          </div>
+          <p class="meta">Weißer Kreis + Drop-Shadow.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="classes">
+      <h2>11. Vollständige Klassenliste</h2>
+      <p>Jede CSS-Klasse, die heute ein Button-Look ist — inkl. Kopien. Filter oben blendet nur die Karten aus, die Tabelle bleibt vollständig.</p>
+      <div class="card span-2">
+        <table class="classes">
+          <thead>
+            <tr><th>App</th><th>Klasse</th><th>Rolle</th><th>Notiz</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>FLOW</td><td><code>glass-btn-accent</code></td><td>Primary</td><td>in <code>glass-layout.css</code>, nicht in Glass-Paket</td></tr>
+            <tr><td>FLOW</td><td><code>glass-btn-secondary</code></td><td>Secondary</td><td>dito</td></tr>
+            <tr><td>FLOW</td><td><code>icon-danger-btn</code></td><td>Icon danger</td><td><code>IconDangerButton.vue</code></td></tr>
+            <tr><td>FLOW</td><td><code>vol-icon-btn</code></td><td>Icon</td><td>Volunteers + MealOptions (Kopie)</td></tr>
+            <tr><td>FLOW</td><td><code>screen-help-btn</code></td><td>Icon naked</td><td>nur Glyph, Accent-Farbe</td></tr>
+            <tr><td>FLOW</td><td><code>ci-btn-danger</code></td><td>Danger</td><td>Check-In</td></tr>
+            <tr><td>FLOW</td><td><code>round-toggle / --on</code></td><td>Toggle green</td><td>Robot-Game-Runden</td></tr>
+            <tr><td>FLOW</td><td><code>glass-choice / --active</code></td><td>Toggle</td><td>Settings Ja/Nein, nicht orange</td></tr>
+            <tr><td>FLOW</td><td><code>event-modal__chip</code></td><td>Chip</td><td>Saisonwahl</td></tr>
+            <tr><td>FLOW</td><td><code>public-schedule__*</code></td><td>Visitor set</td><td>role, option, app, filter, chip, text-action</td></tr>
+            <tr><td>FLOW</td><td><code>public-link-strip__icon-btn</code></td><td>Icon on secondary</td><td>Modifier auf glass-btn-secondary</td></tr>
+            <tr><td>FLOW</td><td><code>swap-btn</code></td><td>Naked</td><td>MatchPlansAdmin</td></tr>
+            <tr><td>FLOW</td><td><code>help-action-feedback__vote</code></td><td>Naked</td><td>Thumbs</td></tr>
+            <tr><td>FLOW</td><td>Tailwind <code>bg-blue-500 / gray / red</code></td><td>Legacy</td><td>FabricEditor, SlideThumb, DeleteModal</td></tr>
+            <tr><td>JOIN</td><td><code>dashboard-cta</code></td><td>Blue primary</td><td>Dashboard „Anmeldung starten“ — #2563eb→#0ea5e9</td></tr>
+            <tr><td>JOIN</td><td><code>dashboard-cta-coach</code></td><td>Outline</td><td>Co-Coach hinzufügen, 2px Border</td></tr>
+            <tr><td>JOIN</td><td><code>wizard-back-link</code></td><td>Text</td><td>EnrollWizard</td></tr>
+            <tr><td>JOIN</td><td><code>tekla-point-action</code></td><td>Text link</td><td>unterstrichen, Accent</td></tr>
+            <tr><td>JOIN</td><td><code>tekla-doc-link / -button</code></td><td>Chip link</td><td>Dokumente in Tekla</td></tr>
+            <tr><td>JOIN</td><td><code>btn btn-primary/secondary</code></td><td>CTA</td><td>3 scoped Kopien: Home, Venues, Settings-sm</td></tr>
+            <tr><td>JOIN</td><td><code>btn-ghost</code></td><td>Ghost</td><td><strong>kein CSS</strong></td></tr>
+            <tr><td>JOIN</td><td><code>icon-btn</code></td><td>Icon</td><td>HomeView</td></tr>
+            <tr><td>JOIN</td><td><code>pill-btn</code></td><td>Pill</td><td>HomeView Sprache</td></tr>
+            <tr><td>JOIN</td><td><code>wizard-header-btn</code></td><td>Cluster</td><td>close / back / primary</td></tr>
+            <tr><td>JOIN</td><td><code>wizard-option</code></td><td>Choice card</td><td></td></tr>
+            <tr><td>JOIN</td><td><code>wizard-btn-add-participant</code></td><td>Dashed</td><td></td></tr>
+            <tr><td>JOIN</td><td><code>wizard-counter-btn</code></td><td>Stepper</td><td></td></tr>
+            <tr><td>JOIN</td><td><code>wizard-participant-remove</code></td><td>Icon ghost</td><td>Hover rot</td></tr>
+            <tr><td>JOIN</td><td><code>detail-btn / -primary / -ghost</code></td><td>Compact</td><td>TeamDetail + Delivery + FutureGroup</td></tr>
+            <tr><td>JOIN</td><td><code>tekla-btn / -primary</code></td><td>Compact</td><td>= detail-btn</td></tr>
+            <tr><td>JOIN</td><td><code>admin-btn-secondary</code></td><td>Secondary</td><td>3 scoped Kopien (Calendar, Documents, Translations)</td></tr>
+            <tr><td>JOIN</td><td><code>tqem-btn / -ghost / -primary</code></td><td>Modal</td><td></td></tr>
+            <tr><td>JOIN</td><td><code>co-coach-modal-btn / -ghost / -primary</code></td><td>Modal</td><td>≈ tqem</td></tr>
+            <tr><td>JOIN</td><td><code>yes-no-btn</code></td><td>Toggle</td><td></td></tr>
+            <tr><td>JOIN</td><td><code>header-install-btn</code></td><td>Pill secondary</td><td></td></tr>
+            <tr><td>JOIN</td><td><code>sidebar-login-btn</code></td><td>Soft primary</td><td></td></tr>
+            <tr><td>JOIN</td><td><code>detail-name-edit-btn</code></td><td>Icon</td><td></td></tr>
+            <tr><td>HERO</td><td><code>btn / btn-primary / secondary / sm</code></td><td>CTA</td><td>global in main.css</td></tr>
+            <tr><td>HERO</td><td><code>role-chip / --action</code></td><td>Chip</td><td></td></tr>
+            <tr><td>Glass</td><td><code>glass-sidebar-footer__icon-btn</code></td><td>Chrome icon</td><td>bereits shared</td></tr>
+            <tr><td>Glass</td><td><code>glass-sidebar-footer__pref-btn</code></td><td>Segmented</td><td>bereits shared</td></tr>
+            <tr><td>Glass</td><td><code>glass-sidebar-footer__pill</code></td><td>Pill</td><td>bereits shared</td></tr>
+            <tr><td>Glass</td><td><code>glass-page-tab</code></td><td>Tabs</td><td>bereits shared</td></tr>
+            <tr><td>Glass</td><td><code>glass-app__menu-toggle</code></td><td>Chrome icon</td><td>bereits shared</td></tr>
+            <tr><td>Glass</td><td><code>glass-app__mobile-tab</code></td><td>Chrome nav</td><td>bereits shared</td></tr>
+            <tr><td>Glass</td><td><code>venues-view-btn</code></td><td>Pill</td><td>ab 1.10 in <code>button.css</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    </div>
+
+    <div id="view-next">
+      <nav class="toc">
+        <a href="#std-accent">Accent</a>
+        <a href="#std-secondary">Secondary</a>
+        <a href="#std-text">Text</a>
+        <a href="#std-warn">Warn</a>
+        <a href="#std-danger">Danger</a>
+        <a href="#std-icon">Icons</a>
+        <a href="#std-toggle">Toggles</a>
+        <a href="#std-keep">Unverändert</a>
+      </nav>
+
+      <section class="section" id="std-accent">
+        <h2>Accent — <code>glass-btn-accent</code></h2>
+        <p>Ein Style für bisher 1 + 1b: JOIN-Dashboard-Größe und Icon-Lücke, flacher oranger Verlauf, Relief nach innen statt Glow. Hover dunkelt ab, Active drückt ein (gleicher Effekt wie Warn/Danger). Eine Größe — auch in Dialogen und Tabellen. Nur konstruktive Hauptaktionen. Löschen und andere zerstörende Bestätigungen gehen nach Danger, nicht hierher — Orange ist Marke, nicht Warnung.</p>
+        <div class="grid">
+          <article class="card span-2">
+            <h3>Standard</h3>
+            <div class="apps"><span class="badge glass">Glass 1.10</span></div>
+            <div class="preview">
+              <button type="button" class="glass-btn-accent"><i class="bi bi-magic" aria-hidden="true"></i> Anmeldung starten</button>
+              <button type="button" class="glass-btn-accent">Speichern</button>
+              <button type="button" class="glass-btn-accent" disabled>Disabled</button>
+            </div>
+            <p class="meta">Eine Größe. <code>glass-btn--block</code> nur für volle Breite, nicht kleiner.</p>
+          </article>
+          <article class="card span-2">
+            <h3>In use — bisher Accent / Primary / blauer CTA</h3>
+            <div class="use-list">
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN <code>dashboard-cta</code><br>Anmeldung starten</div>
+                <div><button type="button" class="glass-btn-accent"><i class="bi bi-magic" aria-hidden="true"></i> Anmeldung starten</button></div>
+              </div>
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN Login <code>btn-primary</code></div>
+                <div><button type="button" class="glass-btn-accent"><i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Anmelden</button></div>
+              </div>
+              <div class="use-row" data-apps="hero">
+                <div class="use-from">HERO <code>btn-primary</code></div>
+                <div><button type="button" class="glass-btn-accent">Anfrage senden</button></div>
+              </div>
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN Venues CTA</div>
+                <div><button type="button" class="glass-btn-accent">Anmelden</button></div>
+              </div>
+              <div class="use-row" data-apps="flow">
+                <div class="use-from">FLOW Speichern / Weiter</div>
+                <div><button type="button" class="glass-btn-accent">Speichern</button></div>
+              </div>
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN Dialog <code>detail-btn-primary</code></div>
+                <div><button type="button" class="glass-btn-accent">Speichern</button></div>
+              </div>
+              <div class="use-row" data-apps="flow">
+                <div class="use-from">FLOW Check-In (volle Breite)</div>
+                <div style="max-width:18rem"><button type="button" class="glass-btn-accent glass-btn--block">Check-in</button></div>
+              </div>
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN Wizard-Header Primary</div>
+                <div><button type="button" class="glass-btn-accent">Weiter</button></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="std-secondary">
+        <h2>Secondary — <code>glass-btn-secondary</code></h2>
+        <p>Der Standard-Button, eine Größe. Outline und „nicht die Hauptaktion mit Fläche“ landen hier. Stille Links ohne Fläche gehen nach Text; destruktiv nach Danger.</p>
+        <div class="grid">
+          <article class="card span-2">
+            <h3>Standard</h3>
+            <div class="apps"><span class="badge glass">Glass 1.10</span></div>
+            <div class="preview">
+              <button type="button" class="glass-btn-secondary">Abbrechen</button>
+              <button type="button" class="glass-btn-secondary">Neu laden</button>
+              <button type="button" class="glass-btn-secondary" disabled>Disabled</button>
+            </div>
+            <p class="meta">Gleiche Klasse, gleicher Look. Nur das Label ändert sich.</p>
+          </article>
+          <article class="card span-2">
+            <h3>In use — bisher Secondary / Ghost / Outline</h3>
+            <div class="use-list">
+              <div class="use-row" data-apps="flow">
+                <div class="use-from">FLOW <code>glass-btn-secondary</code></div>
+                <div><button type="button" class="glass-btn-secondary">Abbrechen</button></div>
+              </div>
+              <div class="use-row" data-apps="join hero">
+                <div class="use-from">JOIN / HERO <code>btn-secondary</code></div>
+                <div><button type="button" class="glass-btn-secondary">Abmelden</button></div>
+              </div>
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN <code>dashboard-cta-coach</code><br>(Outline → Secondary)</div>
+                <div><button type="button" class="glass-btn-secondary"><i class="bi bi-person-plus" aria-hidden="true"></i> Co-Coach hinzufügen</button></div>
+              </div>
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN Ghost / Admin / Detail cancel</div>
+                <div>
+                  <button type="button" class="glass-btn-secondary">Schließen</button>
+                  <button type="button" class="glass-btn-secondary">Testlauf</button>
+                </div>
+              </div>
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN <code>sidebar-login-btn</code><br>(Soft-Primary → Secondary)</div>
+                <div><button type="button" class="glass-btn-secondary">Anmelden</button></div>
+              </div>
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN <code>header-install-btn</code></div>
+                <div><button type="button" class="glass-btn-secondary"><i class="bi bi-download" aria-hidden="true"></i> App installieren</button></div>
+              </div>
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN <code>wizard-btn-add-participant</code></div>
+                <div><button type="button" class="glass-btn-secondary">+ Teilnehmer:in</button></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="std-text">
+        <h2>Text — <code>glass-btn-text</code></h2>
+        <p>Kein Fill, keine Kante. Für Zurück, „Alle anzeigen“, Inline-Aktionen neben Feldern. Hover färbt den Text und legt eine leise Fläche, Active drückt ein wie Pref.</p>
+        <div class="grid">
+          <article class="card span-2">
+            <h3>Standard</h3>
+            <div class="apps"><span class="badge glass">Glass 1.10</span></div>
+            <div class="preview">
+              <button type="button" class="glass-btn-text"><i class="bi bi-arrow-left" aria-hidden="true"></i> Zurück</button>
+              <button type="button" class="glass-btn-text">Alle anzeigen</button>
+              <button type="button" class="glass-btn-text" disabled>Disabled</button>
+            </div>
+            <p class="meta">Kein Orange, kein Unterstrich — der Look kommt von Gewicht und Hover, nicht von Link-Blau.</p>
+          </article>
+          <article class="card span-2">
+            <h3>In use — bisher Text-Ghost / Link-Buttons</h3>
+            <div class="use-list">
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN <code>wizard-back-link</code></div>
+                <div><button type="button" class="glass-btn-text"><i class="bi bi-arrow-left" aria-hidden="true"></i> Zurück</button></div>
+              </div>
+              <div class="use-row" data-apps="flow">
+                <div class="use-from">FLOW Public Schedule <code>ps-text</code></div>
+                <div><button type="button" class="glass-btn-text">Alle anzeigen</button></div>
+              </div>
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN <code>tekla-point-action</code></div>
+                <div><button type="button" class="glass-btn-text">Adresse ergänzen</button></div>
+              </div>
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN Wizard-Header Zurück<br>(im Cluster bleibt Chrome; solo als Text)</div>
+                <div><button type="button" class="glass-btn-text">Zurück</button></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="std-warn">
+        <h2>Warn — <code>glass-btn-warn</code></h2>
+        <p>Gleiche CTA-Geometrie wie Accent, aber Gold statt Markenorange. Für riskante, umkehrbare Schritte: Trotzdem verlassen, überschreiben, fortfahren ohne Speichern. Nicht für Löschen.</p>
+        <div class="grid">
+          <article class="card span-2">
+            <h3>Standard</h3>
+            <div class="apps"><span class="badge glass">Glass 1.10</span></div>
+            <div class="preview">
+              <button type="button" class="glass-btn-warn">Trotzdem verlassen</button>
+              <button type="button" class="glass-btn-warn">Trotzdem fortfahren</button>
+              <button type="button" class="glass-btn-warn" disabled>Disabled</button>
+            </div>
+            <p class="meta">Token <code>--color-warn</code>. Im Dark Theme helles Gold mit dunklem Text — analog zu Accent <code>--color-on-accent</code>.</p>
+          </article>
+          <article class="card span-2">
+            <h3>In use — neu, bisher oft Accent oder Secondary</h3>
+            <div class="use-list">
+              <div class="use-row" data-apps="flow">
+                <div class="use-from">FLOW ungespeicherte Änderungen<br>(bisher oft Accent „Trotzdem“)</div>
+                <div><button type="button" class="glass-btn-warn">Trotzdem verlassen</button></div>
+              </div>
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN überschreiben / ohne Speichern weiter</div>
+                <div><button type="button" class="glass-btn-warn">Trotzdem fortfahren</button></div>
+              </div>
+              <div class="use-row" data-apps="flow join hero">
+                <div class="use-from">Neben Accent und Danger<br>(gleiche Größe, andere Farbe)</div>
+                <div>
+                  <button type="button" class="glass-btn-accent">Speichern</button>
+                  <button type="button" class="glass-btn-warn">Trotzdem</button>
+                  <button type="button" class="glass-btn-danger">Löschen</button>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="std-danger">
+        <h2>Danger — <code>glass-btn-danger</code></h2>
+        <p>Gleiche CTA-Geometrie wie Accent, Rot statt Orange. Für zerstörende Bestätigungen. Icon-Löschen bleibt <code>glass-btn-icon--danger</code> — das hier ist der Text-CTA in Dialogen.</p>
+        <div class="grid">
+          <article class="card span-2">
+            <h3>Standard</h3>
+            <div class="apps"><span class="badge glass">Glass 1.10</span></div>
+            <div class="preview">
+              <button type="button" class="glass-btn-danger">Löschen</button>
+              <button type="button" class="glass-btn-danger">Check-in zurücknehmen</button>
+              <button type="button" class="glass-btn-danger" disabled>Disabled</button>
+            </div>
+            <p class="meta">Token <code>--color-danger</code>. Nicht Orange, nicht Amber.</p>
+          </article>
+          <article class="card span-2">
+            <h3>In use — bisher rot, Accent oder Soft-Danger</h3>
+            <div class="use-list">
+              <div class="use-row" data-apps="flow">
+                <div class="use-from">FLOW Delete-Modal bestätigen<br>(vorher solid red, dann fälschlich Accent)</div>
+                <div><button type="button" class="glass-btn-danger">Löschen</button></div>
+              </div>
+              <div class="use-row" data-apps="flow">
+                <div class="use-from">FLOW <code>ci-btn-danger</code></div>
+                <div><button type="button" class="glass-btn-danger">Check-in zurücknehmen</button></div>
+              </div>
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN <code>legacy-red</code> / Dialog Löschen</div>
+                <div><button type="button" class="glass-btn-danger">Löschen</button></div>
+              </div>
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN Trash-Icon bleibt Icon-Danger</div>
+                <div><button type="button" class="glass-btn-icon glass-btn-icon--danger" aria-label="Löschen"><i class="bi bi-trash3"></i></button></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="std-icon">
+        <h2>Icons</h2>
+        <p>Zwei Icon-Typen für Inhalte: Footer-Kreis (Chrome in der Sidebar) und borderless aus FLOW. Der Hamburger ist kein Button-Token — der bleibt App-Shell-Chrome.</p>
+        <div class="grid">
+          <article class="card">
+            <h3>Footer-Kreis</h3>
+            <div class="apps"><span class="badge glass">Glass</span></div>
+            <div class="preview">
+              <button type="button" class="glass-sidebar-footer__icon-btn" aria-label="Konto"><i class="bi bi-person"></i></button>
+              <button type="button" class="glass-sidebar-footer__icon-btn glass-sidebar-footer__icon-btn--active" aria-label="Einstellungen"><i class="bi bi-gear"></i></button>
+            </div>
+            <p class="meta"><code>glass-sidebar-footer__icon-btn</code></p>
+          </article>
+          <article class="card">
+            <h3>Ohne Border</h3>
+            <div class="apps"><span class="badge glass">Glass 1.10</span></div>
+            <div class="preview">
+              <button type="button" class="glass-btn-icon" aria-label="Bearbeiten"><i class="bi bi-pencil"></i></button>
+              <button type="button" class="glass-btn-icon" aria-label="Hilfe"><i class="bi bi-question-circle"></i></button>
+              <button type="button" class="glass-btn-icon glass-btn-icon--danger" aria-label="Löschen"><i class="bi bi-trash3"></i></button>
+            </div>
+            <p class="meta"><code>glass-btn-icon</code> · <code>glass-btn-icon--danger</code></p>
+          </article>
+          <article class="card span-2">
+            <h3>In use — bisherige Icon-Buttons</h3>
+            <div class="use-list">
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN Home <code>icon-btn</code> → Footer-Kreis</div>
+                <div>
+                  <button type="button" class="glass-sidebar-footer__icon-btn" aria-label="Hell"><i class="bi bi-sun"></i></button>
+                  <button type="button" class="glass-sidebar-footer__icon-btn" aria-label="Dunkel"><i class="bi bi-moon"></i></button>
+                </div>
+              </div>
+              <div class="use-row" data-apps="flow">
+                <div class="use-from">FLOW <code>vol-icon-btn</code>, Hilfe, Name-Edit</div>
+                <div>
+                  <button type="button" class="glass-btn-icon" aria-label="Bearbeiten"><i class="bi bi-pencil"></i></button>
+                  <button type="button" class="glass-btn-icon" aria-label="Hilfe"><i class="bi bi-question-circle"></i></button>
+                </div>
+              </div>
+              <div class="use-row" data-apps="flow join">
+                <div class="use-from">FLOW <code>icon-danger-btn</code> · JOIN Trash-Ghost</div>
+                <div><button type="button" class="glass-btn-icon glass-btn-icon--danger" aria-label="Löschen"><i class="bi bi-trash3"></i></button></div>
+              </div>
+              <div class="use-row" data-apps="flow">
+                <div class="use-from">FLOW Public-Schedule App/Filter</div>
+                <div>
+                  <button type="button" class="glass-btn-icon" aria-label="Mehr"><i class="bi bi-three-dots"></i></button>
+                  <button type="button" class="glass-btn-icon" aria-label="Filter"><i class="bi bi-funnel"></i></button>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="std-toggle">
+        <h2>Toggles — Pill und Pref</h2>
+        <p>Zwei Looks: Capsule (Pill, bisher auch View-Chip) und Rechteck mit optionalem Icon (Pref). Aktiv beide orange.</p>
+        <div class="grid">
+          <article class="card">
+            <h3>Pill</h3>
+            <div class="apps"><span class="badge glass">Glass</span></div>
+            <div class="preview">
+              <button type="button" class="venues-view-btn">DE</button>
+              <button type="button" class="venues-view-btn is-active">EN</button>
+              <button type="button" class="venues-view-btn">Liste</button>
+              <button type="button" class="venues-view-btn is-active">Karte</button>
+            </div>
+            <p class="meta">Eine Capsule. Look vom bisherigen View-Chip (Glass-Fläche, lesbare Größe). Ersetzt <code>glass-sidebar-footer__pill</code> und <code>venues-view-btn</code>.</p>
+          </article>
+          <article class="card">
+            <h3>Pref</h3>
+            <div class="apps"><span class="badge glass">Glass</span></div>
+            <div class="preview">
+              <button type="button" class="glass-sidebar-footer__pref-btn"><i class="bi bi-sun"></i> Hell</button>
+              <button type="button" class="glass-sidebar-footer__pref-btn glass-sidebar-footer__pref-btn--active"><i class="bi bi-moon"></i> Dunkel</button>
+            </div>
+            <p class="meta"><code>glass-sidebar-footer__pref-btn</code> — Rechteck, für paarweise Wahl.</p>
+          </article>
+          <article class="card span-2">
+            <h3>In use — Mapping der übrigen Toggles</h3>
+            <div class="use-list">
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN <code>pill-btn</code> → Pill</div>
+                <div>
+                  <button type="button" class="venues-view-btn">DE</button>
+                  <button type="button" class="venues-view-btn is-active">EN</button>
+                </div>
+              </div>
+              <div class="use-row" data-apps="hero">
+                <div class="use-from">HERO <code>role-chip</code> → Pill</div>
+                <div><button type="button" class="venues-view-btn is-active">Schiedsrichter</button></div>
+              </div>
+              <div class="use-row" data-apps="flow">
+                <div class="use-from">FLOW Event-Modal Chip → Pill</div>
+                <div>
+                  <button type="button" class="venues-view-btn">2025/26</button>
+                  <button type="button" class="venues-view-btn is-active">aktuell</button>
+                </div>
+              </div>
+              <div class="use-row" data-apps="join">
+                <div class="use-from">JOIN <code>yes-no-btn</code> → Pref</div>
+                <div>
+                  <button type="button" class="glass-sidebar-footer__pref-btn">Nein</button>
+                  <button type="button" class="glass-sidebar-footer__pref-btn glass-sidebar-footer__pref-btn--active">Ja</button>
+                </div>
+              </div>
+              <div class="use-row" data-apps="flow">
+                <div class="use-from">FLOW <code>glass-choice</code> → Pref</div>
+                <div>
+                  <button type="button" class="glass-sidebar-footer__pref-btn">Aus</button>
+                  <button type="button" class="glass-sidebar-footer__pref-btn glass-sidebar-footer__pref-btn--active">An</button>
+                </div>
+              </div>
+              <div class="use-row" data-apps="flow">
+                <div class="use-from">FLOW <code>round-toggle</code> (grün fällt weg) → Pref</div>
+                <div>
+                  <button type="button" class="glass-sidebar-footer__pref-btn">Runde aus</button>
+                  <button type="button" class="glass-sidebar-footer__pref-btn glass-sidebar-footer__pref-btn--active">Runde an</button>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="std-keep">
+        <h2>Unverändert — Choice, Cluster, Chrome</h2>
+        <p>Wizard-Karten, Wizard-Header-Cluster, Page Tabs, Mobile Tabs und der Hamburger (<code>glass-app__menu-toggle</code>) bleiben App-Chrome — kein Button-Token. Legacy-Tailwind (FLOW Editor) entfällt; dort später Accent / Secondary / Icon.</p>
+      </section>
+    </div>
+  </div>
+  <script>
+    const themeBtn = document.getElementById('themeBtn')
+    themeBtn.addEventListener('click', () => {
+      const dark = document.documentElement.getAttribute('data-theme') === 'dark'
+      document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark')
+      themeBtn.textContent = dark ? 'Dunkel' : 'Hell'
+    })
+    const viewCurrent = document.getElementById('view-current')
+    const viewNext = document.getElementById('view-next')
+    document.querySelectorAll('.view-switch button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const next = btn.dataset.view === 'next'
+        document.querySelectorAll('.view-switch button').forEach((b) => {
+          b.classList.toggle('is-on', b === btn)
+          b.setAttribute('aria-selected', b === btn ? 'true' : 'false')
+        })
+        viewCurrent.hidden = next
+        viewNext.hidden = !next
+      })
+    })
+    document.querySelectorAll('.filter-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach((b) => b.classList.toggle('is-on', b === btn))
+        const app = btn.dataset.app
+        document.querySelectorAll('[data-apps]').forEach((card) => {
+          card.hidden = app !== 'all' && !card.dataset.apps.split(' ').includes(app)
+        })
+      })
+    })
+  </script>
+</body>
+</html>

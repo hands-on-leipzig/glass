@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.10.0 — 2026-09-17
+
+Shared button styles.
+
+- Local stories playground: `npm run dev` → [http://localhost:6006](http://localhost:6006), Buttons at `/stories/buttons.html`
+
+- `.glass-btn-accent` — orange CTA, flat fill, press-in (no scale / no orange glow)
+- `.glass-btn-secondary` — default glass button
+- `.glass-btn-text` — quiet, no fill
+- `.glass-btn-warn` / `.glass-btn-danger` — same CTA geometry as accent (gold / red)
+- `.glass-btn--sm` / `.glass-btn--block` modifiers
+- `.glass-btn-icon` / `.glass-btn-icon--danger` — borderless icon with press-in
+- `.venues-view-btn` moved into shared CSS (hover + press-in; active hover keeps `--color-on-accent`)
+- Tokens `--color-warn` / `--color-danger` (+ hover / on)
+- Sidebar submenu items (`.glass-sidebar__subitem`) press in like the parent nav keys
+
 ## 1.9.1 — 2026-09-16
 
 Main panel corners match the sidebar.

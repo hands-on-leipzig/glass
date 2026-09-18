@@ -23,6 +23,16 @@ npm install ../glass
 ```bash
 npm install @hands-on/glass@1.2.1
 ```
+
+## Local stories
+
+```bash
+npm install
+npm run dev
+```
+
+Opens [http://localhost:6006](http://localhost:6006). The catalog lists stories; **Buttons** is `/stories/buttons.html` (Heute vs Glass-Standard). Edits in `styles/` show up after reload. The playground is not part of the published package.
+
 ## Usage in a Vue + Vite app
 
 ### 1. `main.js`
@@ -88,8 +98,28 @@ Das Script `scripts/copy-fonts.mjs` kopiert nach `./public/font/` relativ zum Ap
 | `styles/globals.css` | links, buttons, media defaults |
 | `styles/liquid-surface.css` | `.liquid-surface`, `.liquid-surface-scope`, controls |
 | `styles/field.css` | `.glass-input`, `.glass-field`, field stacks/rows |
+| `styles/button.css` | `.glass-btn-accent`, `--secondary`, `--text`, `--warn`, `--danger`, `--icon`, `.venues-view-btn` |
 | `styles/page-tabs.css` | Level-3 page tabs (`.glass-page-tabs`, legacy `.glass-tabs`) |
 | `styles/index.css` | single import entry |
+
+### Buttons
+
+Filled CTAs: Accent (brand orange), Warn (gold), Danger (red) — same size, press-in without scale. Secondary is the default glass button. Text is quiet (no fill). Icon is borderless; `.glass-btn-icon--danger` for trash.
+
+```html
+<button type="button" class="glass-btn-accent">
+  <i class="bi bi-magic" aria-hidden="true"></i>
+  Anmeldung starten
+</button>
+<button type="button" class="glass-btn-secondary">Abbrechen</button>
+<button type="button" class="glass-btn-text"><i class="bi bi-arrow-left" aria-hidden="true"></i> Zurück</button>
+<button type="button" class="glass-btn-warn">Trotzdem verlassen</button>
+<button type="button" class="glass-btn-danger">Löschen</button>
+<button type="button" class="glass-btn-icon" aria-label="Bearbeiten"><i class="bi bi-pencil"></i></button>
+<button type="button" class="glass-btn-icon glass-btn-icon--danger" aria-label="Löschen"><i class="bi bi-trash3"></i></button>
+```
+
+Toggles (keep using the existing three): `.glass-sidebar-footer__pill`, `.glass-sidebar-footer__pref-btn`, `.venues-view-btn`.
 
 ### Form fields
 

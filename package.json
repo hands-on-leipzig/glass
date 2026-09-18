@@ -1,6 +1,6 @@
 {
   "name": "@hands-on/glass",
-  "version": "1.9.1",
+  "version": "1.10.0",
   "description": "Shared HANDS on TECHNOLOGY design tokens, liquid glass UI, app shell, and theme for Vue apps",
   "type": "module",
   "license": "UNLICENSED",
@@ -23,6 +23,7 @@
     "./styles/app-shell.css": "./styles/app-shell.css",
     "./styles/sidebar-footer.css": "./styles/sidebar-footer.css",
     "./styles/page-tabs.css": "./styles/page-tabs.css",
+    "./styles/button.css": "./styles/button.css",
     "./theme": "./theme/index.js",
     "./app-shell": "./components/AppShell.vue",
     "./sidebar-footer": "./components/SidebarFooter.vue",
@@ -46,7 +47,14 @@
     "./fonts/*": "./fonts/*"
   },
   "scripts": {
+    "dev": "vite --config playground/vite.config.js",
     "copy-fonts": "node scripts/copy-fonts.mjs"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "6.0.4",
+    "bootstrap-icons": "1.13.1",
+    "vite": "7.3.1",
+    "vue": "3.5.29"
   },
   "peerDependencies": {
     "vue": "^3.5.0"

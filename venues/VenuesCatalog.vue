@@ -307,22 +307,6 @@ function onMapVenueSelect(venue) {
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
-.venues-view-btn {
-  padding: 0.35rem 0.75rem;
-  border: 1px solid var(--liquid-border);
-  border-radius: var(--radius-full);
-  background: var(--liquid-tile-bg);
-  color: var(--color-text);
-  font: inherit;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  cursor: pointer;
-}
-.venues-view-btn.is-active {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: #fff;
-}
 .venues-group {
   margin-bottom: 1.5rem;
 }
