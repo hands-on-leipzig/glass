@@ -285,6 +285,10 @@
 
 /* Venues view chips — one of the three shared toggle looks */
 .venues-view-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   padding: 0.35rem 0.75rem;
   border: 1px solid var(--liquid-border);
   border-radius: var(--radius-full);
