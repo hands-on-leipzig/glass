@@ -249,9 +249,21 @@ On ≤768px the shell goes edge-to-edge.
 
 Desktop (≥769px): collapse toggle on the brand row shrinks the sidebar to an icon rail (`--glass-sidebar-width-collapsed`). Prefer `SidebarNavItem` so collapsed icons get hover flyouts and expanded items can host submenus.
 
-## Venues catalog (JOIN / HERO / FLOW)
+## Venues catalog (JOIN / HERO)
 
 Map + filtered list of public event locations. The host app must depend on `leaflet` and `vue-i18n` and provide the `venues.*` message keys used by JOIN.
+
+Do not import this barrel from FLOW: Vite follows every static export and would compile `PublicEventFrame` (`vue-i18n`). FLOW only needs the handshake:
+
+```js
+import {
+  emailFromAccessToken,
+  publicEventSsoRequestMessage,
+  tokenFromPublicEventSsoMessage,
+} from '@hands-on/glass/venues/sso'
+```
+
+JOIN / HERO catalog + iframe shell:
 
 ```js
 import { VenuesCatalog, PublicEventFrame, publicEventPathFromUrl } from '@hands-on/glass/venues'

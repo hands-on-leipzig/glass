@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.12.0 — 2026-09-20
+
+Handshake-only entry for FLOW.
+
+- `@hands-on/glass/venues/sso` exports `publicEventSso.js` without the catalog / `PublicEventFrame` barrel (no `vue-i18n` or Leaflet)
+- JOIN and HERO keep `@hands-on/glass/venues`
+
 ## 1.11.0 — 2026-09-18
 
 SSO handshake for in-shell public event pages.

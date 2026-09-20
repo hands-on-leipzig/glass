@@ -2,6 +2,9 @@
  * Handshake between JOIN/HERO (`PublicEventFrame`) and the FLOW public event iframe.
  * The parent posts a Keycloak access token; FLOW uses the email claim and the
  * backend verifies the JWT so Dateneingabe can skip OTP.
+ *
+ * FLOW must import this module via `@hands-on/glass/venues/sso`. The venues barrel
+ * also re-exports it, but that entry pulls catalog Vue SFCs (vue-i18n / Leaflet).
  */
 
 export const PUBLIC_EVENT_SSO_SOURCE = 'hands-on-public-event'
