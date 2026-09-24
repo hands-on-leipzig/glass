@@ -220,7 +220,6 @@ function onMapVenueSelect(venue) {
             <VenueEventRow
               :venue="ev"
               :show-country="viewMode !== 'place'"
-              :show-program="viewMode !== 'program'"
               @select="openVenueDetail"
             >
               <slot name="event-extra" :venue="ev" />
