@@ -13,9 +13,17 @@ const props = defineProps({
   venue: { type: Object, required: true },
   showCountry: { type: Boolean, default: true },
   showProgram: { type: Boolean, default: true },
+  /** Detail page URL; renders the row as a link so it can be opened in a new tab. */
+  href: { type: String, default: '' },
 })
 
 const emit = defineEmits(['select'])
+
+function onClick(event) {
+  if (props.href && (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0)) return
+  event.preventDefault()
+  emit('select', props.venue)
+}
 
 const { t, locale } = useI18n()
 
@@ -36,7 +44,13 @@ const countryCode = computed(() => String(props.venue.country || '').toUpperCase
 
 <template>
   <div class="venue-row">
-    <button type="button" class="venue-row__hit" @click="emit('select', venue)">
+    <component
+      :is="href ? 'a' : 'button'"
+      :href="href || undefined"
+      :type="href ? undefined : 'button'"
+      class="venue-row__hit"
+      @click="onClick"
+    >
       <time class="venue-row__date" :datetime="venue.date || undefined">
         <template v-if="dayParts">
           <span class="venue-row__day">{{ dayParts.day }}</span>
@@ -59,7 +73,7 @@ const countryCode = computed(() => String(props.venue.country || '').toUpperCase
           <span v-if="venue.program === 'future5'">{{ t('venues.futureTrack5') }}</span>
         </span>
       </span>
-    </button>
+    </component>
     <div class="venue-row__extra">
       <slot />
     </div>
@@ -87,6 +101,7 @@ const countryCode = computed(() => String(props.venue.country || '').toUpperCase
   text-align: left;
   color: inherit;
   font: inherit;
+  text-decoration: none;
   cursor: pointer;
 }
 .venue-row:not(:has(.venue-row__extra > *)) .venue-row__hit {

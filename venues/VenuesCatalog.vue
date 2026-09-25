@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import VenuesMap from './VenuesMap.vue'
 import VenueDetailModal from './VenueDetailModal.vue'
@@ -17,17 +17,78 @@ import {
 const props = defineProps({
   venues: { type: Array, default: () => [] },
   selectedVenue: { type: Object, default: null },
+  /** Keeps filters, grouping and scroll position in sessionStorage under this key (empty = off). */
+  stateKey: { type: String, default: '' },
+  /** `(venue) => string` detail URL per row; rows without one stay buttons. */
+  eventHref: { type: Function, default: null },
 })
 
 const emit = defineEmits(['select', 'close'])
 
 const { t, locale } = useI18n()
 
-const countries = ref({ de: true, at: true, ch: true })
-const offers = ref({ future: true, exhibition: true, competition: true })
+const VIEW_MODES = ['date', 'place', 'program']
+
+function readSavedState() {
+  if (!props.stateKey || typeof sessionStorage === 'undefined') return {}
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(props.stateKey) || '{}')
+    return saved && typeof saved === 'object' ? saved : {}
+  } catch {
+    return {}
+  }
+}
+
+const saved = readSavedState()
+
+const countries = ref({ de: true, at: true, ch: true, ...saved.countries })
+const offers = ref({ future: true, exhibition: true, competition: true, ...saved.offers })
 /** Timeline, by country, or by program. */
-const viewMode = ref('date')
-const openGroups = ref({})
+const viewMode = ref(VIEW_MODES.includes(saved.viewMode) ? saved.viewMode : 'date')
+const openGroups = ref({ ...saved.openGroups })
+const rootEl = ref(null)
+let scrollTop = Number(saved.scrollTop) || 0
+
+function writeState() {
+  if (!props.stateKey || typeof sessionStorage === 'undefined') return
+  try {
+    sessionStorage.setItem(props.stateKey, JSON.stringify({
+      countries: countries.value,
+      offers: offers.value,
+      viewMode: viewMode.value,
+      openGroups: openGroups.value,
+      scrollTop,
+    }))
+  } catch {
+    /* storage full or blocked */
+  }
+}
+
+watch([countries, offers, viewMode, openGroups], writeState, { deep: true })
+
+function scrollContainer() {
+  let el = rootEl.value?.parentElement
+  while (el && el !== document.body) {
+    const { overflowY } = getComputedStyle(el)
+    if ((overflowY === 'auto' || overflowY === 'scroll') && el.scrollHeight > el.clientHeight) return el
+    el = el.parentElement
+  }
+  return document.scrollingElement || document.documentElement
+}
+
+onMounted(async () => {
+  if (!props.stateKey || !scrollTop) return
+  await nextTick()
+  requestAnimationFrame(() => {
+    scrollContainer().scrollTop = scrollTop
+  })
+})
+
+onBeforeUnmount(() => {
+  if (!props.stateKey || !rootEl.value) return
+  scrollTop = scrollContainer().scrollTop
+  writeState()
+})
 
 const COUNTRY_KEYS = ['de', 'at', 'ch']
 
@@ -140,7 +201,7 @@ function onMapVenueSelect(venue) {
 </script>
 
 <template>
-  <div class="venues-catalog">
+  <div ref="rootEl" class="venues-catalog">
     <section class="venues-map-section liquid-surface liquid-surface--accent liquid-surface--accent-blue">
       <VenuesMap
         v-model:countries="countries"
@@ -220,6 +281,7 @@ function onMapVenueSelect(venue) {
             <VenueEventRow
               :venue="ev"
               :show-country="viewMode !== 'place'"
+              :href="eventHref ? eventHref(ev) || '' : ''"
               @select="openVenueDetail"
             >
               <slot name="event-extra" :venue="ev" />
