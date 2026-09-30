@@ -2,11 +2,13 @@
 
 ## Unreleased
 
-Venue catalog keeps its state and rows open in a new tab.
+Venue catalog keeps its state and rows open in a new tab. Experimental: free-text search and sort direction.
 
 - `VenuesCatalog` `stateKey`: filters, grouping, open sections and scroll position survive leaving and returning (sessionStorage)
 - `VenuesCatalog` `eventHref(venue)` → `VenueEventRow` `href`: rows render as links (Cmd/Ctrl/middle click opens a new tab; plain click still emits `select`)
 - Program chip shows in every grouping, including by program
+- **Testweise:** search box (name / English name / address / zip, accent-insensitive) filters on top of the map filters; a sort-direction toggle reverses the active grouping (`venueFilters.js` `venueMatchesSearch`, `sortVenues(..., dir)`); both persist in `stateKey` state
+- **Testweise:** 4th grouping "A–Z" (`viewMode: 'alpha'`) indexes venues by first letter of the display name (`venueNameGroupKey`); digits/symbols group under `#`
 
 ## 1.12.0 — 2026-09-20
 

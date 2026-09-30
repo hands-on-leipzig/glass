@@ -10,7 +10,9 @@ import {
   PROGRAM_ORDER,
   sortVenues,
   venueMatchesFilters,
+  venueMatchesSearch,
   venueMonthKey,
+  venueNameGroupKey,
   venueProgramKey,
 } from './venueFilters.js'
 
@@ -27,7 +29,7 @@ const emit = defineEmits(['select', 'close'])
 
 const { t, locale } = useI18n()
 
-const VIEW_MODES = ['date', 'place', 'program']
+const VIEW_MODES = ['date', 'place', 'program', 'alpha']
 
 function readSavedState() {
   if (!props.stateKey || typeof sessionStorage === 'undefined') return {}
@@ -45,6 +47,10 @@ const countries = ref({ de: true, at: true, ch: true, ...saved.countries })
 const offers = ref({ future: true, exhibition: true, competition: true, ...saved.offers })
 /** Timeline, by country, or by program. */
 const viewMode = ref(VIEW_MODES.includes(saved.viewMode) ? saved.viewMode : 'date')
+/** Reverses the sort within the active view (e.g. newest-first instead of oldest-first). */
+const sortDir = ref(saved.sortDir === 'desc' ? 'desc' : 'asc')
+/** Free-text filter across name / English name / address, on top of the map filters. */
+const searchQuery = ref(typeof saved.searchQuery === 'string' ? saved.searchQuery : '')
 const openGroups = ref({ ...saved.openGroups })
 const rootEl = ref(null)
 let scrollTop = Number(saved.scrollTop) || 0
@@ -56,6 +62,8 @@ function writeState() {
       countries: countries.value,
       offers: offers.value,
       viewMode: viewMode.value,
+      sortDir: sortDir.value,
+      searchQuery: searchQuery.value,
       openGroups: openGroups.value,
       scrollTop,
     }))
@@ -64,7 +72,15 @@ function writeState() {
   }
 }
 
-watch([countries, offers, viewMode, openGroups], writeState, { deep: true })
+watch([countries, offers, viewMode, sortDir, searchQuery, openGroups], writeState, { deep: true })
+
+function toggleSortDir() {
+  sortDir.value = sortDir.value === 'desc' ? 'asc' : 'desc'
+}
+
+function clearSearch() {
+  searchQuery.value = ''
+}
 
 function scrollContainer() {
   let el = rootEl.value?.parentElement
@@ -98,13 +114,15 @@ const activeFilters = computed(() => ({
 }))
 
 const filteredVenues = computed(() =>
-  props.venues.filter((v) => venueMatchesFilters(v, activeFilters.value)),
+  props.venues.filter(
+    (v) => venueMatchesFilters(v, activeFilters.value) && venueMatchesSearch(v, searchQuery.value),
+  ),
 )
 
 const mapClusters = computed(() => clusterVenuesForMap(filteredVenues.value))
 
 const monthGroups = computed(() => {
-  const sorted = sortVenues(filteredVenues.value, locale.value, 'date')
+  const sorted = sortVenues(filteredVenues.value, locale.value, 'date', sortDir.value)
   /** @type {Map<string, object[]>} */
   const map = new Map()
   for (const venue of sorted) {
@@ -130,6 +148,7 @@ const countryGroups = computed(() =>
         filteredVenues.value.filter((v) => v.country === c),
         locale.value,
         'name',
+        sortDir.value,
       ),
     }))
     .filter((group) => group.venues.length > 0),
@@ -151,14 +170,30 @@ const programGroups = computed(() =>
         filteredVenues.value.filter((v) => venueProgramKey(v) === key),
         locale.value,
         'date',
+        sortDir.value,
       ),
     }))
     .filter((group) => group.venues.length > 0),
 )
 
+/** A–Z index by display name; digits/symbols group under '#'. */
+const alphaGroups = computed(() => {
+  const sorted = sortVenues(filteredVenues.value, locale.value, 'name', sortDir.value)
+  /** @type {Map<string, object[]>} */
+  const map = new Map()
+  for (const venue of sorted) {
+    const key = venueNameGroupKey(venue, locale.value)
+    const list = map.get(key) || []
+    list.push(venue)
+    map.set(key, list)
+  }
+  return [...map.entries()].map(([key, list]) => ({ key, label: key, venues: list }))
+})
+
 const accordionGroups = computed(() => {
   if (viewMode.value === 'place') return countryGroups.value
   if (viewMode.value === 'program') return programGroups.value
+  if (viewMode.value === 'alpha') return alphaGroups.value
   return monthGroups.value
 })
 
@@ -212,9 +247,29 @@ function onMapVenueSelect(venue) {
       />
     </section>
 
+    <div class="venues-search">
+      <i class="bi bi-search venues-search-icon" aria-hidden="true"></i>
+      <input
+        v-model="searchQuery"
+        type="search"
+        class="venues-search-input"
+        :placeholder="t('venues.searchPlaceholder')"
+        :aria-label="t('venues.searchPlaceholder')"
+      >
+      <button
+        v-if="searchQuery"
+        type="button"
+        class="venues-search-clear"
+        :aria-label="t('venues.clearSearch')"
+        @click="clearSearch"
+      >
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+
     <p v-if="venues.length && filteredVenues.length === 0" class="venues-hint">
       <i class="bi bi-funnel"></i>
-      {{ t('venues.noFilterResults') }}
+      {{ searchQuery ? t('venues.noSearchResults') : t('venues.noFilterResults') }}
     </p>
 
     <div
@@ -252,6 +307,24 @@ function onMapVenueSelect(venue) {
           @click="viewMode = 'program'"
         >
           {{ t('venues.sortProgram') }}
+        </button>
+        <button
+          type="button"
+          class="venues-view-btn"
+          :class="{ 'is-active': viewMode === 'alpha' }"
+          :aria-pressed="viewMode === 'alpha'"
+          @click="viewMode = 'alpha'"
+        >
+          {{ t('venues.sortAlpha') }}
+        </button>
+        <button
+          type="button"
+          class="venues-view-btn venues-view-btn--dir"
+          :aria-label="sortDir === 'desc' ? t('venues.sortDirDesc') : t('venues.sortDirAsc')"
+          :title="sortDir === 'desc' ? t('venues.sortDirDesc') : t('venues.sortDirAsc')"
+          @click="toggleSortDir"
+        >
+          <i class="bi" :class="sortDir === 'desc' ? 'bi-sort-down' : 'bi-sort-up'" aria-hidden="true"></i>
         </button>
       </div>
     </div>
@@ -339,6 +412,59 @@ function onMapVenueSelect(venue) {
   color: var(--color-text-muted);
   line-height: 1.5;
   box-shadow: var(--shadow-sm);
+}
+.venues-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0 0 1rem;
+}
+.venues-search-icon {
+  position: absolute;
+  left: 0.85rem;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+.venues-search-input {
+  width: 100%;
+  padding: 0.65rem 2.4rem 0.65rem 2.35rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--liquid-border);
+  background: var(--liquid-tile-bg);
+  backdrop-filter: blur(calc(var(--liquid-blur) * 0.48)) saturate(calc(var(--liquid-saturate) * 0.88));
+  -webkit-backdrop-filter: blur(calc(var(--liquid-blur) * 0.48)) saturate(calc(var(--liquid-saturate) * 0.88));
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+}
+.venues-search-input::placeholder {
+  color: var(--color-text-muted);
+}
+.venues-search-input::-webkit-search-cancel-button {
+  display: none;
+}
+.venues-search-clear {
+  position: absolute;
+  right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.venues-search-clear:hover {
+  background: var(--color-bg-muted);
+  color: var(--color-text);
+}
+.venues-view-btn--dir {
+  padding: 0.35rem 0.6rem;
 }
 .venues-toolbar {
   display: flex;

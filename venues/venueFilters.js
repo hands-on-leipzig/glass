@@ -59,6 +59,19 @@ export function venueDisplayName(venue, locale) {
 }
 
 /**
+ * First letter of the display name for an A–Z index; digits/symbols group under '#'.
+ *
+ * @param {object} venue
+ * @param {string} locale
+ */
+export function venueNameGroupKey(venue, locale) {
+  const name = venueDisplayName(venue, locale).trim()
+  if (!name) return '#'
+  const letter = name[0].toUpperCase()
+  return /[A-ZÄÖÜ]/.test(letter) ? letter : '#'
+}
+
+/**
  * @param {object} venue
  * @param {(key: string) => string} t
  */
@@ -221,7 +234,36 @@ export function compareVenues(a, b, locale, sortBy = 'name') {
  * @param {object[]} list
  * @param {string} locale
  * @param {'name'|'date'} [sortBy]
+ * @param {'asc'|'desc'} [dir] Reverses the whole comparison; 'desc' does not just flip the
+ *   primary key, it also flips the tie-breakers (newest-first, then Z→A within a day, etc.).
  */
-export function sortVenues(list, locale, sortBy = 'name') {
-  return list.slice().sort((a, b) => compareVenues(a, b, locale, sortBy))
+export function sortVenues(list, locale, sortBy = 'name', dir = 'asc') {
+  const factor = dir === 'desc' ? -1 : 1
+  return list.slice().sort((a, b) => factor * compareVenues(a, b, locale, sortBy))
+}
+
+/**
+ * Free-text match across name, English name and address — used by an optional search box
+ * on top of the country/offer filters. Case- and diacritic-insensitive.
+ *
+ * @param {object} venue
+ * @param {string} query
+ */
+export function venueMatchesSearch(venue, query) {
+  const q = normalizeSearchText(query)
+  if (!q) return true
+  const haystack = [venue?.name, venue?.nameEn, venue?.address, venue?.zip]
+    .filter(Boolean)
+    .map(normalizeSearchText)
+    .join(' ')
+  return haystack.includes(q)
+}
+
+/** @param {string} value */
+function normalizeSearchText(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
 }
