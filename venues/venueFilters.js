@@ -189,7 +189,7 @@ export function formatVenueMonthHeading(monthKey, locale, tbdText = '') {
  *
  * @param {string|null|undefined} isoDate
  * @param {string} locale
- * @returns {{ day: string, month: string } | null}
+ * @returns {{ weekday: string, day: string, month: string } | null}
  */
 export function formatVenueDayParts(isoDate, locale) {
   const raw = isoDate != null ? String(isoDate).trim() : ''
@@ -198,6 +198,7 @@ export function formatVenueDayParts(isoDate, locale) {
   if (Number.isNaN(d.getTime())) return null
   const loc = locale === 'de' ? 'de-DE' : 'en-GB'
   return {
+    weekday: d.toLocaleDateString(loc, { weekday: 'short' }).replace('.', ''),
     day: d.toLocaleDateString(loc, { day: '2-digit' }),
     month: d.toLocaleDateString(loc, { month: 'short' }).replace('.', ''),
   }
@@ -209,25 +210,37 @@ export function venueProgramRank(venue) {
   return index === -1 ? PROGRAM_ORDER.length : index
 }
 
+/** @param {object} a @param {object} b */
+function compareVenueDatesRaw(a, b) {
+  const da = a?.date ? String(a.date) : ''
+  const db = b?.date ? String(b.date) : ''
+  if (da === db) return 0
+  if (!da) return 1
+  if (!db) return -1
+  return da < db ? -1 : 1
+}
+
 /**
+ * Date sort: date → name → program. Name sort: name → date → program. Either way, program
+ * (Future → Explore → Challenge) is the *last* tie-break, so same-place/same-day entries for
+ * different programs stay grouped together instead of being torn apart by it.
+ *
  * @param {object} a
  * @param {object} b
  * @param {string} locale
  * @param {'name'|'date'} [sortBy]
  */
 export function compareVenues(a, b, locale, sortBy = 'name') {
-  if (sortBy === 'date') {
-    const da = a?.date ? String(a.date) : ''
-    const db = b?.date ? String(b.date) : ''
-    if (da !== db) {
-      if (!da) return 1
-      if (!db) return -1
-      return da < db ? -1 : 1
-    }
-  }
-  const program = venueProgramRank(a) - venueProgramRank(b)
-  if (program !== 0) return program
-  return venueDisplayName(a, locale).localeCompare(venueDisplayName(b, locale), locale)
+  const dateCmp = compareVenueDatesRaw(a, b)
+  const nameCmp = venueDisplayName(a, locale).localeCompare(venueDisplayName(b, locale), locale)
+
+  const primary = sortBy === 'date' ? dateCmp : nameCmp
+  if (primary !== 0) return primary
+
+  const secondary = sortBy === 'date' ? nameCmp : dateCmp
+  if (secondary !== 0) return secondary
+
+  return venueProgramRank(a) - venueProgramRank(b)
 }
 
 /**

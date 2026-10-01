@@ -7,19 +7,17 @@ import VenueEventRow from './VenueEventRow.vue'
 import {
   clusterVenuesForMap,
   formatVenueMonthHeading,
-  PROGRAM_ORDER,
   sortVenues,
   venueMatchesFilters,
   venueMatchesSearch,
   venueMonthKey,
   venueNameGroupKey,
-  venueProgramKey,
 } from './venueFilters.js'
 
 const props = defineProps({
   venues: { type: Array, default: () => [] },
   selectedVenue: { type: Object, default: null },
-  /** Keeps filters, grouping and scroll position in sessionStorage under this key (empty = off). */
+  /** Keeps filters, sort and scroll position in sessionStorage under this key (empty = off). */
   stateKey: { type: String, default: '' },
   /** `(venue) => string` detail URL per row; rows without one stay buttons. */
   eventHref: { type: Function, default: null },
@@ -29,7 +27,7 @@ const emit = defineEmits(['select', 'close'])
 
 const { t, locale } = useI18n()
 
-const VIEW_MODES = ['date', 'place', 'program', 'alpha']
+const SORT_COLUMNS = ['date', 'name']
 
 function readSavedState() {
   if (!props.stateKey || typeof sessionStorage === 'undefined') return {}
@@ -45,15 +43,23 @@ const saved = readSavedState()
 
 const countries = ref({ de: true, at: true, ch: true, ...saved.countries })
 const offers = ref({ future: true, exhibition: true, competition: true, ...saved.offers })
-/** Timeline, by country, or by program. */
-const viewMode = ref(VIEW_MODES.includes(saved.viewMode) ? saved.viewMode : 'date')
-/** Reverses the sort within the active view (e.g. newest-first instead of oldest-first). */
+/** Active sort column; the date/name column headers above the list toggle this. */
+const sortBy = ref(SORT_COLUMNS.includes(saved.sortBy) ? saved.sortBy : 'name')
+/** Reversed by clicking the already-active column header again. */
 const sortDir = ref(saved.sortDir === 'desc' ? 'desc' : 'asc')
 /** Free-text filter across name / English name / address, on top of the map filters. */
 const searchQuery = ref(typeof saved.searchQuery === 'string' ? saved.searchQuery : '')
-const openGroups = ref({ ...saved.openGroups })
 const rootEl = ref(null)
 let scrollTop = Number(saved.scrollTop) || 0
+
+/**
+ * The search bar sticks first; the list's column-header row sticks right below it. Measured
+ * instead of hardcoded so it stays correct across locales/font sizes/zoom — two `top: 0` sticky
+ * elements would otherwise just overlap.
+ */
+const searchBarEl = ref(null)
+const searchBarHeight = ref(0)
+let searchBarResizeObserver = null
 
 function writeState() {
   if (!props.stateKey || typeof sessionStorage === 'undefined') return
@@ -61,10 +67,9 @@ function writeState() {
     sessionStorage.setItem(props.stateKey, JSON.stringify({
       countries: countries.value,
       offers: offers.value,
-      viewMode: viewMode.value,
+      sortBy: sortBy.value,
       sortDir: sortDir.value,
       searchQuery: searchQuery.value,
-      openGroups: openGroups.value,
       scrollTop,
     }))
   } catch {
@@ -72,10 +77,16 @@ function writeState() {
   }
 }
 
-watch([countries, offers, viewMode, sortDir, searchQuery, openGroups], writeState, { deep: true })
+watch([countries, offers, sortBy, sortDir, searchQuery], writeState, { deep: true })
 
-function toggleSortDir() {
-  sortDir.value = sortDir.value === 'desc' ? 'asc' : 'desc'
+/** Clicking the active column reverses it; clicking the other column switches and starts ascending. */
+function setSort(column) {
+  if (sortBy.value === column) {
+    sortDir.value = sortDir.value === 'desc' ? 'asc' : 'desc'
+  } else {
+    sortBy.value = column
+    sortDir.value = 'asc'
+  }
 }
 
 function clearSearch() {
@@ -93,6 +104,13 @@ function scrollContainer() {
 }
 
 onMounted(async () => {
+  if (searchBarEl.value && typeof ResizeObserver !== 'undefined') {
+    searchBarResizeObserver = new ResizeObserver(([entry]) => {
+      searchBarHeight.value = Math.round(entry.contentRect.height)
+    })
+    searchBarResizeObserver.observe(searchBarEl.value)
+  }
+
   if (!props.stateKey || !scrollTop) return
   await nextTick()
   requestAnimationFrame(() => {
@@ -101,6 +119,9 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  searchBarResizeObserver?.disconnect()
+  searchBarResizeObserver = null
+
   if (!props.stateKey || !rootEl.value) return
   scrollTop = scrollContainer().scrollTop
   writeState()
@@ -121,106 +142,43 @@ const filteredVenues = computed(() =>
 
 const mapClusters = computed(() => clusterVenuesForMap(filteredVenues.value))
 
-const monthGroups = computed(() => {
-  const sorted = sortVenues(filteredVenues.value, locale.value, 'date', sortDir.value)
-  /** @type {Map<string, object[]>} */
-  const map = new Map()
-  for (const venue of sorted) {
-    const key = venueMonthKey(venue)
-    const list = map.get(key) || []
-    list.push(venue)
-    map.set(key, list)
-  }
-  return [...map.entries()].map(([key, list]) => ({
-    key,
-    label: formatVenueMonthHeading(key, locale.value, t('venues.dateTbd')),
-    venues: list,
-  }))
-})
-
-const countryGroups = computed(() =>
-  COUNTRY_KEYS
-    .filter((c) => countries.value[c])
-    .map((c) => ({
-      key: c,
-      label: t(`venues.country.${c}`),
-      venues: sortVenues(
-        filteredVenues.value.filter((v) => v.country === c),
-        locale.value,
-        'name',
-        sortDir.value,
-      ),
-    }))
-    .filter((group) => group.venues.length > 0),
+const sortedVenues = computed(() =>
+  sortVenues(filteredVenues.value, locale.value, sortBy.value, sortDir.value),
 )
 
-const PROGRAM_LABEL_KEYS = {
-  exhibition: 'venues.sectionExplore',
-  competition: 'venues.sectionChallenge',
-  future: 'venues.sectionFuture',
-}
-
-const programGroups = computed(() =>
-  PROGRAM_ORDER
-    .filter((key) => offers.value[key])
-    .map((key) => ({
-      key,
-      label: t(PROGRAM_LABEL_KEYS[key]),
-      venues: sortVenues(
-        filteredVenues.value.filter((v) => venueProgramKey(v) === key),
-        locale.value,
-        'date',
-        sortDir.value,
-      ),
-    }))
-    .filter((group) => group.venues.length > 0),
-)
-
-/** A–Z index by display name; digits/symbols group under '#'. */
-const alphaGroups = computed(() => {
-  const sorted = sortVenues(filteredVenues.value, locale.value, 'name', sortDir.value)
-  /** @type {Map<string, object[]>} */
-  const map = new Map()
-  for (const venue of sorted) {
-    const key = venueNameGroupKey(venue, locale.value)
-    const list = map.get(key) || []
-    list.push(venue)
-    map.set(key, list)
-  }
-  return [...map.entries()].map(([key, list]) => ({ key, label: key, venues: list }))
-})
-
-const accordionGroups = computed(() => {
-  if (viewMode.value === 'place') return countryGroups.value
-  if (viewMode.value === 'program') return programGroups.value
-  if (viewMode.value === 'alpha') return alphaGroups.value
-  return monthGroups.value
-})
-
-function groupId(group) {
-  return `${viewMode.value}-${group.key}`
-}
-
-watch(
-  accordionGroups,
-  (groups) => {
-    const next = { ...openGroups.value }
-    for (const group of groups) {
-      const id = groupId(group)
-      if (next[id] === undefined) next[id] = true
+/**
+ * Flat, always-open list: date sort gets subtle month dividers, name sort gets A–Z letter
+ * dividers — orientation only, not a second click target.
+ */
+const listItems = computed(() => {
+  const items = []
+  let lastKey = null
+  for (const venue of sortedVenues.value) {
+    const key = sortBy.value === 'name' ? venueNameGroupKey(venue, locale.value) : venueMonthKey(venue)
+    if (key !== lastKey) {
+      items.push({
+        type: 'divider',
+        id: `divider-${key}`,
+        label: sortBy.value === 'name' ? key : formatVenueMonthHeading(key, locale.value, t('venues.dateTbd')),
+      })
+      lastKey = key
     }
-    openGroups.value = next
-  },
-  { immediate: true },
-)
+    items.push({ type: 'venue', id: venue.id, venue })
+  }
+  return items
+})
 
-function isGroupOpen(group) {
-  return !!openGroups.value[groupId(group)]
+function sortAriaLabel(column, label) {
+  if (sortBy.value !== column) return label
+  const dirText = sortDir.value === 'desc' ? t('venues.sortDirDesc') : t('venues.sortDirAsc')
+  return `${label}: ${dirText}`
 }
 
-function toggleGroup(group) {
-  const id = groupId(group)
-  openGroups.value = { ...openGroups.value, [id]: !openGroups.value[id] }
+/** Both headers always show an arrow — active one points with the current direction, the
+ *  other stays a neutral "sortable" hint so the row never jumps when switching columns. */
+function sortArrowIcon(column) {
+  if (sortBy.value !== column) return 'bi-chevron-expand'
+  return sortDir.value === 'desc' ? 'bi-caret-down-fill' : 'bi-caret-up-fill'
 }
 
 function openVenueDetail(venue) {
@@ -247,24 +205,26 @@ function onMapVenueSelect(venue) {
       />
     </section>
 
-    <div class="venues-search">
-      <i class="bi bi-search venues-search-icon" aria-hidden="true"></i>
-      <input
-        v-model="searchQuery"
-        type="search"
-        class="venues-search-input"
-        :placeholder="t('venues.searchPlaceholder')"
-        :aria-label="t('venues.searchPlaceholder')"
-      >
-      <button
-        v-if="searchQuery"
-        type="button"
-        class="venues-search-clear"
-        :aria-label="t('venues.clearSearch')"
-        @click="clearSearch"
-      >
-        <i class="bi bi-x-lg" aria-hidden="true"></i>
-      </button>
+    <div ref="searchBarEl" class="venues-search-bar">
+      <div class="venues-search">
+        <i class="bi bi-search venues-search-icon" aria-hidden="true"></i>
+        <input
+          v-model="searchQuery"
+          type="search"
+          class="venues-search-input"
+          :placeholder="t('venues.searchPlaceholder')"
+          :aria-label="t('venues.searchPlaceholder')"
+        >
+        <button
+          v-if="searchQuery"
+          type="button"
+          class="venues-search-clear"
+          :aria-label="t('venues.clearSearch')"
+          @click="clearSearch"
+        >
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+      </div>
     </div>
 
     <p v-if="venues.length && filteredVenues.length === 0" class="venues-hint">
@@ -272,97 +232,50 @@ function onMapVenueSelect(venue) {
       {{ searchQuery ? t('venues.noSearchResults') : t('venues.noFilterResults') }}
     </p>
 
-    <div
-      v-if="filteredVenues.length"
-      class="venues-toolbar"
-    >
-      <p class="venues-toolbar-count">
-        {{ t('venues.resultsCount', { count: filteredVenues.length }) }}
-      </p>
-      <div class="venues-view" role="group" :aria-label="t('venues.sortBy')">
-        <span class="venues-view-label">{{ t('venues.sortBy') }}</span>
+    <p v-if="filteredVenues.length" class="venues-toolbar-count">
+      {{ t('venues.resultsCount', { count: filteredVenues.length }) }}
+    </p>
+
+    <div v-if="filteredVenues.length" class="venues-list liquid-surface liquid-surface--radius-lg">
+      <div class="venues-list-head" :style="{ top: `${searchBarHeight}px` }">
         <button
           type="button"
-          class="venues-view-btn"
-          :class="{ 'is-active': viewMode === 'date' }"
-          :aria-pressed="viewMode === 'date'"
-          @click="viewMode = 'date'"
+          class="venues-col-btn venues-col-btn--date"
+          :class="{ 'is-active': sortBy === 'date' }"
+          :aria-label="sortAriaLabel('date', t('venues.colDate'))"
+          @click="setSort('date')"
         >
-          {{ t('venues.sortDate') }}
+          <span>{{ t('venues.colDate') }}</span>
+          <i class="bi venues-col-arrow" :class="sortArrowIcon('date')" aria-hidden="true"></i>
         </button>
         <button
           type="button"
-          class="venues-view-btn"
-          :class="{ 'is-active': viewMode === 'place' }"
-          :aria-pressed="viewMode === 'place'"
-          @click="viewMode = 'place'"
+          class="venues-col-btn venues-col-btn--name"
+          :class="{ 'is-active': sortBy === 'name' }"
+          :aria-label="sortAriaLabel('name', t('venues.colName'))"
+          @click="setSort('name')"
         >
-          {{ t('venues.sortName') }}
-        </button>
-        <button
-          type="button"
-          class="venues-view-btn"
-          :class="{ 'is-active': viewMode === 'program' }"
-          :aria-pressed="viewMode === 'program'"
-          @click="viewMode = 'program'"
-        >
-          {{ t('venues.sortProgram') }}
-        </button>
-        <button
-          type="button"
-          class="venues-view-btn"
-          :class="{ 'is-active': viewMode === 'alpha' }"
-          :aria-pressed="viewMode === 'alpha'"
-          @click="viewMode = 'alpha'"
-        >
-          {{ t('venues.sortAlpha') }}
-        </button>
-        <button
-          type="button"
-          class="venues-view-btn venues-view-btn--dir"
-          :aria-label="sortDir === 'desc' ? t('venues.sortDirDesc') : t('venues.sortDirAsc')"
-          :title="sortDir === 'desc' ? t('venues.sortDirDesc') : t('venues.sortDirAsc')"
-          @click="toggleSortDir"
-        >
-          <i class="bi" :class="sortDir === 'desc' ? 'bi-sort-down' : 'bi-sort-up'" aria-hidden="true"></i>
+          <span>{{ t('venues.colName') }}</span>
+          <i class="bi venues-col-arrow" :class="sortArrowIcon('name')" aria-hidden="true"></i>
         </button>
       </div>
-    </div>
-
-    <section
-      v-for="group in accordionGroups"
-      :key="groupId(group)"
-      class="venues-group"
-    >
-      <div class="venues-stack liquid-surface liquid-surface--radius-lg">
-        <button
-          type="button"
-          class="venues-group-head"
-          :aria-expanded="isGroupOpen(group)"
-          @click="toggleGroup(group)"
-        >
-          <i
-            class="bi"
-            :class="isGroupOpen(group) ? 'bi-dash-lg' : 'bi-plus-lg'"
-            aria-hidden="true"
-          />
-          {{ group.label }}
-          <span class="venues-group-count">{{ group.venues.length }}</span>
-        </button>
-        <ul v-show="isGroupOpen(group)" class="venues-stack-body">
-          <li v-for="ev in group.venues" :key="ev.id">
+      <ul class="venues-list-body">
+        <template v-for="item in listItems" :key="item.id">
+          <li v-if="item.type === 'divider'" class="venues-list-divider" role="presentation">
+            {{ item.label }}
+          </li>
+          <li v-else>
             <VenueEventRow
-              :venue="ev"
-              :show-country="viewMode !== 'place'"
-              :href="eventHref ? eventHref(ev) || '' : ''"
+              :venue="item.venue"
+              :href="eventHref ? eventHref(item.venue) || '' : ''"
               @select="openVenueDetail"
             >
-              <slot name="event-extra" :venue="ev" />
+              <slot name="event-extra" :venue="item.venue" />
             </VenueEventRow>
           </li>
-        </ul>
-      </div>
-    </section>
+        </template>
+      </ul>
+    </div>
 
     <VenueDetailModal
       :show="!!selectedVenue"
@@ -413,11 +326,21 @@ function onMapVenueSelect(venue) {
   line-height: 1.5;
   box-shadow: var(--shadow-sm);
 }
+.venues-search-bar {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  padding-bottom: 1rem;
+  /* Same opaque "strong" sticky-bar treatment used for the app shell's own sticky header/
+     footer — a translucent background here looked odd with rows scrolling underneath. */
+  background: color-mix(in srgb, var(--liquid-tile-bg-strong, var(--liquid-tile-bg)) 94%, transparent);
+  backdrop-filter: blur(20px) saturate(var(--liquid-saturate, 1.2));
+  -webkit-backdrop-filter: blur(20px) saturate(var(--liquid-saturate, 1.2));
+}
 .venues-search {
   position: relative;
   display: flex;
   align-items: center;
-  margin: 0 0 1rem;
 }
 .venues-search-icon {
   position: absolute;
@@ -463,73 +386,74 @@ function onMapVenueSelect(venue) {
   background: var(--color-bg-muted);
   color: var(--color-text);
 }
-.venues-view-btn--dir {
-  padding: 0.35rem 0.6rem;
-}
-.venues-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem 1.25rem;
-  margin: 0 0 1.35rem;
-}
 .venues-toolbar-count {
-  margin: 0;
+  margin: 0 0 0.6rem;
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-text-muted);
 }
-.venues-view {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.4rem;
+.venues-list {
+  /* `clip` (not `hidden`) keeps the rounded corners without turning this box into a
+     scroll container — that would break `position: sticky` on the head row below. */
+  overflow: clip;
 }
-.venues-view-label {
-  margin-right: 0.2rem;
+.venues-list-head {
+  position: sticky;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 3.4rem minmax(0, 1fr);
+  gap: 0.85rem 1rem;
+  padding: 0 1rem;
+  /* Same opaque "strong" sticky-bar treatment as `.venues-search-bar` above it — needs to be
+     solid, not just frosted, or rows scrolling underneath show through oddly. */
+  background: color-mix(in srgb, var(--liquid-tile-bg-strong, var(--liquid-tile-bg)) 94%, transparent);
+  backdrop-filter: blur(20px) saturate(var(--liquid-saturate, 1.2));
+  -webkit-backdrop-filter: blur(20px) saturate(var(--liquid-saturate, 1.2));
+  border-bottom: 1px solid var(--color-border);
+}
+.venues-col-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.65rem 0;
+  border: none;
+  background: transparent;
+  font: inherit;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--color-text-muted);
-}
-.venues-group {
-  margin-bottom: 1.5rem;
-}
-.venues-stack {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-.venues-stack-body > li + li {
-  border-top: 1px solid var(--color-border);
-}
-.venues-stack-body {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border-top: 1px solid var(--color-border);
-}
-.venues-group-head {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.85rem 1rem;
-  border: none;
-  background: transparent;
-  font: inherit;
-  font-weight: 700;
   cursor: pointer;
   text-align: left;
+}
+.venues-col-btn:hover {
   color: var(--color-text);
 }
-.venues-group-count {
-  margin-left: auto;
-  font-size: var(--text-sm);
+.venues-col-btn.is-active {
+  color: var(--color-accent);
+}
+.venues-col-arrow {
+  font-size: 0.6rem;
+}
+.venues-col-btn:not(.is-active) .venues-col-arrow {
+  opacity: 0.45;
+}
+.venues-list-body {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.venues-list-body > li:not(.venues-list-divider) + li:not(.venues-list-divider) {
+  border-top: 1px solid var(--color-border);
+}
+.venues-list-divider {
+  padding: 0.55rem 1rem 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: var(--color-text-muted);
-  font-weight: 500;
+  background: color-mix(in srgb, var(--color-text-muted) 5%, transparent);
 }
 </style>

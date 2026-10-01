@@ -2,13 +2,17 @@
 
 ## Unreleased
 
-Venue catalog keeps its state and rows open in a new tab. Experimental: free-text search and sort direction.
+Venue catalog keeps its state and rows open in a new tab. Search box. Sortable "Datum" / "Name" column headers replace the grouping-mode buttons.
 
-- `VenuesCatalog` `stateKey`: filters, grouping, open sections and scroll position survive leaving and returning (sessionStorage)
+- `VenuesCatalog` `stateKey`: filters, sort and scroll position survive leaving and returning (sessionStorage)
 - `VenuesCatalog` `eventHref(venue)` → `VenueEventRow` `href`: rows render as links (Cmd/Ctrl/middle click opens a new tab; plain click still emits `select`)
-- Program chip shows in every grouping, including by program
-- **Testweise:** search box (name / English name / address / zip, accent-insensitive) filters on top of the map filters; a sort-direction toggle reverses the active grouping (`venueFilters.js` `venueMatchesSearch`, `sortVenues(..., dir)`); both persist in `stateKey` state
-- **Testweise:** 4th grouping "A–Z" (`viewMode: 'alpha'`) indexes venues by first letter of the display name (`venueNameGroupKey`); digits/symbols group under `#`
+- Search box (name / English name / address / zip, accent-insensitive) filters on top of the map filters (`venueFilters.js` `venueMatchesSearch`)
+- **List redesign:** the country/program/A–Z grouping buttons are gone — country/program stay map-legend filters only. The list is now flat with a sticky "Datum" / "Name" column-header row above it; clicking a header sorts by it (click again to reverse). Subtle, non-collapsible month dividers (date sort) or A–Z letter dividers (name sort, `venueNameGroupKey`) give orientation without a second click target
+- Both column headers always show a sort arrow — the active one points with the current direction (▲/▼), the inactive one shows a neutral "sortable" chevron, so the row never resizes when switching columns
+- Default sort is now "Name" (A–Z); `compareVenues(..., sortBy)`: date sort → date → name → program; name sort → name → date → program. Program (Future → Explore → Challenge) is always the *last* tie-break, so same place / same day stays grouped together instead of being torn apart by program
+- `VenueEventRow`: reworked as a real 4-column grid (date | name | meta | chip) instead of a stacked flex layout — name gets the full flexible width (no more forced truncation), country/capacity get their own right-aligned column, and the program chip lands flush on the row's right edge automatically (no dotted leader line needed, that was a detour). Collapses back to a stacked date-sidebar layout under 720px
+- Date block gains a weekday abbreviation above the day number (Öbb-style: "Sa" / "28" / "Nov"); `formatVenueDayParts` now returns `{ weekday, day, month }`
+- Search box is sticky too now, docking above the "Datum"/"Name" column-header row (which measures the search bar's height via `ResizeObserver` and offsets its own `top` accordingly, so two independent `top: 0` sticky elements don't just overlap). Both sticky bars switched from the translucent `--liquid-tile-bg` to the opaque `--liquid-tile-bg-strong` (same treatment the app shell already uses for its own sticky header/footer) — the frosted version let rows scrolling underneath show through oddly
 
 ## 1.12.0 — 2026-09-20
 
