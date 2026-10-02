@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+Brand spelling: *FIRST* (italic, all caps) LEGO League.
+
+- `@hands-on/glass/brand-text` (`BrandText`): renders `text` with every "first lego league" (any casing) as `<i>FIRST</i> LEGO League`
+- `@hands-on/glass/brand`: `splitFllBrand(text)` segments, `normalizeFllBrand(text)` for plain attributes (alt, title)
+
 Venue catalog keeps its state and rows open in a new tab. Search box. Sortable "Datum" / "Name" column headers replace the grouping-mode buttons.
 
 - `VenuesCatalog` `stateKey`: filters, sort and scroll position survive leaving and returning (sessionStorage)
