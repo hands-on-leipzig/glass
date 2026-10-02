@@ -3,7 +3,14 @@ import { ref, computed, watch, onMounted, onUnmounted, shallowRef, nextTick } fr
 import { useI18n } from 'vue-i18n'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { OFFER_COLORS, PROGRAM_ORDER } from './venueFilters.js'
+import {
+  OFFER_COLORS,
+  PROGRAM_ORDER,
+  formatVenueDateDisplay,
+  sortVenues,
+  venueDisplayName,
+  venueProgramKey,
+} from './venueFilters.js'
 
 const COUNTRY_KEYS = ['de', 'at', 'ch']
 
@@ -23,7 +30,7 @@ const props = defineProps({
 
 const emit = defineEmits(['venue-select'])
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const mapWrap = ref(null)
 const mapRoot = ref(null)
@@ -215,11 +222,85 @@ function offerStyle(key) {
   return { '--offer-color': OFFER_COLORS[key] || OFFER_COLORS.other }
 }
 
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  })[ch])
+}
+
+/** Clusters are split per program, so markers at the same spot share one event list. */
+function locationKey(lat, lon) {
+  return `${lat.toFixed(3)}:${lon.toFixed(3)}`
+}
+
+function venuesTooltipHtml(venues) {
+  const loc = locale.value
+  const rows = sortVenues(venues, loc, 'date').map((v) => {
+    const date = formatVenueDateDisplay(v.date, loc, 'tbd')
+    const track = v.program === 'future5' ? ` · ${t('venues.futureTrack5')}` : ''
+    return `<li class="venues-map-tip-row" style="--offer-color:${offerColor(venueProgramKey(v))}">`
+      + '<span class="venues-map-tip-dot"></span>'
+      + `<span class="venues-map-tip-date">${escapeHtml(date)}</span>`
+      + `<span class="venues-map-tip-name">${escapeHtml(venueDisplayName(v, loc) + track)}</span>`
+      + '</li>'
+  })
+  return `<ul class="venues-map-tip-list">${rows.join('')}</ul>`
+}
+
+const TIP_EDGE_MARGIN = 8
+
+/** The map section clips overflow, so open the bubble on whichever side of the marker it fits. */
+function placeTooltipInView(map, tooltip, latlng, radius) {
+  const el = tooltip.getElement()
+  if (!el) return
+  const size = map.getSize()
+  const p = map.latLngToContainerPoint(latlng)
+  const w = el.offsetWidth
+  const h = el.offsetHeight
+  const gap = radius + TIP_EDGE_MARGIN
+
+  const fitsX = p.x - w / 2 >= TIP_EDGE_MARGIN && p.x + w / 2 <= size.x - TIP_EDGE_MARGIN
+  const spaceAbove = p.y - gap
+  const spaceBelow = size.y - p.y - gap
+
+  let direction
+  if (fitsX && spaceAbove >= h) direction = 'top'
+  else if (fitsX && spaceBelow >= h) direction = 'bottom'
+  else if (p.x + gap + w <= size.x - TIP_EDGE_MARGIN) direction = 'right'
+  else if (p.x - gap - w >= TIP_EDGE_MARGIN) direction = 'left'
+  else direction = spaceAbove >= spaceBelow ? 'top' : 'bottom'
+
+  const offsets = {
+    top: [0, -radius],
+    bottom: [0, radius],
+    left: [-radius, 0],
+    right: [radius, 0],
+  }
+  tooltip.options.direction = direction
+  tooltip.options.offset = offsets[direction]
+  tooltip.update()
+}
+
 function syncMarkers() {
   const map = mapInstance.value
   const layer = markersLayer.value
   if (!map || !layer) return
   layer.clearLayers()
+
+  const venuesByLocation = new Map()
+  for (const cluster of props.clusters) {
+    const lat = Number(cluster.lat)
+    const lon = Number(cluster.lon)
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue
+    const key = locationKey(lat, lon)
+    if (!venuesByLocation.has(key)) venuesByLocation.set(key, [])
+    venuesByLocation.get(key).push(...(cluster.venues || []))
+  }
+
   const bounds = []
   for (const cluster of props.clusters) {
     const lat = Number(cluster.lat)
@@ -235,10 +316,28 @@ function syncMarkers() {
       fillColor: color,
       fillOpacity: 0.92,
     })
-    const title = cluster.venues.map((v) => v.name).join('<br>')
-    marker.bindPopup(`<strong>${cluster.count}</strong><br>${title}`)
+    const locationVenues = venuesByLocation.get(locationKey(lat, lon)) || []
+    if (locationVenues.length) {
+      marker.bindTooltip(venuesTooltipHtml(locationVenues), {
+        direction: 'top',
+        offset: [0, -radius],
+        opacity: 1,
+        className: 'venues-map-tip',
+      })
+      marker.on('tooltipopen', (e) => placeTooltipInView(map, e.tooltip, [lat, lon], radius))
+    }
     if (cluster.count > 1) {
-      marker.bindTooltip(String(cluster.count), { permanent: true, direction: 'center', className: 'venues-map-count' })
+      const size = radius * 2
+      L.marker([lat, lon], {
+        interactive: false,
+        keyboard: false,
+        icon: L.divIcon({
+          className: 'venues-map-count',
+          html: String(cluster.count),
+          iconSize: [size, size],
+          iconAnchor: [radius, radius],
+        }),
+      }).addTo(layer)
     }
     marker.on('click', () => {
       const list = Array.isArray(cluster.venues) ? cluster.venues : []
@@ -291,6 +390,7 @@ onMounted(() => {
 })
 
 watch(() => props.clusters, syncMarkers, { deep: true })
+watch(locale, syncMarkers)
 
 /** Re-fit markers into the changed free space when the legend collapses/expands. */
 watch(legendCollapsed, () => {
@@ -683,13 +783,63 @@ html[data-theme='dark'] .venues-map-switch-input:checked + .venues-map-switch-tr
 
 <style>
 .venues-map-count {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  color: #fff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
   font-weight: 700;
   font-size: 0.75rem;
-  margin: 0 !important;
-  padding: 0 !important;
+  pointer-events: none;
+}
+.leaflet-tooltip.venues-map-tip {
+  width: max-content;
+  max-width: min(30rem, 85vw);
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--liquid-border, rgba(0, 0, 0, 0.12));
+  border-radius: var(--radius-lg, 12px);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.18));
+  color: var(--color-text, #1c1c1e);
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  white-space: normal;
+}
+html[data-theme='dark'] .leaflet-tooltip.venues-map-tip {
+  background: rgba(36, 32, 30, 0.96);
+}
+.leaflet-tooltip.venues-map-tip::before {
+  display: none;
+}
+.venues-map-tip-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.venues-map-tip-row {
+  display: grid;
+  grid-template-columns: 0.7rem auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.6rem;
+}
+.venues-map-tip-dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--offer-color);
+  align-self: center;
+}
+.venues-map-tip-date {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted, #6b7280);
+  white-space: nowrap;
+}
+.venues-map-tip-name {
+  font-weight: 600;
 }
 </style>
