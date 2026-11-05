@@ -9,7 +9,7 @@
  *   - With `#mobile-tabs` slot: app-style top bar + bottom tab bar; drawer via toggle
  *     (bottom sheet, swipe-down to dismiss)
  */
-import { computed, onMounted, provide, ref, useSlots, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, provide, ref, useSlots, watch } from 'vue'
 
 const props = defineProps({
   /** Mobile drawer open */
@@ -65,6 +65,74 @@ onMounted(() => {
   } catch {
     /* ignore */
   }
+})
+
+const tabsEl = ref(null)
+const tabBubble = ref({ on: false, x: 0, y: 0, width: 0, height: 0, swoosh: false })
+let tabObserver = null
+let tabResize = null
+let tabSwooshTimer = 0
+let tabBubblePlaced = false
+
+function placeTabBubble() {
+  const nav = tabsEl.value
+  if (!nav) return
+  const marked = nav.querySelectorAll('.glass-app__mobile-tab--active')
+  const active = marked.length ? marked[marked.length - 1] : null
+  if (!active) {
+    tabBubblePlaced = false
+    tabBubble.value = { ...tabBubble.value, on: false, swoosh: false }
+    return
+  }
+  const navBox = nav.getBoundingClientRect()
+  const box = active.getBoundingClientRect()
+  const x = box.left - navBox.left
+  const y = box.top - navBox.top
+  const moved = tabBubblePlaced && Math.abs(x - tabBubble.value.x) > 1
+  if (tabBubblePlaced && !moved && Math.abs(box.width - tabBubble.value.width) < 1) return
+  tabBubble.value = {
+    on: true,
+    x,
+    y,
+    width: box.width,
+    height: box.height,
+    swoosh: moved,
+  }
+  tabBubblePlaced = true
+  if (!moved) return
+  window.clearTimeout(tabSwooshTimer)
+  tabSwooshTimer = window.setTimeout(() => {
+    tabBubble.value = { ...tabBubble.value, swoosh: false }
+  }, 280)
+}
+
+function watchTabBubble() {
+  const nav = tabsEl.value
+  if (!nav || tabObserver) return
+  tabObserver = new MutationObserver(() => {
+    nextTick(() => placeTabBubble())
+  })
+  tabObserver.observe(nav, {
+    subtree: true,
+    childList: true,
+    attributes: true,
+    attributeFilter: ['class'],
+  })
+  if (typeof ResizeObserver !== 'undefined') {
+    tabResize = new ResizeObserver(() => placeTabBubble())
+    tabResize.observe(nav)
+  }
+  nextTick(() => placeTabBubble())
+}
+
+watch(hasMobileTabs, (on) => {
+  if (on) nextTick(() => watchTabBubble())
+}, { immediate: true })
+
+onBeforeUnmount(() => {
+  tabObserver?.disconnect()
+  tabResize?.disconnect()
+  window.clearTimeout(tabSwooshTimer)
 })
 
 const isCollapsed = computed({
@@ -320,9 +388,23 @@ const sheetStyle = computed(() => {
     <!-- App-style bottom tabs (mobile only via CSS). -->
     <nav
       v-if="hasMobileTabs"
+      ref="tabsEl"
       class="glass-app__mobile-tabs"
       aria-label="Primary"
     >
+      <span
+        v-show="tabBubble.on"
+        class="glass-app__tab-bubble"
+        :class="{ 'is-swoosh': tabBubble.swoosh }"
+        :style="{
+          width: `${tabBubble.width}px`,
+          height: `${tabBubble.height}px`,
+          transform: `translate(${tabBubble.x}px, ${tabBubble.y}px)`,
+        }"
+        aria-hidden="true"
+      >
+        <span class="glass-app__tab-bubble-lens" />
+      </span>
       <slot name="mobile-tabs" :open="open" :toggle="onToggle" />
     </nav>
   </div>

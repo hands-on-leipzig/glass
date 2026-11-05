@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+Mobile tab bar (`#mobile-tabs`) is a floating liquid-glass capsule. The selected tab is a lens that springs across the bar. Same bar on every app that fills the slot; phones only. From tablet width the bar stays centered and no wider than 34rem.
+
 Brand spelling: *FIRST* (italic, all caps) LEGO League.
 
 - `@hands-on/glass/brand-text` (`BrandText`): renders `text` with every "first lego league" (any casing) as `<i>FIRST</i> LEGO League`
