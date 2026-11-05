@@ -113,8 +113,10 @@ html[data-theme='dark'] .glass-app--mobile-tabs .glass-app__mobile-top {
 
 .glass-app--mobile-tabs .glass-app__mobile-tabs {
   position: fixed;
-  left: max(0.7rem, env(safe-area-inset-left, 0px));
-  right: max(0.7rem, env(safe-area-inset-right, 0px));
+  left: 50%;
+  right: auto;
+  width: min(24rem, calc(100% - 1.4rem));
+  transform: translateX(-50%);
   bottom: calc(0.45rem + env(safe-area-inset-bottom, 0px));
   z-index: 1080;
   align-items: stretch;
@@ -130,15 +132,6 @@ html[data-theme='dark'] .glass-app--mobile-tabs .glass-app__mobile-top {
   backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
   -webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
   box-shadow: var(--liquid-shadow);
-}
-
-@media (min-width: 769px) {
-  .glass-app--mobile-tabs .glass-app__mobile-tabs {
-    width: min(34rem, calc(100% - 1.4rem));
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-  }
 }
 
 .glass-app--mobile-tabs .glass-app__mobile-tabs::before {
