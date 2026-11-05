@@ -95,9 +95,7 @@ useModalDismiss(() => props.show, {
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  background: var(--liquid-popover-fill);
-  backdrop-filter: blur(var(--liquid-popover-blur)) saturate(var(--liquid-popover-saturate));
-  -webkit-backdrop-filter: blur(var(--liquid-popover-blur)) saturate(var(--liquid-popover-saturate));
+  background: transparent;
   overflow: hidden;
 }
 @media (min-width: 640px) {
@@ -114,6 +112,7 @@ useModalDismiss(() => props.show, {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--liquid-border);
   flex-shrink: 0;
+  background: transparent;
 }
 .docs-viewer-title {
   font-weight: 600;
