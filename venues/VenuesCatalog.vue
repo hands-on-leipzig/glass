@@ -318,8 +318,8 @@ function onMapVenueSelect(venue) {
   margin: 0 0 1.25rem;
   border-radius: var(--radius-lg);
   background: var(--liquid-tile-bg);
-  backdrop-filter: blur(calc(var(--liquid-blur) * 0.48)) saturate(calc(var(--liquid-saturate) * 0.88));
-  -webkit-backdrop-filter: blur(calc(var(--liquid-blur) * 0.48)) saturate(calc(var(--liquid-saturate) * 0.88));
+  backdrop-filter: blur(var(--liquid-blur)) saturate(calc(var(--liquid-saturate) * 0.88));
+  -webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(calc(var(--liquid-saturate) * 0.88));
   border: 1px solid var(--liquid-border);
   font-size: var(--text-sm);
   color: var(--color-text-muted);
@@ -334,8 +334,8 @@ function onMapVenueSelect(venue) {
   /* Same opaque "strong" sticky-bar treatment used for the app shell's own sticky header/
      footer — a translucent background here looked odd with rows scrolling underneath. */
   background: color-mix(in srgb, var(--liquid-tile-bg-strong, var(--liquid-tile-bg)) 94%, transparent);
-  backdrop-filter: blur(20px) saturate(var(--liquid-saturate, 1.2));
-  -webkit-backdrop-filter: blur(20px) saturate(var(--liquid-saturate, 1.2));
+  backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate, 1.2));
+  -webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate, 1.2));
 }
 .venues-search {
   position: relative;
@@ -355,8 +355,8 @@ function onMapVenueSelect(venue) {
   border-radius: var(--radius-lg);
   border: 1px solid var(--liquid-border);
   background: var(--liquid-tile-bg);
-  backdrop-filter: blur(calc(var(--liquid-blur) * 0.48)) saturate(calc(var(--liquid-saturate) * 0.88));
-  -webkit-backdrop-filter: blur(calc(var(--liquid-blur) * 0.48)) saturate(calc(var(--liquid-saturate) * 0.88));
+  backdrop-filter: blur(var(--liquid-blur)) saturate(calc(var(--liquid-saturate) * 0.88));
+  -webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(calc(var(--liquid-saturate) * 0.88));
   color: var(--color-text);
   font: inherit;
   font-size: var(--text-sm);
@@ -407,8 +407,8 @@ function onMapVenueSelect(venue) {
   /* Same opaque "strong" sticky-bar treatment as `.venues-search-bar` above it — needs to be
      solid, not just frosted, or rows scrolling underneath show through oddly. */
   background: color-mix(in srgb, var(--liquid-tile-bg-strong, var(--liquid-tile-bg)) 94%, transparent);
-  backdrop-filter: blur(20px) saturate(var(--liquid-saturate, 1.2));
-  -webkit-backdrop-filter: blur(20px) saturate(var(--liquid-saturate, 1.2));
+  backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate, 1.2));
+  -webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate, 1.2));
   border-bottom: 1px solid var(--color-border);
 }
 .venues-col-btn {

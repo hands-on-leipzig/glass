@@ -67,7 +67,7 @@ useModalDismiss(() => props.show, {
           v-if="show && venue"
           :aria-label="title"
           aria-modal="true"
-          class="venue-detail-modal-backdrop"
+          class="venue-detail-modal-backdrop liquid-scrim"
           role="dialog"
           @click="onBackdropClick"
       >
@@ -190,6 +190,8 @@ useModalDismiss(() => props.show, {
   justify-content: center;
   padding: 1.5rem;
   background: var(--liquid-modal-scrim-bg);
+  backdrop-filter: blur(var(--liquid-modal-scrim-blur)) saturate(var(--liquid-saturate));
+  -webkit-backdrop-filter: blur(var(--liquid-modal-scrim-blur)) saturate(var(--liquid-saturate));
 }
 
 .venue-detail-modal-dialog {

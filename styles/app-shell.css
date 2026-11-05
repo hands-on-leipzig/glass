@@ -234,8 +234,8 @@ html[data-theme='dark'] .glass-app__tab-bubble-lens {
   inset: 0;
   z-index: 100;
   background: var(--liquid-modal-scrim-bg);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(var(--liquid-modal-scrim-blur)) saturate(var(--liquid-saturate));
+  -webkit-backdrop-filter: blur(var(--liquid-modal-scrim-blur)) saturate(var(--liquid-saturate));
 }
 
 .glass-sidebar {
@@ -962,8 +962,8 @@ html[data-theme='dark'] .glass-app__tab-bubble-lens {
   padding: 0.5rem 0.5rem 0.65rem;
   border-top: 1px solid var(--color-border);
   background: var(--liquid-bg-subtle);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
+  -webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
   display: flex;
   flex-direction: column;
   gap: 0.125rem;

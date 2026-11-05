@@ -34,8 +34,8 @@
   --orbit-glow: radial-gradient(ellipse 100% 80% at 12% 8%, rgba(255, 122, 0, 0.045) 0%, transparent 55%),
     radial-gradient(ellipse 70% 55% at 92% 90%, rgba(90, 130, 200, 0.06) 0%, transparent 50%);
 
-  /* Liquid glass – frost + specular rim (top light) for readable 3D edges */
-  --liquid-blur: 44px;
+  /* Liquid glass – frost strong enough that type behind a surface is only color */
+  --liquid-blur: 120px;
   --liquid-saturate: 1.72;
   --liquid-bg: rgba(255, 255, 255, 0.38);
   --liquid-bg-strong: rgba(255, 255, 255, 0.78);
@@ -52,12 +52,13 @@
     inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
     inset 0 -1px 0 rgba(15, 23, 42, 0.05);
 
-  /* Dropdowns / modal panels – starker Frost (nur auf der schwebenden Fläche) */
-  --liquid-popover-blur: 96px;
+  /* Dropdowns / modal panels – heavier frost than cards (floating over live type) */
+  --liquid-popover-blur: 160px;
   --liquid-popover-saturate: 2;
   --liquid-popover-fill: rgba(255, 255, 255, 0.82);
-  /* Vollebild-Scrim: eher transparent, Umgebung bleibt lesbar */
+  /* Full-screen scrim: tint plus the same frost, so the page behind a modal is color only */
   --liquid-modal-scrim-bg: rgba(15, 23, 42, 0.36);
+  --liquid-modal-scrim-blur: 120px;
 
   /* Sheened “liquid” tile surface (gradient + blur reads as glass) */
   --liquid-tile-bg: linear-gradient(
@@ -152,7 +153,7 @@ html[data-theme='dark'] {
   --orbit-glow: radial-gradient(ellipse 95% 75% at 18% 0%, rgba(255, 130, 70, 0.06) 0%, transparent 52%),
     radial-gradient(ellipse 65% 50% at 96% 94%, rgba(255, 90, 40, 0.045) 0%, transparent 50%);
 
-  --liquid-blur: 44px;
+  --liquid-blur: 128px;
   --liquid-saturate: 1.55;
   --liquid-bg: rgba(38, 34, 32, 0.42);
   --liquid-bg-strong: rgba(44, 40, 38, 0.76);
@@ -218,10 +219,11 @@ html[data-theme='dark'] {
   --shadow: var(--liquid-shadow);
   --shadow-lg: 0 28px 70px rgba(0, 0, 0, 0.52), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
-  --liquid-popover-blur: 108px;
+  --liquid-popover-blur: 168px;
   --liquid-popover-saturate: 1.88;
   --liquid-popover-fill: rgba(44, 40, 38, 0.8);
   --liquid-modal-scrim-bg: rgba(0, 0, 0, 0.42);
+  --liquid-modal-scrim-blur: 128px;
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {

@@ -30,7 +30,7 @@ useModalDismiss(() => props.show, {
     <Transition name="docs-viewer">
       <div
         v-if="show"
-        class="docs-viewer-backdrop"
+        class="docs-viewer-backdrop liquid-scrim"
         role="dialog"
         aria-modal="true"
         :aria-label="title || closeLabel"
@@ -82,6 +82,8 @@ useModalDismiss(() => props.show, {
     env(safe-area-inset-bottom, 0)
     env(safe-area-inset-left, 0);
   background: var(--liquid-modal-scrim-bg);
+  backdrop-filter: blur(var(--liquid-modal-scrim-blur)) saturate(var(--liquid-saturate));
+  -webkit-backdrop-filter: blur(var(--liquid-modal-scrim-blur)) saturate(var(--liquid-saturate));
 }
 @media (min-width: 640px) {
   .docs-viewer-backdrop {
@@ -93,7 +95,9 @@ useModalDismiss(() => props.show, {
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  background: var(--color-bg);
+  background: var(--liquid-popover-fill);
+  backdrop-filter: blur(var(--liquid-popover-blur)) saturate(var(--liquid-popover-saturate));
+  -webkit-backdrop-filter: blur(var(--liquid-popover-blur)) saturate(var(--liquid-popover-saturate));
   overflow: hidden;
 }
 @media (min-width: 640px) {

@@ -11,7 +11,7 @@ defineProps({
     <Transition name="docs-opening-fade">
       <div
         v-if="open"
-        class="docs-opening"
+        class="docs-opening liquid-scrim"
         role="status"
         aria-live="polite"
         aria-busy="true"
@@ -35,8 +35,9 @@ defineProps({
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: color-mix(in srgb, var(--color-bg) 45%, transparent);
-  backdrop-filter: blur(2px);
+  background: var(--liquid-modal-scrim-bg);
+  backdrop-filter: blur(var(--liquid-modal-scrim-blur)) saturate(var(--liquid-saturate));
+  -webkit-backdrop-filter: blur(var(--liquid-modal-scrim-blur)) saturate(var(--liquid-saturate));
 }
 .docs-opening__inner {
   display: flex;

@@ -530,8 +530,8 @@ onUnmounted(() => {
   border-radius: var(--radius-lg);
   border: 1px solid var(--liquid-border);
   background: color-mix(in srgb, var(--liquid-tile-bg) 92%, transparent);
-  backdrop-filter: blur(calc(var(--liquid-blur) * 0.55)) saturate(calc(var(--liquid-saturate) * 0.95));
-  -webkit-backdrop-filter: blur(calc(var(--liquid-blur) * 0.55)) saturate(calc(var(--liquid-saturate) * 0.95));
+  backdrop-filter: blur(var(--liquid-blur)) saturate(calc(var(--liquid-saturate) * 0.95));
+  -webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(calc(var(--liquid-saturate) * 0.95));
   box-shadow: var(--shadow-md);
   pointer-events: auto;
 }
@@ -797,9 +797,9 @@ html[data-theme='dark'] .venues-map-switch-input:checked + .venues-map-switch-tr
   padding: 0.75rem 1rem;
   border: 1px solid var(--liquid-border, rgba(0, 0, 0, 0.12));
   border-radius: var(--radius-lg, 12px);
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: var(--liquid-popover-fill, rgba(255, 255, 255, 0.82));
+  backdrop-filter: blur(var(--liquid-popover-blur)) saturate(var(--liquid-popover-saturate));
+  -webkit-backdrop-filter: blur(var(--liquid-popover-blur)) saturate(var(--liquid-popover-saturate));
   box-shadow: var(--shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.18));
   color: var(--color-text, #1c1c1e);
   font: inherit;
@@ -808,7 +808,7 @@ html[data-theme='dark'] .venues-map-switch-input:checked + .venues-map-switch-tr
   white-space: normal;
 }
 html[data-theme='dark'] .leaflet-tooltip.venues-map-tip {
-  background: rgba(36, 32, 30, 0.96);
+  background: var(--liquid-popover-fill, rgba(44, 40, 38, 0.8));
 }
 .leaflet-tooltip.venues-map-tip::before {
   display: none;

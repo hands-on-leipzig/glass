@@ -30,6 +30,13 @@ body {
   -webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(var(--liquid-saturate));
 }
 
+/* Full-screen dim behind a modal. Blur matches the glass so type behind is only color. */
+.liquid-scrim {
+  background: var(--liquid-modal-scrim-bg);
+  backdrop-filter: blur(var(--liquid-modal-scrim-blur)) saturate(var(--liquid-saturate));
+  -webkit-backdrop-filter: blur(var(--liquid-modal-scrim-blur)) saturate(var(--liquid-saturate));
+}
+
 @media (pointer: coarse) {
   /*
    * Raise tappable controls on touch devices — but skip compact chrome
