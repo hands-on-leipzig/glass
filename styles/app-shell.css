@@ -1259,7 +1259,74 @@ html[data-theme='dark'] .glass-app__tab-bubble-lens {
   }
 
   .glass-app--mobile-tabs .glass-sidebar__brand {
-    padding-top: 0.35rem;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 0.1rem 1.15rem 0.85rem;
+    border-bottom: none;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar__brand-logo {
+    width: auto;
+    max-width: 9rem;
+    max-height: 1.75rem;
+    object-fit: contain;
+    object-position: left center;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar__nav,
+  .glass-app--mobile-tabs .glass-sidebar__nav-pinned {
+    align-items: stretch;
+    gap: 0.15rem;
+    margin-top: 0.15rem;
+    padding: 0 0.65rem;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar__item {
+    width: 100%;
+    margin: 0;
+    min-height: 3rem;
+    padding: 0.55rem 0.75rem;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    border: 0;
+    border-radius: 0.85rem;
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+    text-align: left;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar__item:hover:not(.glass-sidebar__item--active):not(:disabled),
+  .glass-app--mobile-tabs .glass-sidebar__item:active:not(.glass-sidebar__item--active):not(:disabled),
+  .glass-app--mobile-tabs .glass-sidebar__item--active,
+  .glass-app--mobile-tabs .glass-sidebar__item--active:active {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar__item--active {
+    background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar__partners {
+    align-items: flex-start;
+    text-align: left;
+    margin: 0.35rem 1.15rem 0.5rem;
+    padding: 0.75rem 0 0.35rem;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar__partner-logo--primary,
+  .glass-app--mobile-tabs .glass-sidebar__partner-logo--secondary {
+    max-height: 2.4rem;
+    max-width: 9rem;
+    object-position: left center;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar-footer__bar {
+    justify-content: flex-start;
+    gap: 0.35rem;
+    padding: 0.65rem 0.85rem max(0.65rem, env(safe-area-inset-bottom, 0px));
+    background: transparent;
   }
 
   .glass-sidebar__brand {
@@ -1322,10 +1389,10 @@ html[data-theme='dark'] .glass-app__tab-bubble-lens {
     border-right: none;
     border-top: none;
     box-shadow: none;
-    padding: 0.45rem 0.55rem 0.65rem;
+    padding: 0.35rem 0.4rem 0.5rem;
     /* Clear notch + hamburger / top bar / bottom tabs */
     padding-top: var(--glass-mobile-chrome-top);
-    padding-bottom: calc(0.65rem + var(--glass-mobile-chrome-bottom));
+    padding-bottom: calc(0.5rem + var(--glass-mobile-chrome-bottom));
   }
 }
 
