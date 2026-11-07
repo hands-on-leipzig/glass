@@ -1202,22 +1202,32 @@ html[data-theme='dark'] .glass-app__tab-bubble-lens {
   }
 
   .glass-app--mobile-tabs .glass-sidebar {
-    /* Sheet from the bottom feels more native with a tab bar. */
+    /* Sheet hugs its content; long menus still scroll. */
     top: auto;
     left: 0;
     right: 0;
     bottom: 0;
     width: 100%;
     max-width: none;
-    height: min(88dvh, 40rem);
-    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 0.5rem);
+    height: auto;
+    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 0.75rem);
     transform: translateY(105%);
     transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-    border-left: 1px solid var(--liquid-border);
+    border-radius: 1.35rem 1.35rem 0 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
     border-top: 1px solid var(--liquid-border);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding: 0 0 env(safe-area-inset-bottom, 0px);
+    overflow-x: hidden;
+    overflow-y: auto;
     touch-action: pan-y;
+    background: color-mix(in srgb, var(--orbit-base, #e8ebf0) 86%, #fff);
+    box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.16);
+  }
+
+  html[data-theme='dark'] .glass-app--mobile-tabs .glass-sidebar {
+    background: #1c1917;
   }
 
   .glass-app--mobile-tabs .glass-sidebar--open {
@@ -1258,42 +1268,66 @@ html[data-theme='dark'] .glass-app__tab-bubble-lens {
     display: none;
   }
 
+  .glass-app--mobile-tabs .glass-sidebar__brand-row {
+    margin: 0 1rem 0.2rem;
+    padding: 0;
+    border-bottom: none;
+    align-items: center;
+  }
+
   .glass-app--mobile-tabs .glass-sidebar__brand {
     justify-content: flex-start;
     margin: 0;
-    padding: 0.1rem 1.15rem 0.85rem;
+    padding: 0.05rem 0 0.45rem;
     border-bottom: none;
   }
 
   .glass-app--mobile-tabs .glass-sidebar__brand-logo {
     width: auto;
-    max-width: 9rem;
-    max-height: 1.75rem;
+    max-width: 7.5rem;
+    max-height: 1.55rem;
     object-fit: contain;
     object-position: left center;
   }
 
   .glass-app--mobile-tabs .glass-sidebar__nav,
   .glass-app--mobile-tabs .glass-sidebar__nav-pinned {
+    flex: 0 0 auto;
     align-items: stretch;
-    gap: 0.15rem;
-    margin-top: 0.15rem;
-    padding: 0 0.65rem;
+    gap: 0;
+    margin: 0 0.85rem;
+    padding: 0.2rem;
+    overflow: visible;
+    background: color-mix(in srgb, #fff 96%, var(--orbit-base, #e8ebf0));
+    border-radius: 1rem;
+  }
+
+  html[data-theme='dark'] .glass-app--mobile-tabs .glass-sidebar__nav,
+  html[data-theme='dark'] .glass-app--mobile-tabs .glass-sidebar__nav-pinned {
+    background: #292524;
   }
 
   .glass-app--mobile-tabs .glass-sidebar__item {
     width: 100%;
     margin: 0;
-    min-height: 3rem;
-    padding: 0.55rem 0.75rem;
+    min-height: 2.85rem;
+    padding: 0.4rem 0.7rem;
     justify-content: flex-start;
-    gap: 0.75rem;
+    gap: 0.7rem;
     border: 0;
-    border-radius: 0.85rem;
+    border-radius: 0.75rem;
     background: transparent;
     box-shadow: none;
     transform: none;
     text-align: left;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar__item + .glass-sidebar__item {
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-border-strong) 28%, transparent);
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar__lower {
+    margin-top: 0.55rem;
   }
 
   .glass-app--mobile-tabs .glass-sidebar__item:hover:not(.glass-sidebar__item--active):not(:disabled),
@@ -1309,24 +1343,82 @@ html[data-theme='dark'] .glass-app__tab-bubble-lens {
   }
 
   .glass-app--mobile-tabs .glass-sidebar__partners {
-    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
     text-align: left;
-    margin: 0.35rem 1.15rem 0.5rem;
-    padding: 0.75rem 0 0.35rem;
+    gap: 0.85rem 1.1rem;
+    margin: 0.15rem 1rem 0.65rem;
+    padding: 0.65rem 0 0;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar__partner-link {
+    width: auto;
+    flex: 0 0 auto;
   }
 
   .glass-app--mobile-tabs .glass-sidebar__partner-logo--primary,
   .glass-app--mobile-tabs .glass-sidebar__partner-logo--secondary {
-    max-height: 2.4rem;
-    max-width: 9rem;
+    display: block;
+    width: auto;
+    height: 2.75rem;
+    max-width: none;
+    max-height: none;
+    object-fit: contain;
     object-position: left center;
   }
 
   .glass-app--mobile-tabs .glass-sidebar-footer__bar {
+    flex-direction: column;
+    align-items: stretch;
     justify-content: flex-start;
-    gap: 0.35rem;
-    padding: 0.65rem 0.85rem max(0.65rem, env(safe-area-inset-bottom, 0px));
+    gap: 0;
+    margin: 0.55rem 0.85rem 0;
+    padding: 0.2rem;
+    border-top: none;
+    border-radius: 1rem;
+    background: color-mix(in srgb, #fff 96%, var(--orbit-base, #e8ebf0));
+  }
+
+  html[data-theme='dark'] .glass-app--mobile-tabs .glass-sidebar-footer__bar {
+    background: #292524;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar-footer__slot {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar-footer__slot + .glass-sidebar-footer__slot .glass-sidebar-footer__icon-btn {
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-border-strong) 28%, transparent);
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar-footer__icon-btn {
+    width: 100%;
+    height: auto;
+    min-height: 2.85rem;
+    padding: 0.4rem 0.7rem;
+    justify-content: flex-start;
+    gap: 0.7rem;
+    border: 0;
+    border-radius: 0.75rem;
     background: transparent;
+    box-shadow: none;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar-footer__icon-btn::after {
+    content: attr(aria-label);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: left;
+  }
+
+  .glass-app--mobile-tabs .glass-sidebar-footer__icon-btn .bi {
+    width: 2rem;
+    font-size: 1.15rem;
+    text-align: center;
   }
 
   .glass-sidebar__brand {
