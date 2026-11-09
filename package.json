@@ -27,6 +27,7 @@
     "./styles/button.css": "./styles/button.css",
     "./theme": "./theme/index.js",
     "./app-shell": "./components/AppShell.vue",
+    "./app-switch": "./components/AppSwitch.vue",
     "./sidebar-footer": "./components/SidebarFooter.vue",
     "./sidebar-nav-item": "./components/SidebarNavItem.vue",
     "./page-tabs": "./components/PageTabs.vue",
