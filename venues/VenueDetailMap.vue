@@ -41,7 +41,7 @@ const hasCoords = () => {
  *
  * Returns the first line that looks like "Straßenname Hausnummer"
  * (contains letters followed by digits, but does NOT start with a ZIP code).
- * Falls back to the full text if no street line is found.
+ * An institution name without a house number is left out, so the search uses the postal code.
  */
 function extractStreetLine(text) {
   if (!text) return ''
@@ -94,52 +94,71 @@ function syncMarker(precise = false) {
  * Improves pin precision beyond the postal-code centre stored in the DB.
  * Falls back to stored lat/lon silently if geocoding fails or is imprecise.
  */
+/** DE and FR use 5 digits. AT and CH use 4. A leading CH- or A- is not part of the code. */
+function postalCodeForCountry(rawZip, country) {
+  const stripped = String(rawZip || '').trim().replace(/^(?:CH|A|D)[-\s]*/i, '')
+  const match = stripped.match(/\d{4,5}/)
+  const code = match ? match[0] : ''
+  if (!code) return ''
+  if ((country === 'de' || country === 'fr') && code.length !== 5) return ''
+  if ((country === 'at' || country === 'ch') && code.length !== 4) return ''
+  return code
+}
+
+function hitMatchesCountry(hit, country) {
+  if (!country) return true
+  const code = String(hit?.address?.country_code || '').toLowerCase()
+  return code === '' || code === country
+}
+
+async function searchNominatim(params) {
+  const res = await fetch(
+    `https://nominatim.openstreetmap.org/search?${params.toString()}`,
+    { signal: geocodeAbort.signal },
+  )
+  if (!res.ok) return null
+  const list = await res.json()
+  return Array.isArray(list) ? list[0] : null
+}
+
 async function geocodeAddress() {
   if (geocodeAbort) geocodeAbort.abort()
   geocodeAbort = new AbortController()
 
-  const rawAddr  = (props.address || '').trim()
-  const zipText  = (props.zip || '').trim()
-  const cc       = (props.country || '').toLowerCase().trim()
-
-  // Use only the street line (e.g. "Paul-Wittsack-Straße 10"), stripping institution names.
+  const rawAddr = (props.address || '').trim()
+  const cc = (props.country || '').toLowerCase().trim()
+  const zipText = postalCodeForCountry(props.zip || '', cc)
   const streetLine = extractStreetLine(rawAddr)
-  const addrText   = streetLine || rawAddr
 
-  if (addrText || zipText) {
-    try {
-      const params = new URLSearchParams({ format: 'json', limit: '1', addressdetails: '1' })
-      if (addrText && zipText) {
-        params.set('q', `${addrText}, ${zipText}`)
-      } else if (addrText) {
-        params.set('q', addrText)
-      } else {
-        params.set('postalcode', zipText)
-      }
-      if (cc) params.set('countrycodes', cc)
-
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?${params.toString()}`,
-        { signal: geocodeAbort.signal },
-      )
-      if (res.ok) {
-        const list = await res.json()
-        const hit  = Array.isArray(list) ? list[0] : null
-        if (hit?.lat) {
-          const type    = hit.type || ''
-          const cls     = hit.class || ''
-          // Accept street-level results (road, building, amenity, …)
-          // but reject broad area results (postcode, city, county, state)
-          const isPrecise = PRECISE_TYPES.has(type) || cls === 'highway' ||
-            (cls === 'place' && !['postcode', 'city', 'town', 'village', 'county', 'state', 'country'].includes(type))
-          resolvedLat.value = parseFloat(hit.lat)
-          resolvedLon.value = parseFloat(hit.lon)
-          syncMarker(isPrecise)
-          return
-        }
-      }
-    } catch (_) { /* aborted or network error – fall through to stored coords */ }
+  const queries = []
+  if (zipText) {
+    if (streetLine) {
+      const precise = new URLSearchParams({ format: 'json', limit: '1', addressdetails: '1' })
+      precise.set('street', streetLine)
+      precise.set('postalcode', zipText)
+      if (cc) precise.set('countrycodes', cc)
+      queries.push(precise)
+    }
+    const postal = new URLSearchParams({ format: 'json', limit: '1', addressdetails: '1' })
+    postal.set('postalcode', zipText)
+    if (cc) postal.set('countrycodes', cc)
+    queries.push(postal)
   }
+
+  try {
+    for (const params of queries) {
+      const hit = await searchNominatim(params)
+      if (!hit?.lat || !hitMatchesCountry(hit, cc)) continue
+      const type = hit.type || ''
+      const cls = hit.class || ''
+      const isPrecise = PRECISE_TYPES.has(type) || cls === 'highway' ||
+        (cls === 'place' && !['postcode', 'city', 'town', 'village', 'county', 'state', 'country'].includes(type))
+      resolvedLat.value = parseFloat(hit.lat)
+      resolvedLon.value = parseFloat(hit.lon)
+      syncMarker(isPrecise)
+      return
+    }
+  } catch (_) { /* aborted or network error – fall through to stored coords */ }
 
   // Fallback: use stored lat/lon (postal-code centre, zoom 14)
   resolvedLat.value = props.lat
